@@ -1,0 +1,118 @@
+package com.capitalbank.serviceImpl;
+
+import java.util.List;
+import java.util.Optional;
+
+import com.capitalbank.dao.AccountDao;
+
+import com.capitalbank.daoImpl.AccountDaoImpl;
+import com.capitalbank.model.Account;
+import com.capitalbank.service.AccountService;
+import com.capitalbank.util.account.AccountValidationException;
+import com.capitalbank.util.account.AccountValidator;
+import com.capitalbank.util.database.TransactionManager;
+
+public class AccountServiceImpl implements AccountService {
+	private AccountDao accountDao;
+
+	public AccountServiceImpl() {
+		this.accountDao = new AccountDaoImpl();
+	}
+
+	public AccountServiceImpl(AccountDao accountDao) {
+		this.accountDao = new AccountDaoImpl();
+	}
+
+	@Override
+	public boolean createAccount(Account account) {
+		return TransactionManager.doInTransaction(connection -> {
+			try {
+				Optional<List<Account>> existingAccount = accountDao.findAccountByCustomerId(connection,
+						account.getCustomerId());
+				if (existingAccount.isPresent()) {
+					throw new RuntimeException("Account already exists.");
+				}
+
+				AccountValidator.validate(account);
+				System.out.println("Account verification successful");
+
+				return accountDao.save(connection, account);
+			} catch (AccountValidationException e) {
+				throw new AccountValidationException("Account verification failed: " + e.getMessage());
+			}
+		});
+	}
+
+	@Override
+	public Optional<List<Account>> findAll() {
+		return TransactionManager.doInTransaction(connection -> {
+			Optional<List<Account>> existingAccounts = accountDao.findAllAccount(connection);
+			if (existingAccounts.isEmpty()) {
+				throw new RuntimeException("No Account exists.");
+			}
+			return existingAccounts;
+		});
+	}
+
+	@Override
+	public Optional<Account> findAccount(String accountNumber) {
+		return TransactionManager.doInTransaction(connection -> {
+			if (accountNumber.length() != 12) {
+				throw new RuntimeException("Invalid account number...");
+			}
+
+			Optional<Account> existingAccount = accountDao.findByAccountNumber(connection, accountNumber);
+			if (existingAccount.isEmpty()) {
+				throw new RuntimeException("Account doesn't exist.");
+			}
+			return existingAccount;
+		});
+	}
+
+	@Override
+	public boolean updateAccount(String accountNumber, Account account) {
+		return TransactionManager.doInTransaction(connection -> {
+			try {
+				AccountValidator.validate(account);
+				System.out.println("Account verification successful.");
+
+				if (accountNumber.length() != 12) {
+					throw new RuntimeException("Invalid account number.");
+				}
+
+				Optional<Account> existingAccount = findAccount(accountNumber);
+				if (existingAccount.isEmpty()) {
+					return false;
+				}
+
+				return accountDao.updateByAccountNumber(connection, accountNumber, account);
+			} catch (AccountValidationException e) {
+				throw new AccountValidationException("Account verification failed." + e.getMessage());
+			}
+		});
+	}
+
+	@Override
+	public boolean deleteAccount(String accountNumber, Account account) {
+		return TransactionManager.doInTransaction(connection -> {
+			try {
+				AccountValidator.validate(account);
+				System.out.println("Account verification successful.");
+
+				if (accountNumber.length() != 12) {
+					throw new RuntimeException("Invalid account number.");
+				}
+
+				Optional<Account> existingAccount = findAccount(accountNumber);
+				if (existingAccount.isEmpty()) {
+					return false;
+				}
+
+				return accountDao.deleteByAccountNumber(connection, accountNumber);
+
+			} catch (AccountValidationException e) {
+				throw new AccountValidationException("Account verification failed." + e.getMessage());
+			}
+		});
+	}
+}

@@ -1,0 +1,120 @@
+<?page title="Registration Page" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<style>
+		.registration-page { margin: 10px; width: 100%; display: flex;
+		justify-content: center; align-items: center; background:
+		linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+		margin: 0; padding: 0; font-family: "Segoe UI", Tahoma, Geneva,
+		Verdana, sans-serif; } hbox { border: 2px solid black; }
+	</style>
+
+	<div sclass="registration-page">
+		<window title="User Registration" border="normal"  width="550px" 
+			style="margin:auto; background:rgba(249, 249, 249, 0.8); border-radius:10px; margin:20px; padding:25px; overflow:auto;"
+			>
+
+			<caption label="Registration Form"
+				style="font-weight:bold; font-size:20px; text-align:center; margin-bottom:10px;" />
+
+			<vlayout spacing="10px" width="100%">
+		
+				<hbox hflex="1">
+					<label value="Full Name:" hflex="1"
+						style="font-size: 17px;" />
+					<textbox id="fname" hflex="2"
+						constraint="no empty: Full Name is required" />
+				</hbox>
+
+				<hbox hflex="1">
+					<label value="Date of Birth:" hflex="1"
+						style="font-size: 17px;" />
+					<datebox id="dob" hflex="2"
+						constraint="no empty: Date is required" />
+				</hbox>
+
+				<hbox hflex="1">
+					<label value="Gender:" hflex="1"
+						style="font-size: 17px;" />
+					<radiogroup id="gender" hflex="2">
+						<radio label="Male" value="Male" checked="true"
+							iconSclass="z-icon-male" />
+						<radio label="Female" value="Female"
+							iconSclass="z-icon-female" />
+						<radio label="Other" value="Other" />
+					</radiogroup>
+				</hbox>
+
+				<hbox hflex="1">
+					<label value="Email ID:" hflex="1"
+						style="font-size: 17px;" />
+					<textbox id="email" type="email" hflex="2"
+						constraint="no empty: EmailID is required" />
+				</hbox>
+
+				<hbox hflex="1">
+					<label value="Phone Number:" hflex="1"
+						style="font-size: 17px;" />
+					<textbox id="phone" hflex="2" maxlength="10"
+						constraint="no empty: PhoneNumber is required" />
+				</hbox>
+
+				<hbox hflex="1">
+					<label value="Aadhar Number:" hflex="1"
+						style="font-size: 17px;" />
+					<textbox id="aadhar" hflex="2" maxlength="12"
+						constraint="no empty: AadharNO is required" />
+				</hbox>
+				<hbox hflex="1">
+					<label value="Password:" hflex="1"
+						style="font-size: 17px;" />
+					<textbox id="password" hflex="2"
+						constraint="no empty: Password is required" />
+				</hbox>
+
+				<hbox hflex="1">
+					<label value="Confirm Password:" hflex="1"
+						style="font-size: 17px;" />
+					<textbox id="confirmPassword" hflex="2"
+						constraint="no empty: Confirm Password is required" />
+				</hbox>
+				
+				<hbox hflex="1">
+					<label value="Address:" hflex="1"
+						style="font-size: 17px;" />
+					<textbox id="address" hflex="2"
+						constraint="no empty: Address is required" />
+				</hbox>
+
+				<hbox hflex="1">
+					<label value="Aadhar Proof:" hflex="1"
+						style="font-size:17px;" />
+					<fileupload id="proofUpload" label="Upload Aadhar"
+						upload="true" hflex="2"
+						style="width:100px; height:30px; padding:2px;" />
+					<button id="btnDeleteProof"
+							iconSclass="z-icon-trash-o" style="height:30px; padding:2px; background:red"/>
+				</hbox>
+				
+				<hbox hflex="1">
+					<label value="Profile Photo:" hflex="1"
+						style="font-size: 17px;" />
+					<fileupload id="imageUpload" label="Upload Image"
+						upload="true" hflex="2"
+						style="width:100px; height:30px; padding:2px;" />
+					<button id="btnDeleteImage"
+						iconSclass="z-icon-trash-o" style="height:30px; padding:2px; background:red" />
+				</hbox>
+			</vlayout>
+
+			<separator spacing="46px" />
+
+			<hbox align="center" pack="center" spacing="15px"
+				height="100%" width="100%">
+				<button label="Register" id="btnRegister" width="120px"
+					style="background:#4CAF50; color:white; border:none;" />
+				<button label="Clear" id="btnClear" width="120px"
+					style="background:#f44336; color:white; border:none;" />
+			</hbox>
+		</window>
+	</div>
+</zk>

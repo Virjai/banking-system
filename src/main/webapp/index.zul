@@ -1,0 +1,178 @@
+<?page title="app store"?>
+<zk>
+	<div>
+		<style>
+			body { background: linear-gradient(135deg, #667eea 0%,
+			#764ba2 50%, #f093fb 100%); margin: 0; padding: 0;
+
+			.footer { background: rgba(0, 0, 0, 0.2); padding: 30px;
+			margin-top: 80px; text-align: center; color: rgba(255, 255,
+			255, 0.7); } }
+
+			.center-content { display: flex; justify-content: center;
+			align-items: center; flex-direction: column; min-height:
+			60vh; text-align: center; }
+
+		</style>
+
+		<hbox width="100%"
+			style="padding: 20px 40px;  background: linear-gradient(135deg, #667eea 0%,
+    #764ba2 50%, #f093fb 100%);">
+
+			<hbox spacing="12px" hflex="1">
+
+				<button id="bHome" label="HOME" sclass="nav-btn"
+					iconSclass="z-icon-home" />
+				<button id="bPay" label="PAY" class="nav-btn"
+					iconSclass="z-icon-credit-card" />
+				<button id="bSave" label="SAVE" class="nav-btn"
+					iconSclass="z-icon-pie-chart" />
+				<button id="bInvest" label="INVEST" sclass="nav-btn"
+					iconSclass="z-icon-line-chart" />
+				<button id="bBorrow" label="BORROW" class="nav-btn"
+					iconSclass="z-icon-handshake-o" />
+				<button id="bInsure" label="INSURE" class="nav-btn"
+					iconSclass="z-icon-shield" />
+				<button id="bOffer" label="OFFER" class="nav-btn"
+					iconSclass="z-icon-gift" />
+			</hbox>
+
+			<hbox spacing="12px" pack="end">
+				<button id="bLogIn" label="LOGIN" sclass="login-btn"
+					iconSclass="z-icon-sign-in" visible="falsea" />
+				<button id="bRegister" label="REGISTER"
+					sclass="signup-btn" iconSclass="z-icon-user-plus" visible="false" />
+				<button id="bProfile" label="PROFILE"
+					sclass="profile-btn" iconSclass="z-icon-user" visible="true" />
+			</hbox>
+		</hbox>
+
+		<div class="center-content">
+			<vbox spacing="30px" align="center">
+
+				<label value="Welcome to Capital Bank of Prestige"
+					style="font-size: 48px; font-weight: 700; color: white;
+
+             " />
+
+				<label
+					value="Trust in Every Transaction | Security in Every Temptation | Technology in Every Touch"
+					style="font-size: 20px; font-weight: 400; color: rgba(255, 255, 255, 0.9);
+                     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);" />
+
+				<hbox
+					style="position: relative; width: 350px; height: 420px; margin-top: 40px;">
+
+					<vbox id="card1" align="center" spacing="15px"
+						style="position: absolute;
+           top: 0;
+           left: 50%;
+           transform: translateX(-50%);
+           background: rgba(255, 255, 255, 0.25);
+           border: 1px solid rgba(255, 255, 255, 0.3);
+           border-radius: 20px;
+           padding: 50px 60px;
+           width: 640px;  
+           opacity: 1;
+           transition: opacity 1.5s ease-in-out;">
+
+						<label value="💳" style="font-size: 80px;" />
+						<label value="Credit Card"
+							style="font-size: 26px; font-weight: 700; color: white;" />
+						<label value="Swipe • Pay • Benefits"
+							style="font-size: 16px; color: rgba(255, 255, 255, 0.85); text-align: center;" />
+					</vbox>
+
+					<vbox id="card2" align="center" spacing="15px"
+						style="position: absolute;
+           top: 0;
+           left: 50%;
+           transform: translateX(-50%);
+           background: rgba(255, 255, 255, 0.25);
+           border: 1px solid rgba(255, 255, 255, 0.3);
+           border-radius: 20px;
+           padding: 50px 60px;
+           width: 640px;
+           opacity: 0;
+           transition: opacity 1.5s ease-in-out;">
+						<label value="💰" style="font-size: 80px;" />
+						<label value="Savings"
+							style="font-size: 26px; font-weight: 700; color: white;" />
+						<label value="Plan • Grow • Target"
+							style="font-size: 16px; color: rgba(255, 255, 255, 0.85); text-align: center;" />
+					</vbox>
+
+					<vbox id="card3" align="center" spacing="15px"
+						style="position: absolute;
+           top: 0;
+           left: 50%;
+           transform: translateX(-50%);
+           background: rgba(255, 255, 255, 0.25);
+           border: 1px solid rgba(255, 255, 255, 0.3);
+           border-radius: 20px;
+           padding: 50px 60px;
+           width: 640px;
+           opacity: 0;
+           transition: opacity 1.5s ease-in-out;">
+						<label value="📈" style="font-size: 80px;" />
+						<label value="Cred-Score"
+							style="font-size: 26px; font-weight: 700; color: white;" />
+						<label value="Improve • Check • Build"
+							style="font-size: 16px; color: rgba(255, 255, 255, 0.85); text-align: center;" />
+					</vbox>
+
+					<vbox id="card4" align="center" spacing="15px"
+						style="position: absolute;
+           top: 0;
+           left: 50%;
+           transform: translateX(-50%);
+           background: rgba(255, 255, 255, 0.25);
+           border: 1px solid rgba(255, 255, 255, 0.3);
+           border-radius: 20px;
+           padding: 50px 60px;
+           width: 640px;
+           opacity: 0;
+           transition: opacity 1.5s ease-in-out;">
+						<label value="💡" style="font-size: 80px;" />
+						<label value="More Tools"
+							style="font-size: 26px; font-weight: 700; color: white;" />
+						<label value="Explore • Discover • Use"
+							style="font-size: 16px; color: rgba(255, 255, 255, 0.85); text-align: center;" />
+					</vbox>
+
+
+				</hbox>
+
+
+				<script>
+					
+					<![CDATA[ zk.afterMount(function() { var cards =
+					[jq('$card1'), jq('$card2'), jq('$card3'),
+					jq('$card4')]; var index = 0; setInterval(function()
+					{ cards.forEach(c => c.css('opacity', '0'));
+					cards[index].css('opacity', '1'); index = (index +
+					1) % cards.length; }, 2500); });
+
+					]]>
+					
+				</script>
+
+
+				<label
+					value="Get started by selecting a tool from the navigation above"
+					style="font-size: 16px; color: rgba(255, 255, 255, 0.7);
+                          margin-top: 30px;" />
+			</vbox>
+		</div>
+
+		<window id="backendWin" border="none" visible="false"></window>
+
+		<div sclass="footer">
+			<label
+				value="© 2025 Capital Bank of Prestige, All rights reserved."
+				style="font-size: 14px;" />
+		</div>
+	</div>
+
+</zk>
+
