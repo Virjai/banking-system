@@ -1,0 +1,6 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+    <window title="Admin Page" border="normal">
+        <label value="Only Admin can see this page." style="color:blue; font-weight:bold"/>
+    </window>
+</zk>

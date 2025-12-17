@@ -1,1 +1,54 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+	xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<beans:bean id="userDetailsService"
+		class="com.capitalbank.security.CustomerUserDetailsService">
+		<beans:property name="customerService"
+			ref="customerService" />
+	</beans:bean>
+
+	<authentication-manager>
+		<authentication-provider
+			user-service-ref="userDetailsService">
+		</authentication-provider>
+	</authentication-manager>
+
+	<http auto-config="true" use-expressions="true">
+		<intercept-url pattern="/zul/admin/**"
+			access="hasRole('ADMIN')" />
+		<intercept-url pattern="/zul/user/**"
+			access="hasAnyRole('USER','ADMIN')" />
+
+		<!-- 🔓 Allow login page -->
+		<intercept-url pattern="/login.zul" access="permitAll" />
+
+		<!-- 🔓 Allow ZK engine (VERY IMPORTANT) -->
+		<intercept-url pattern="/zkau/**" access="permitAll" />
+
+		<!-- 🔒 Secured areas -->
+		<intercept-url pattern="/zul/admin/**"
+			access="hasRole('ADMIN')" />
+		<intercept-url pattern="/zul/user/**"
+			access="hasAnyRole('USER','ADMIN')" />
+
+		<form-login login-page="/login.zul"
+			default-target-url="/zul/user/dashboard.zul"
+			authentication-failure-url="/login.zul?error=true" />
+
+		<logout logout-success-url="/login.zul?logout=true" />
+		<!-- Login configuration -->
+
+		<!-- Logout -->
+		<logout logout-url="/logout" logout-success-url="/login.zul" />
+	</http>
+
+	<!-- 🔥 THIS LINE FIXES EVERYTHING -->
+	<beans:import resource="applicationContext.xml" />
+</beans:beans>

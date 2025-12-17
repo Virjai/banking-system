@@ -1,27 +1,21 @@
 package com.capitalbank.service;
 
+import com.capitalbank.model.Customer;
 import java.util.List;
 import java.util.Optional;
 
-import com.capitalbank.model.Customer;
-
 public interface CustomerService {
 
-	public boolean register(Customer customer);
-	
-	public Optional<Customer> login(String email, String password);
+    // CRUD
+    boolean register(Customer customer);
+    Customer loadCustomerForAuthentication(String email);
 
-	public Optional<List<Customer>> findAll();
+    Customer getCustomerById(long customerId, Customer.Role requesterRole, long requesterId);
+    List<Customer> getAllCustomers(Customer.Role requesterRole);
+    Customer getCustomerByEmail(String email, Customer.Role requesterRole);
+    boolean updateCustomer(Customer customer, Customer.Role requesterRole, long requesterId);
+    boolean deleteCustomer(long customerId, Customer.Role requesterRole);
 
-	public Optional<Customer> findById(long id);
-
-	public Optional<Customer> findCustomer(String identifier);
-
-	public boolean updateById(long id, Customer customer);
-
-	public boolean updateCustomer(String identifier, Customer customer);
-
-	public boolean deleteById(long id);
-
-	public boolean deleteCustomer(String identifier);
+    // Authentication
+    Customer login(String email, String password);
 }

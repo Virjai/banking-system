@@ -1,4 +1,4 @@
-package com.capitalbank.util;
+package com.capitalbank.security;
 
 import org.mindrot.jbcrypt.BCrypt;
 

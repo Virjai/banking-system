@@ -1,0 +1,95 @@
+<?page title="Login" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2
+        50%, #f093fb 100%); margin: 0; padding: 0; }
+
+        .z-window,
+        .z-window-embedded, .z-window-embedded .z-window-content {
+        background: transparent !important; box-shadow: none !important;
+        border: none !important; }
+
+        .z-window-content {
+        padding: 0 !important; }
+
+
+        .login-wrapper { display: flex; justify-content: center;
+        align-items: center; min-height: 100vh; }
+
+        .login-card { width: 380px; background: rgba(255, 255, 255,
+        0.3); border: 1px solid rgba(255, 255, 255, 0.3); border-radius:
+        20px; backdrop-filter: blur(12px); padding: 40px; text-align:
+        center; box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+
+        .title-text { font-size: 24px; font-weight: bold; color: white;
+        margin-bottom: 45px; }
+
+        .input-box { width: 100%; margin-bottom: 20px; }
+
+        .password-wrapper { width: 100%; padding: 0 12px; background:
+        white; border-radius: 5px; border: 1px solid #ccc; display:
+        flex; align-items: center; }
+
+        .password-wrapper input { border: none !important; background:
+        transparent !important; outline: none !important; box-shadow:
+        none !important; }
+
+        .icon-btn { background: transparent !important; border: none
+        !important; cursor: pointer; margin-left: 8px; color: gray
+        !important; }
+    </style>
+
+    <!-- Center Wrapper -->
+    <div class="login-wrapper">
+
+
+        <window border="none" mode="embedded">
+
+            <vbox class="login-card" spacing="15px" align="center">
+
+                <label value="Welcome to Capital Bank of Prestige"
+                    sclass="title-text" />
+
+                <hbox sclass="password-wrapper input-box" hflex="1">
+                    <textbox id="tEmailBox" placeholder="Enter Email"
+                        hflex="1" style="border:none; background:transparent;" />
+                </hbox>
+
+                <hbox sclass="password-wrapper input-box" hflex="1">
+                    <textbox id="tPassBox" type="password"
+                        inplace="false" hflex="1" placeholder="EnterPassword"
+                        style="border:none; background:transparent;" />
+                    <button id="togglePwd" iconSclass="z-icon-eye"
+                        sclass="icon-btn" />
+                </hbox>
+
+                <checkbox id="rememberMe" label="Remember me"
+                    style="color:white;" />
+
+                <button id="bLogin" label="Login" width="100%"
+                    style="background:#667eea; color:white;
+                               border-radius:10px; padding:8px;" />
+
+                <hbox spacing="20px" style="margin-top:15px;">
+                    <label id="lForgetPass" value="Forgot Password?"
+                        style="cursor:pointer; color:white;" />
+                    <label value="|" style="color:white;" />
+                    <label id="lNewUser" value="New User?"
+                        style="cursor:pointer; color:white;" />
+                </hbox>
+
+            </vbox>
+
+        </window>
+    </div>
+    <script>
+        <![CDATA[ zk.afterMount(function() { var btn =
+        zk.Widget.$("$togglePwd"); var pwd = zk.Widget.$("$tPassBox");
+
+        jq(btn.$n()).on("click", function () { var inputNode = pwd.$n();
+        inputNode.type = (inputNode.type === "password") ? "text" :
+        "password"; }); }); ]]>
+    </script>
+
+</zk>

@@ -1,53 +1,84 @@
 package com.capitalbank.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.time.LocalDate;
-
 public class Customer {
+	// ENUM ROLE
+	public enum Role {
+		USER, ADMIN
+	}
+
+	// CUSTOMER FIELDS
+
 	// --- Identification ---
 	private long customerId;
-
-	private String customerName;
+	private String fullName;
 
 	// --- Personal Information ---
 	private LocalDate dob;
 	private String gender;
-	private String aadhar;
+	private String aadharNumber;
+	private String panNumber;
 	private String aadharImage;
 	private String customerImage;
 
 	// --- Contact Information ---
 	private String email;
 	private String password;
+	private String city;
+	private String state;
+	private String pincode;
+	private String country;
 	private String phone;
 	private String address;
 
-	private List<Account> accountList;
+	// --- Role & Status ---
+	private Role role; // ENUM (USER or ADMIN)
+	private boolean isActive;
 
-	// --- Constructors ---
+	// --- Account List ---
+	private List<Account> accountList = new ArrayList<>();
+
+	// CONSTRUCTORS
 	public Customer() {
 	}
 
-	public Customer(long customerId, String customerName, LocalDate dob, String gender, String aadhar,
-			String aadharImage, String customerImage, String email, String password, String phone, String address) {
-		super();
+	public Customer(String firstName, String lastName, String email, String password) {
+		this.fullName = firstName + " " + lastName;
+		this.email = email;
+		this.password = password;
+	}
+
+	public Customer(long customerId, String fullName, LocalDate dob, String gender, String aadharNumber,
+			String panNumber, String aadharImage, String customerImage, String email, String password, String city,
+			String state, String pincode, String country, String phone, String address, Role role, boolean isActive,
+			List<Account> accountList) {
+
 		this.customerId = customerId;
-		this.customerName = customerName;
+		this.fullName = fullName;
 		this.dob = dob;
 		this.gender = gender;
-		this.aadhar = aadhar;
+		this.aadharNumber = aadharNumber;
+		this.panNumber = panNumber;
 		this.aadharImage = aadharImage;
 		this.customerImage = customerImage;
 		this.email = email;
 		this.password = password;
+		this.city = city;
+		this.state = state;
+		this.pincode = pincode;
+		this.country = country;
 		this.phone = phone;
 		this.address = address;
-		this.accountList = new ArrayList<>();
+		this.role = role;
+		this.isActive = isActive;
+		this.accountList = accountList != null ? accountList : new ArrayList<>();
 	}
 
-	// --- Getters & Setters ---
+	// GETTERS & SETTERS
+
 	public long getCustomerId() {
 		return customerId;
 	}
@@ -56,20 +87,12 @@ public class Customer {
 		this.customerId = customerId;
 	}
 
-	public String getCustomerName() {
-		return customerName;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 	public LocalDate getDob() {
@@ -88,12 +111,20 @@ public class Customer {
 		this.gender = gender;
 	}
 
-	public String getAadhar() {
-		return aadhar;
+	public String getAadharNumber() {
+		return aadharNumber;
 	}
 
-	public void setAadhar(String aadhar) {
-		this.aadhar = aadhar;
+	public void setAadharNumber(String aadharNumber) {
+		this.aadharNumber = aadharNumber;
+	}
+
+	public String getPanNumber() {
+		return panNumber;
+	}
+
+	public void setPanNumber(String panNumber) {
+		this.panNumber = panNumber;
 	}
 
 	public String getAadharImage() {
@@ -120,6 +151,46 @@ public class Customer {
 		this.email = email;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getPincode() {
+		return pincode;
+	}
+
+	public void setPincode(String pincode) {
+		this.pincode = pincode;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
 	public String getPhone() {
 		return phone;
 	}
@@ -136,6 +207,22 @@ public class Customer {
 		this.address = address;
 	}
 
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean active) {
+		isActive = active;
+	}
+
 	public List<Account> getAccountList() {
 		return accountList;
 	}
@@ -144,12 +231,14 @@ public class Customer {
 		this.accountList = accountList;
 	}
 
+	// TO STRING
 	@Override
 	public String toString() {
-		return "Customer [customerId=" + customerId + ", customerName=" + customerName + ", password=" + password
-				+ ", dob=" + dob + ", gender=" + gender + ", aadhar=" + aadhar + ", aadharImage=" + aadharImage
-				+ ", customerImage=" + customerImage + ", email=" + email + ", phone=" + phone + ", address=" + address
-				+ ", accountList=" + accountList + "]";
+		return "Customer{" + "customerId=" + customerId + ", fullName='" + fullName + '\'' + ", dob=" + dob
+				+ ", gender='" + gender + '\'' + ", aadharNumber='" + aadharNumber + '\'' + ", panNumber='" + panNumber
+				+ '\'' + ", aadharImage='" + aadharImage + '\'' + ", customerImage='" + customerImage + '\''
+				+ ", email='" + email + '\'' + ", city='" + city + '\'' + ", state='" + state + '\'' + ", pincode='"
+				+ pincode + '\'' + ", country='" + country + '\'' + ", phone='" + phone + '\'' + ", address='" + address
+				+ '\'' + ", role=" + role + ", isActive=" + isActive + ", accountList=" + accountList + '}';
 	}
-
 }

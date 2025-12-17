@@ -22,9 +22,17 @@ import com.capitalbank.model.Account;
 import com.capitalbank.util.database.TransactionManager;
 
 public class AccountDaoImpl implements AccountDao {
+	private Connection connection;
+	
+	public AccountDaoImpl() {
+		this.connection = DBConnection.getConnection();
+	}
+	public AccountDaoImpl(Connection connection) {
+		this.connection = connection;
+	}
 
 	@Override
-	public boolean save(Connection connection, Account account) {
+	public boolean save(Account account) {
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(AccountQuery.SAVE_ACCOUNT.getQuery());) {
 
@@ -46,7 +54,7 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public Optional<List<Account>> findAllAccount(Connection connection) {
+	public Optional<List<Account>> findAllAccount() {
 		List<Account> accounts = new ArrayList<>();
 
 		try (Statement statement = connection.createStatement();
@@ -74,7 +82,7 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public Optional<List<Account>> findAccountByCustomerId(Connection connection, long customerId) {
+	public Optional<List<Account>> findAccountByCustomerId(long customerId) {
 		List<Account> accounts = new ArrayList<>();
 
 		try (PreparedStatement preparedStatement = connection
@@ -103,7 +111,7 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public Optional<Account> findByAccountId(Connection connection, long accountId) {
+	public Optional<Account> findByAccountId(long accountId) {
 
 		Account account = null;
 		try (PreparedStatement preparedStatement = connection
@@ -133,7 +141,7 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public Optional<Account> findByAccountNumber(Connection connection, String accountNumber) {
+	public Optional<Account> findByAccountNumber(String accountNumber) {
 		Account account = null;
 		ResultSet resultSet = null;
 		try (PreparedStatement preparedStatement = connection
@@ -162,9 +170,9 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public boolean updateByAccountId(Connection connection, long accountId, Account account) {
+	public boolean updateByAccountId(long accountId, Account account) {
 
-		Optional<Account> existingAccount = findByAccountId(connection, accountId);
+		Optional<Account> existingAccount = findByAccountId(accountId);
 		if (!existingAccount.isPresent()) {
 			return false;
 		}
@@ -184,10 +192,10 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public boolean updateByAccountNumber(Connection connection, String accountNumber, Account account) {
+	public boolean updateByAccountNumber(String accountNumber, Account account) {
 
 		// Find the existing account by account number
-		Optional<Account> existingAccount = findByAccountNumber(connection, accountNumber);
+		Optional<Account> existingAccount = findByAccountNumber(accountNumber);
 		if (existingAccount.isEmpty()) {
 			// Return empty if the account doesn't exist
 			return false;
@@ -209,7 +217,7 @@ public class AccountDaoImpl implements AccountDao {
 				connection.commit();
 
 				// Retrieve the updated account details
-				updatedAccount = findByAccountNumber(connection, accountNumber).orElse(null);
+				updatedAccount = findByAccountNumber(accountNumber).orElse(null);
 				return true;
 			} else {
 				return false;
@@ -220,9 +228,9 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public boolean deleteByAccountId(Connection connection, long accountId) {
+	public boolean deleteByAccountId(long accountId) {
 
-		Optional<Account> existingAccount = findByAccountId(connection, accountId);
+		Optional<Account> existingAccount = findByAccountId(accountId);
 		if (!existingAccount.isPresent()) {
 			return false;
 		}
@@ -242,9 +250,9 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public boolean deleteByAccountNumber(Connection connection, String accountNumber) {
+	public boolean deleteByAccountNumber(String accountNumber) {
 
-		Optional<Account> existingAccount = findByAccountNumber(connection, accountNumber);
+		Optional<Account> existingAccount = findByAccountNumber(accountNumber);
 		if (existingAccount.isEmpty()) {
 			return false;
 		}

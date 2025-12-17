@@ -27,7 +27,7 @@ public class AccountServiceImpl implements AccountService {
 	public boolean createAccount(Account account) {
 		return TransactionManager.doInTransaction(connection -> {
 			try {
-				Optional<List<Account>> existingAccount = accountDao.findAccountByCustomerId(connection,
+				Optional<List<Account>> existingAccount = accountDao.findAccountByCustomerId(
 						account.getCustomerId());
 				if (existingAccount.isPresent()) {
 					throw new RuntimeException("Account already exists.");
@@ -36,7 +36,7 @@ public class AccountServiceImpl implements AccountService {
 				AccountValidator.validate(account);
 				System.out.println("Account verification successful");
 
-				return accountDao.save(connection, account);
+				return accountDao.save(account);
 			} catch (AccountValidationException e) {
 				throw new AccountValidationException("Account verification failed: " + e.getMessage());
 			}
@@ -46,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public Optional<List<Account>> findAll() {
 		return TransactionManager.doInTransaction(connection -> {
-			Optional<List<Account>> existingAccounts = accountDao.findAllAccount(connection);
+			Optional<List<Account>> existingAccounts = accountDao.findAllAccount();
 			if (existingAccounts.isEmpty()) {
 				throw new RuntimeException("No Account exists.");
 			}
@@ -61,7 +61,7 @@ public class AccountServiceImpl implements AccountService {
 				throw new RuntimeException("Invalid account number...");
 			}
 
-			Optional<Account> existingAccount = accountDao.findByAccountNumber(connection, accountNumber);
+			Optional<Account> existingAccount = accountDao.findByAccountNumber(accountNumber);
 			if (existingAccount.isEmpty()) {
 				throw new RuntimeException("Account doesn't exist.");
 			}
@@ -85,7 +85,7 @@ public class AccountServiceImpl implements AccountService {
 					return false;
 				}
 
-				return accountDao.updateByAccountNumber(connection, accountNumber, account);
+				return accountDao.updateByAccountNumber(accountNumber, account);
 			} catch (AccountValidationException e) {
 				throw new AccountValidationException("Account verification failed." + e.getMessage());
 			}
@@ -108,7 +108,7 @@ public class AccountServiceImpl implements AccountService {
 					return false;
 				}
 
-				return accountDao.deleteByAccountNumber(connection, accountNumber);
+				return accountDao.deleteByAccountNumber(accountNumber);
 
 			} catch (AccountValidationException e) {
 				throw new AccountValidationException("Account verification failed." + e.getMessage());

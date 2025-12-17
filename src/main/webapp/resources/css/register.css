@@ -1,0 +1,140 @@
+
+/* ===============================
+   PAGE WRAPPER
+================================ */
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(
+        135deg,
+        #667eea 0%,
+        #764ba2 50%,
+        #f093fb 100%
+    );
+}
+
+body {
+	margin: 0;
+	padding: 0px;
+}
+/* ===============================
+   CARD (AUTO SIZE TO CONTENT)
+================================ */
+.form-card {
+	width: 520px;
+	padding: 32px 36px;
+	border-radius: 6px;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* ===============================
+   TITLE
+================================ */
+/* .form-title {
+	display: block;
+	width: 100%;
+	text-align: center;
+	font-size: 24px;
+	font-weight: 700;
+	color: #0a3d91;
+	margin-bottom: 28px;
+} */
+
+/* ===============================
+   GRID – BANK STYLE
+================================ */
+.form-grid {
+	border: none;
+}
+
+/* Space BETWEEN rows (bank style) */
+.form-grid .z-row td {
+    padding: 18px 0 !important;   /* vertical gap */
+}
+
+
+/* Remove ALL borders / lines */
+.form-grid table, .form-grid tbody, .form-grid tr, .form-grid td {
+	border: none !important;
+}
+
+/* Remove hover / selection */
+.form-grid .z-row:hover, .form-grid .z-row-hover, .form-grid .z-row-hover td,
+	.form-grid .z-row-selected, .form-grid .z-row-selected td {
+	background: transparent !important;
+}
+
+/* Row height */
+.form-grid .z-row {
+	height: 44px;
+}
+
+/* ===============================
+   LABEL
+================================ */
+.form-label {
+	font-size: 14px;
+	font-weight: 600;
+	color: #222;
+	padding-left: 4px;
+}
+
+/* ===============================
+   INPUT – NORMAL BANK SIZE
+================================ */
+.form-input {
+	width: 200px;
+	height: 32px;
+	padding: 4px 6px;
+	font-size: 14px;
+	border: 1px solid #cfd8ea;
+	border-radius: 3px;
+	box-sizing: border-box;
+}
+
+.form-input:focus {
+	border-color: #0a3d91;
+	outline: none;
+}
+
+/* ===============================
+   BUTTON BAR (CENTERED)
+================================ */
+.button-bar {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+.primary-btn {
+	width: 120px;
+	height: 34px;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	border-radius: 4px;
+}
+
+/* Primary */
+.primary-btn {
+	background: #0a3d91;
+	color: #ffffff;
+	border: none;
+}
+
+/* ===============================
+   TABLET SAFETY
+================================ */
+@media ( max-width : 900px) {
+	.form-card {
+		width: 100%;
+		max-width: 520px;
+	}
+}

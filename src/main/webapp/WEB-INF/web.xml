@@ -1,14 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app id="WebApp_ID" version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>fundtransfer-management-system</display-name>
-	<!-- Spring Security Filter -->
-    
 	<listener>
 		<description>
 		Used to cleanup when a session is destroyed</description>
 		<display-name>ZK Session cleaner</display-name>
 		<listener-class>org.zkoss.zk.ui.http.HttpSessionListener</listener-class>
 	</listener>
+	
+	<!-- 1️⃣ Tell Spring where config is -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+        /WEB-INF/applicationContext.xml
+        /WEB-INF/applicationContext-security.xml
+    </param-value>
+	</context-param>
+	
+	<!-- 2️⃣ START Spring FIRST -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- For using web scoped bean -->
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+
+	<!-- 3️⃣ Spring Security Filter -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 	<servlet>
 		<description>
 		The ZK loader for ZUML pages</description>
@@ -38,6 +70,7 @@
 		<servlet-name>auEngine</servlet-name>
 		<url-pattern>/zkau/*</url-pattern>
 	</servlet-mapping>
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>

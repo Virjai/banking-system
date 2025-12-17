@@ -5,396 +5,208 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import com.capitalbank.dao.CustomerDao;
 import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.enums.query.CustomerQuery;
-import com.capitalbank.model.Account;
 import com.capitalbank.model.Customer;
-import com.capitalbank.util.PasswordUtil;
-import com.capitalbank.util.database.TransactionManager;
+import com.capitalbank.util.table.TableUtil;
 
 public class CustomerDaoImpl implements CustomerDao {
+	private Connection connection;
+
+	public CustomerDaoImpl() {
+		connection = DBConnection.getConnection();
+	}
+	public CustomerDaoImpl(Connection connection) {
+		TableUtil.createCustomerTable();
+		this.connection = connection;
+	}
 
 	@Override
-	public boolean save(Connection connection, Customer customer) {
+	public boolean saveCustomer(Customer customer) {
+		int idk = 1;
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.INSERT_CUSTOMER.getQuery())) {
+			ps.setString(idk++, customer.getFullName());
+			ps.setDate(idk++, Date.valueOf(customer.getDob()));
+			ps.setString(idk++, customer.getGender());
+			ps.setString(idk++, customer.getAadharNumber());
+			ps.setString(idk++, customer.getPanNumber());
+			ps.setString(idk++, customer.getAadharImage());
+			ps.setString(idk++, customer.getCustomerImage());
+			ps.setString(idk++, customer.getEmail());
 
-		try (PreparedStatement preparedStatement = connection
-				.prepareStatement(CustomerQuery.INSERT_CUSTOMER.getQuery());) {
+			// Hash password
+			ps.setString(idk++, customer.getPassword());
 
-			preparedStatement.setString(1, customer.getCustomerName());
+			ps.setString(idk++, customer.getPhone());
+			ps.setString(idk++, customer.getCity());
+			ps.setString(idk++, customer.getState());
+			ps.setString(idk++, customer.getAddress());
+			ps.setString(idk++, customer.getPincode());
+			ps.setString(idk++, customer.getCountry());
 
-			LocalDate dob = customer.getDob();
-			preparedStatement.setDate(2, dob != null ? Date.valueOf(dob) : null);
+			ps.setString(idk++, customer.getRole().name());
+			ps.setBoolean(idk++, customer.isActive());
 
-			preparedStatement.setString(3, customer.getGender());
-			preparedStatement.setString(4, customer.getAadhar());
-			preparedStatement.setString(5, customer.getAadharImage());
-			preparedStatement.setString(6, customer.getCustomerImage());
-			preparedStatement.setString(7, customer.getEmail());
-			preparedStatement.setString(8, PasswordUtil.hashPassword(customer.getPassword()));
-			preparedStatement.setString(9, customer.getPhone());
-			preparedStatement.setString(10, customer.getAddress());
-
-			int affectedRows = preparedStatement.executeUpdate();
-			return affectedRows > 0;
+			return ps.executeUpdate() > 0;
 		} catch (SQLException e) {
-			throw new RuntimeException("Error saving user: " + e.getMessage());
+			throw new RuntimeException("Error while saving the user: " + e.getMessage());
 		}
 	}
 
 	@Override
-	public Optional<List<Customer>> findAllCustomer(Connection connection) {
-		Map<Long, Customer> map = new LinkedHashMap<>();
+	public Optional<Customer> findById(long id) {
+		ResultSet rs = null;
 
-		try (Statement statement = connection.createStatement();) {
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_ID.getQuery())) {
 
-			ResultSet resultSet = statement.executeQuery(CustomerQuery.SELECT_ALL_CUSTOMERS.getQuery());
-			while (resultSet.next()) {
-				long id = resultSet.getLong("customerId");
-				Customer customer = map.computeIfAbsent(id, (key) -> extractCustomer(resultSet));
-				Account account = extractAccount(resultSet);
+			ps.setLong(1, id);
+			rs = ps.executeQuery();
 
-				if (account != null) {
-					customer.getAccountList().add(account);
-				}
-			}
-
-			List<Customer> customers = new ArrayList<>(map.values());
-			return customers.isEmpty() ? Optional.empty() : Optional.of(customers);
-
-		} catch (SQLException e) {
-			throw new RuntimeException("Error retrieving customer: " + e.getMessage());
-		}
-	}
-
-	@Override
-	public Optional<Customer> findByCustomerId(Connection connection, long customerId) {
-		Customer customer = null;
-
-		try (PreparedStatement preparedStatement = connection
-				.prepareStatement(CustomerQuery.SELECT_CUSTOMER_BY_ID.getQuery());) {
-
-			preparedStatement.setLong(1, customerId);
-			ResultSet resultSet = preparedStatement.executeQuery();
-
-			if (resultSet.next()) {
-				System.out.println("hi");
-				if (customer == null) {
-					customer = extractCustomer(resultSet);
-				}
-				Account account = extractAccount(resultSet);
-				if (account != null) {
-					customer.getAccountList().add(account);
-				}
-			} else {
-				throw new IllegalArgumentException("Invalid customer id.");
-			}
-
-		} catch (SQLException e) {
-			throw new RuntimeException("Failed to find customer by id: " + e.getMessage());
-		}
-		return Optional.ofNullable(customer);
-	}
-
-	@Override
-	public Optional<Customer> findByEmail(Connection connection, String email) {
-		Customer customer = null;
-		if (!email.contains("@")) {
-			throw new IllegalArgumentException("Invalid email.");
-		}
-
-		try (PreparedStatement preparedStatement = connection
-				.prepareStatement(CustomerQuery.SELECT_CUSTOMER_BY_EMAIL.getQuery());) {
-			preparedStatement.setString(1, email.trim());
-
-			ResultSet resultSet = preparedStatement.executeQuery();
-			if (!resultSet.next()) {
-				throw new RuntimeException("Email does not exist.");
-			}
-
-			if (customer == null) {
-				customer = extractCustomer(resultSet);
-			}
-			while (resultSet.next()) {
-
-				Account account = extractAccount(resultSet);
-				if (account != null) {
-					customer.getAccountList().add(account);
-				}
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException("Error retrieving customer by email: " + e.getMessage());
-		}
-		return Optional.ofNullable(customer);
-	}
-
-	@Override
-	public Optional<Customer> findByPhone(Connection connection, String phone) {
-		Customer customer = null;
-
-		try (PreparedStatement preparedStatement = connection
-				.prepareStatement(CustomerQuery.SELECT_CUSTOMER_BY_PHONE.getQuery());) {
-			preparedStatement.setString(1, phone);
-
-			ResultSet resultSet = preparedStatement.executeQuery();
-
-			if (!resultSet.next()) {
-				throw new IllegalArgumentException("Phone does not exist.");
-			}
-			if (customer == null) {
-				customer = extractCustomer(resultSet);
-			}
-
-			while (resultSet.next()) {
-				Account account = extractAccount(resultSet);
-				if (account != null) {
-					customer.getAccountList().add(account);
-				}
-			}
-
-		} catch (SQLException e) {
-			throw new RuntimeException("Error retrieving customer by phone: " + e.getMessage());
-		}
-		return Optional.ofNullable(customer);
-	}
-
-	@Override
-	public Optional<Customer> findByAadhar(Connection connection, String aadhar) {
-		Customer customer = null;
-
-		try (PreparedStatement preparedStatement = connection
-				.prepareStatement(CustomerQuery.SELECT_CUSTOMER_BY_AADHAR.getQuery());) {
-			preparedStatement.setString(1, aadhar);
-
-			ResultSet resultSet = preparedStatement.executeQuery();
-
-			if (!resultSet.next()) {
-				throw new IllegalArgumentException("Aadhar does not exist.");
-			}
-			if (customer == null) {
-				customer = extractCustomer(resultSet);
-			}
-
-			while (resultSet.next()) {
-				Account account = extractAccount(resultSet);
-				if (account != null) {
-					customer.getAccountList().add(account);
-				}
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException("Error retrieving customer by aadhar: " + e.getMessage());
-		}
-		return Optional.ofNullable(customer);
-	}
-
-	@Override
-	public boolean updateById(Connection connection, long customerId, Customer customer) {
-
-		Optional<Customer> customers = findByCustomerId(connection, customerId);
-		if (!customers.isPresent()) {
-			throw new RuntimeException("User not found.");
-		}
-
-		try (PreparedStatement preparedStatement = connection
-				.prepareStatement(CustomerQuery.UPDATE_BY_CUSTOMER_ID.getQuery());) {
-
-			preparedStatement.setString(1, customer.getCustomerName());
-			LocalDate dob = customer.getDob();
-			preparedStatement.setDate(2, dob != null ? Date.valueOf(dob) : null);
-			preparedStatement.setString(3, customer.getGender());
-			preparedStatement.setString(4, customer.getAadharImage());
-			preparedStatement.setString(5, customer.getCustomerImage());
-			preparedStatement.setString(6, customer.getEmail());
-			preparedStatement.setString(7, customer.getPassword());
-			preparedStatement.setString(8, customer.getPhone());
-			preparedStatement.setString(9, customer.getAddress());
-			preparedStatement.setLong(10, customerId);
-
-			int affectedRows = preparedStatement.executeUpdate();
-
-			return affectedRows > 0;
-		} catch (SQLException e) {
-			throw new RuntimeException("Error while updating user by id: " + e.getMessage());
-		}
-	}
-
-	@Override
-	public boolean updateByEmail(Connection connection, String email, Customer customer) {
-
-		Optional<Customer> customers = findByEmail(connection, email);
-		if (!customers.isPresent()) {
-			throw new RuntimeException("User not found.");
-		}
-
-		try (PreparedStatement preparedStatement = connection
-				.prepareStatement(CustomerQuery.UPDATE_BY_EMAIL.getQuery());) {
-
-			preparedStatement.setString(1, customer.getCustomerName());
-			LocalDate dob = customer.getDob();
-			preparedStatement.setDate(2, dob != null ? Date.valueOf(dob) : null);
-			preparedStatement.setString(3, customer.getGender());
-			preparedStatement.setString(4, customer.getAadharImage());
-			preparedStatement.setString(5, customer.getCustomerImage());
-			preparedStatement.setString(6, customer.getPassword());
-			preparedStatement.setString(7, customer.getPhone());
-			preparedStatement.setString(8, customer.getAddress());
-			preparedStatement.setString(9, email);
-
-			int affectedRows = preparedStatement.executeUpdate();
-			return affectedRows > 0;
-		} catch (SQLException e) {
-			throw new RuntimeException("Error updating user by email: " + e.getMessage());
-		}
-	}
-
-	@Override
-	public boolean updateByAadhar(Connection connection, String aadhar, Customer customer) {
-
-		Optional<Customer> customers = findByAadhar(connection, aadhar);
-		if (!customers.isPresent()) {
-			throw new RuntimeException("User not found.");
-		}
-
-		try (PreparedStatement preparedStatement = connection
-				.prepareStatement(CustomerQuery.UPDATE_BY_AADHAR.getQuery());) {
-
-			preparedStatement.setString(1, customer.getCustomerName());
-			LocalDate dob = customer.getDob();
-			preparedStatement.setDate(2, dob != null ? Date.valueOf(dob) : null);
-			preparedStatement.setString(3, customer.getGender());
-			preparedStatement.setString(4, customer.getAadharImage());
-			preparedStatement.setString(5, customer.getCustomerImage());
-			preparedStatement.setString(6, customer.getEmail());
-			preparedStatement.setString(7, customer.getPassword());
-			preparedStatement.setString(8, customer.getPhone());
-			preparedStatement.setString(9, customer.getAddress());
-			preparedStatement.setString(10, aadhar);
-
-			int affectedRows = preparedStatement.executeUpdate();
-			return affectedRows > 0;
-		} catch (SQLException e) {
-			throw new RuntimeException("Error while updating user by aadhar: " + e.getMessage());
-		}
-	}
-
-	@Override
-	public boolean deleteById(Connection connection, long customerId) {
-
-		Optional<Customer> customers = findByCustomerId(connection, customerId);
-		if (customers.isEmpty()) {
-			throw new RuntimeException("User not found");
-		}
-
-		try (PreparedStatement preparedStatement = connection
-				.prepareStatement(CustomerQuery.DELETE_BY_CUSTOMER_ID.getQuery());) {
-
-			preparedStatement.setLong(1, customerId);
-			int affectedRows = preparedStatement.executeUpdate();
-
-			connection.commit();
-			return affectedRows > 0;
-		} catch (SQLException e) {
-			throw new RuntimeException("Error while deleting user by id: " + e.getMessage());
-		}
-	}
-
-	@Override
-	public boolean deleteByEmail(Connection connection, String email) {
-
-		Optional<Customer> customers = findByEmail(connection, email);
-		if (!customers.isPresent()) {
-			throw new RuntimeException("User not found");
-		}
-
-		try (PreparedStatement preparedStatement = connection
-				.prepareStatement(CustomerQuery.DELETE_BY_EMAIL.getQuery());) {
-
-			preparedStatement.setString(1, email);
-			int affectedRows = preparedStatement.executeUpdate();
-
-			return affectedRows > 0;
-		} catch (SQLException e) {
-			throw new RuntimeException("Error while deleting customer by email: " + e.getMessage());
-		}
-
-	}
-
-	@Override
-	public boolean deleteByAadhar(Connection connection, String aadhar) {
-
-		Optional<Customer> customers = findByAadhar(connection, aadhar);
-		if (!customers.isPresent()) {
-			throw new RuntimeException("User not found");
-		}
-
-		try (PreparedStatement preparedStatement = connection
-				.prepareStatement(CustomerQuery.DELETE_BY_AADHAR.getQuery());) {
-
-			preparedStatement.setString(1, aadhar);
-			int affectedRows = preparedStatement.executeUpdate();
-			return affectedRows > 0;
-		} catch (SQLException e) {
-			throw new RuntimeException("Error deleting user by aadhar: " + e.getMessage());
-		}
-	}
-
-	/**
-	 * ***************** Helper function ******************
-	 */
-
-	private Customer extractCustomer(ResultSet resultSet) {
-
-		try {
-			Customer customer = new Customer();
-			customer.setCustomerId(resultSet.getLong("customerId"));
-			customer.setCustomerName(resultSet.getString("customerName"));
-			Date dob = resultSet.getDate("dob");
-
-			customer.setDob(dob != null ? dob.toLocalDate() : null);
-			customer.setGender(resultSet.getString("gender"));
-			customer.setAadhar(resultSet.getString("aadhar"));
-			customer.setAadharImage(resultSet.getString("aadharImage"));
-			customer.setCustomerImage(resultSet.getString("customerImage"));
-			customer.setEmail(resultSet.getString("email"));
-			customer.setPassword(resultSet.getString("password"));
-			customer.setPhone(resultSet.getString("phone"));
-			customer.setAddress(resultSet.getString("address"));
-
-			customer.setAccountList(new ArrayList<>());
-			return customer;
+			if (rs.next())
+				return Optional.ofNullable(mapRow(rs));
+			return Optional.empty();
 
 		} catch (Exception e) {
-			throw new RuntimeException("Error extracting customer: " + e.getMessage());
+			throw new RuntimeException("Error while retrieving customer by id: " + e.getMessage());
+		} finally {
+			DBConnection.close(rs);
 		}
 	}
 
-	private Account extractAccount(ResultSet resultSet) {
-		System.out.println("Bye");
-		try {
-			long accountId = resultSet.getLong("accountId");
-			if (accountId == 0) {
-				return null;
-			}
-			Account account = new Account();
-			account.setAccountId(accountId);
-			account.setBalance(resultSet.getDouble("balance"));
-			account.setAccountType(resultSet.getString("accountType"));
-			Timestamp timestamp = resultSet.getTimestamp("createdAt");
-			if (timestamp != null) {
-				account.setCreatedAt(timestamp.toLocalDateTime());
-			}
-			return account;
-		} catch (SQLException e) {
-			throw new RuntimeException("Error extracting account: " + e.getMessage());
+	@Override
+	public Optional<Customer> findByEmail(String email) {
+		ResultSet rs = null;
+
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_EMAIL.getQuery())) {
+
+			ps.setString(1, email);
+			rs = ps.executeQuery();
+
+			if (rs.next())
+				return Optional.ofNullable(mapRow(rs));
+			return Optional.empty();
+
+		} catch (Exception e) {
+			throw new RuntimeException("Error while retrieving customer by email: " + e.getMessage());
+		} finally {
+			DBConnection.close(rs);
 		}
+	}
+
+	@Override
+	public Optional<List<Customer>> findAll() {
+		List<Customer> list = new ArrayList<>();
+
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_ALL_CUSTOMER.getQuery())) {
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				list.add(mapRow(rs));
+			}
+
+			return Optional.ofNullable(list);
+		} catch (Exception e) {
+			throw new RuntimeException("Error while retrieving customer: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public boolean updateCustomer(Customer customer) {
+		int idk = 1;
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_CUSTOMER.getQuery())) {
+
+			ps.setString(idk++, customer.getFullName());
+			ps.setDate(idk++, Date.valueOf(customer.getDob()));
+			ps.setString(idk++, customer.getGender());
+			ps.setString(idk++, customer.getAadharNumber());
+			ps.setString(idk++, customer.getPanNumber());
+			ps.setString(idk++, customer.getAadharImage());
+			ps.setString(idk++, customer.getCustomerImage());
+			ps.setString(idk++, customer.getEmail());
+			ps.setString(idk++, customer.getPhone());
+			ps.setString(idk++, customer.getCity());
+			ps.setString(idk++, customer.getState());
+			ps.setString(idk++, customer.getAddress());
+			ps.setString(idk++, customer.getPincode());
+			ps.setString(idk++, customer.getCountry());
+			ps.setString(idk++, customer.getRole().name());
+			ps.setBoolean(idk++, customer.isActive());
+
+			ps.setLong(idk++, customer.getCustomerId());
+
+			return ps.executeUpdate() > 0;
+
+		} catch (Exception e) {
+			throw new RuntimeException("Error while updating customer: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public boolean updatePassword(long id, String newPassword) {
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_PASSWORD.getQuery())) {
+
+			ps.setString(1, newPassword);
+			ps.setLong(2, id);
+
+			return ps.executeUpdate() > 0;
+
+		} catch (Exception e) {
+			throw new RuntimeException("Error while updating password of customer: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public boolean deleteCustomer(long id) {
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.DELETE_CUSTOMER.getQuery())) {
+			ps.setLong(1, id);
+
+			return ps.executeUpdate() > 0;
+
+		} catch (Exception e) {
+			throw new RuntimeException("Error while updating password of customer: " + e.getMessage());
+		}
+	}
+
+	private Customer mapRow(ResultSet rs) {
+		try {
+			Customer c = new Customer();
+
+			c.setCustomerId(rs.getLong("customer_id"));
+			c.setFullName(rs.getString("full_name"));
+
+			Date dob = rs.getDate("dob");
+			if (dob != null)
+				c.setDob(dob.toLocalDate());
+
+			c.setGender(rs.getString("gender"));
+			c.setAadharNumber(rs.getString("aadhar_number"));
+			c.setPanNumber(rs.getString("pan_number"));
+			c.setAadharImage(rs.getString("aadhar_image"));
+			c.setCustomerImage(rs.getString("customer_image"));
+
+			c.setEmail(rs.getString("email"));
+			c.setPassword(rs.getString("password")); 
+			c.setPhone(rs.getString("phone"));
+			c.setCity(rs.getString("city"));
+			c.setState(rs.getString("state"));
+			c.setAddress(rs.getString("address"));
+			c.setPincode(rs.getString("pincode"));
+			c.setCountry(rs.getString("country"));
+			c.setRole(Customer.Role.valueOf(rs.getString("role")));
+
+			c.setActive(rs.getBoolean("is_active"));
+
+			return c;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }
