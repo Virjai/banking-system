@@ -27,7 +27,7 @@ public class TableUtil {
 					    -- Contact Information
 					    email            VARCHAR(100) NOT NULL UNIQUE,
 					    password         VARCHAR(200) NOT NULL,
-					    mobile           VARCHAR(15),
+					    phone           VARCHAR(15),
 					    city             VARCHAR(100),
 					    state            VARCHAR(100),
 					    address          VARCHAR(255),

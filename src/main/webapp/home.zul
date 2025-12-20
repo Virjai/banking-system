@@ -1,8 +1,0 @@
-<?page title="new page title" contentType="text/html;charset=UTF-8"?>
-<zk>
-    <window title="Home" border="normal">
-        <label value="Welcome, you are logged in!" style="font-size:16px; font-weight:bold"/>
-
-        <button label="Logout" onClick="Executions.sendRedirect('/logout')"/>
-    </window>
-</zk>

@@ -27,6 +27,7 @@ public class CustomerUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Customer customer = customerService.loadCustomerForAuthentication(username);
+		System.out.println(customer);
 		if(customer == null) {
 			throw new CustomerNotFoundException("User not found");
 		}

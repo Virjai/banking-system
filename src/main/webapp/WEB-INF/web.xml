@@ -10,27 +10,22 @@
 		<display-name>ZK Session cleaner</display-name>
 		<listener-class>org.zkoss.zk.ui.http.HttpSessionListener</listener-class>
 	</listener>
-	
-	<!-- 1️⃣ Tell Spring where config is -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>
-        /WEB-INF/applicationContext.xml
-        /WEB-INF/applicationContext-security.xml
-    </param-value>
-	</context-param>
-	
-	<!-- 2️⃣ START Spring FIRST -->
+
+	<listener>
+		<listener-class>
+			org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+	</listener>
+
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
-	<!-- For using web scoped bean -->
+
 	<listener>
 		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
 
-	<!-- 3️⃣ Spring Security Filter -->
+
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -40,6 +35,10 @@
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+
+	<session-config>
+		<session-timeout>15</session-timeout> <!-- minutes -->
+	</session-config>
 
 	<servlet>
 		<description>

@@ -19,7 +19,7 @@
 
 		<window border="none" sclass="form-card"
 			style="background: rgba(255, 255, 255, 0.25); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);"
-			>
+			apply="com.capitalbank.controller.customers.RegistrationController">
 
 			<vbox width="100%" spacing="0">
 

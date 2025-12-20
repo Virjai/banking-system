@@ -40,12 +40,13 @@ public class RegistrationController extends SelectorComposer<Window> {
 	private Textbox tConfirmPassword;
 
 	@Wire
-	private Button tRegister;
+	private Button bRegister;
 	@Wire
 	private Button tReset;
 
-	@Listen("onClick = #tRegister")
+	@Listen("onClick = #bRegister")
 	public void register() {
+	
 		String firstName = tFirstName.getValue().trim();
 		String lastName = tLastName.getValue().trim();
 		String email = tEmail.getValue().trim();
@@ -95,4 +96,5 @@ public class RegistrationController extends SelectorComposer<Window> {
 			Messagebox.show("Error: " + e.getMessage(), "Exception", Messagebox.OK, Messagebox.ERROR);
 		}
 	}
+	
 }
