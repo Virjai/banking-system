@@ -1,21 +1,35 @@
 package com.capitalbank.service;
 
-import com.capitalbank.model.Customer;
 import java.util.List;
-import java.util.Optional;
+
+import com.capitalbank.model.Customer;
 
 public interface CustomerService {
 
-    // CRUD
-    boolean register(Customer customer);
-    Customer loadCustomerForAuthentication(String email);
+	/* ========= AUTHENTICATION (Spring Security only) ========= */
 
-    Customer getCustomerById(long customerId, Customer.Role requesterRole, long requesterId);
-    List<Customer> getAllCustomers(Customer.Role requesterRole);
-    Customer getCustomerByEmail(String email, Customer.Role requesterRole);
-    boolean updateCustomer(Customer customer, Customer.Role requesterRole, long requesterId);
-    boolean deleteCustomer(long customerId, Customer.Role requesterRole);
+	Customer loadByEmailForAuth(String email);
 
-    // Authentication
-    Customer login(String email, String password);
+	/* ========= REGISTRATION ========= */
+
+	boolean register(Customer customer);
+
+	/* ========= SELF SERVICE ========= */
+	Customer findByEmail(String email);
+
+	Customer getMyProfile(long customerId);
+
+	boolean updateMyProfile(Customer customer);
+
+	/* ========= ADMIN ========= */
+
+	Customer getCustomerById(long customerId);
+
+	List<Customer> getAllCustomers();
+
+	boolean deleteCustomer(long customerId);
+
+	/* ========= LOGIN (optional, ZK manual login) ========= */
+
+	Customer login(String email, String rawPassword);
 }

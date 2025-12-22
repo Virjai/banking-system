@@ -1,6 +1,7 @@
 <?page title="User Registration" contentType="text/html;charset=UTF-8"?>
 <zk>
 	<style src="/resources/css/register.css" />
+	
 	<style>
 		body { padding:0px; } 
 		.z-window-content { padding: 16px;
@@ -38,14 +39,14 @@
 						<row zclass="h1">
 							<label value="First Name:"
 								sclass="form-label" />
-							<textbox id="tFirstname" sclass="form-input"
+							<textbox id="tFirstName" sclass="form-input"
 								hflex="min" />
 						</row>
 
 						<row zclass="h1">
 							<label value="Last Name:"
 								sclass="form-label" />
-							<textbox id="tLastname" sclass="form-input"
+							<textbox id="tLastName" sclass="form-input"
 								hflex="min" />
 						</row>
 
@@ -65,7 +66,7 @@
 						<row zclass="h1">
 							<label value="Confirm Password:"
 								sclass="form-label" />
-							<textbox id="tConfirmpassword"
+							<textbox id="tConfirmPassword"
 								type="password" sclass="form-input" hflex="min" />
 						</row>
 					</rows>

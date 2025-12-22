@@ -16,36 +16,48 @@
 			ref="customerService" />
 	</beans:bean>
 
+	<http pattern="/web/**" security="none"/>
 	<!-- Security rules -->
 	<http auto-config="true">
 
-				<!-- Public pages -->
+		<!-- 🔥 ZK INTERNAL (MUST BE FIRST) -->
+		<intercept-url pattern="/zkau/**"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
+		<!-- Public pages -->
 		<intercept-url pattern="/index.zul"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/pages/customers/customer-login-form.zul"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
 		<intercept-url
-			pattern="/login.zul"
+			pattern="/pages/customers/customer-registration-form.zul"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 
 		<!-- Role based -->
 		<intercept-url pattern="/zul/admin/**"
-			access="ROLE_USER" />
-			
+			access="ROLE_ADMIN" />
+
 		<intercept-url pattern="/zul/user/**" access="ROLE_USER" />
-		<intercept-url pattern="/admin.zul" access="ROLE_USER"/>
-		
+		<intercept-url pattern="/admin.zul" access="ROLE_ADMIN" />
+
 		<intercept-url pattern="/pages/accounts/**"
 			access="ROLE_USER" />
-			
+
 		<!-- Login -->
 		<form-login
-			login-page="/login.zul"
-			default-target-url="/login.zul"
-			authentication-failure-url="/login.zul?error=true" />
+			login-page="/pages/customers/customer-login-form.zul"
+			login-processing-url="/j_spring_security_check"
+			default-target-url="/index.zul"
+			authentication-failure-url="/pages/customers/customer-login-form.zul?error=true" />
 
 		<!-- Logout -->
-		<logout
-			logout-success-url="/login.zul"
+		<logout logout-success-url="/login.zul"
 			invalidate-session="true" />
+
+		<!-- 🔒 BLOCK EVERYTHING ELSE -->
+		<intercept-url pattern="/**"
+			access="IS_AUTHENTICATED_FULLY" />
 
 		<session-management>
 			<concurrency-control max-sessions="1"

@@ -6,7 +6,7 @@ public enum CustomerQuery {
 				INSERT INTO customers 
 		        (full_name, dob, gender, aadhar_number, pan_number, aadhar_image, customer_image,
 		         email, password, phone, city, state, address, pincode, country, role, is_active)
-		        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 			"""),
 
 	SELECT_BY_ID("""
