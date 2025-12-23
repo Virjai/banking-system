@@ -1,86 +1,178 @@
 <?page title="User Registration" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<style src="/resources/css/register.css" />
-	
-	<style>
-		body { padding:0px; } 
-		.z-window-content { padding: 16px;
-		
-		background: rgba(255, 255, 255, 0.25); color: rgba(0, 0, 0,
-		0.9); overflow: hidden; zoom: 1; }
 
-		.form-title { display: block; width: 100%; text-align: center;
-		
-		font-size: 24px; font-weight: 700; color: #0a3d91;
-		margin-bottom: 28px; } 
-	</style>
+    <style>
+    /* General body */
+    body { 
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+    }
 
-	<div sclass="page-wrapper"
-		style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-	">
+    /* Page wrapper */
+    .page-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    }
 
-		<window border="none" sclass="form-card"
-			style="background: rgba(255, 255, 255, 0.25); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);"
-			apply="com.capitalbank.controller.customers.RegistrationController">
+    /* Card */
+    .form-card {
+        width: 550px;
+        max-width: 95%;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+        background: rgba(255, 255, 255, 0.25);
+        overflow-x: hidden;
+    }
 
-			<vbox width="100%" spacing="0">
+    .z-window-content {
+        padding: 16px;
+        background: transparent;
+        box-sizing: border-box;
+    }
 
-				<!-- Title -->
-				<label value="User Registration:" sclass="form-title"
-					width="100%" />
+    /* Title */
+    .form-title {
+        display: block;
+        width: 100%;
+        text-align: center;
+        font-size: 24px;
+        font-weight: 700;
+        color: #0a3d91;
+        margin-bottom: 28px;
+    }
 
-				<!-- Form Grid -->
-				<grid zclass="form-grid">
-					<columns>
-						<column width="160px" /><!-- LABEL COLUMN -->
-						<column /><!-- INPUT COLUMN -->
-					</columns>
+    /* Grid layout */
+    .form-grid {
+        width: 100% !important;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
 
-					<rows>
-						<row zclass="h1">
-							<label value="First Name:"
-								sclass="form-label" />
-							<textbox id="tFirstName" sclass="form-input"
-								hflex="min" />
-						</row>
+    .form-grid td, .form-grid th {
+        border: none !important;
+        padding: 4px 8px;
+        vertical-align: middle;
+    }
 
-						<row zclass="h1">
-							<label value="Last Name:"
-								sclass="form-label" />
-							<textbox id="tLastName" sclass="form-input"
-								hflex="min" />
-						</row>
+    /* Labels left-aligned */
+    .form-label {
+        text-align: left;
+        font-size: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-						<row zclass="h1">
-							<label value="Email:" sclass="form-label" />
-							<textbox id="tEmail" sclass="form-input"
-								hflex="min" />
-						</row>
+    /* Textboxes right-aligned */
+    .form-input {
+        width: 400px !important;
+        max-width: 100%;
+        box-sizing: border-box;
+        display: block;
+        margin-left: auto;
+        padding: 8px 10px;
+        font-size: 14px;
+    }
 
-						<row zclass="h1">
-							<label value="Password:"
-								sclass="form-label" />
-							<textbox id="tPassword" type="password"
-								sclass="form-input" hflex="min" />
-						</row>
+    /* Buttons same size */
+    .primary-btn {
+        width: 120px;
+        text-align: center;
+    }
 
-						<row zclass="h1">
-							<label value="Confirm Password:"
-								sclass="form-label" />
-							<textbox id="tConfirmPassword"
-								type="password" sclass="form-input" hflex="min" />
-						</row>
-					</rows>
-				</grid>
+    .button-bar {
+        width: 100%;
+        justify-content: center;
+        margin-top: 12px;
+        gap: 10px;
+    }
 
-				<!-- Buttons -->
-				<hbox sclass="button-bar" pack="center">
-					<button id="tRegister" label="Register" sclass="primary-btn" />
-					<button id="tReset" label="Reset" sclass="primary-btn" />
-				</hbox>
-			</vbox>
+    /* Remove all hover effects */
+.z-row, .z-row:hover,
+.z-listitem, .z-listitem:hover,
+.z-grid-row, .z-grid-row:hover,
+.z-row-selected, .z-listitem-selected, .z-grid-row-selected,
+.z-row:active, .z-listitem:active, .z-grid-row:active {
+    background-color: transparent !important;
+    color: inherit !important;
+    cursor: default !important;
+}
 
-		</window>
+/* Ensure inner divs inside rows also don't get hover */
+.z-row > div, .z-listitem > div, .z-grid-row > div {
+    background-color: transparent !important;
+}
 
-	</div>
+    /* Responsive for small screens */
+    @media (max-width: 600px) {
+        .form-card { width: 90%; }
+        .form-input { max-width: 100%; margin-left: 0; }
+        .form-label { width: 100%; margin-bottom: 4px; }
+        .form-grid td { display: block; }
+        .form-grid tr { display: block; margin-bottom: 8px; }
+        .button-bar { flex-direction: column; gap: 8px; }
+    }
+    </style>
+
+    <div sclass="page-wrapper">
+
+        <window border="none"
+                sclass="form-card"
+                apply="com.capitalbank.controller.customers.RegistrationController">
+
+            <vbox width="100%" spacing="0">
+
+                <!-- Title -->
+                <label value="User Registration:" sclass="form-title" width="100%" />
+
+                <!-- Form Grid -->
+                <grid zclass="form-grid">
+                    <columns>
+                        <column width="180px"/>  <!-- label column -->
+                        <column/>              <!-- input column -->
+                    </columns>
+
+                    <rows>
+                        <row>
+                            <label value="First Name:" sclass="form-label" />
+                            <textbox id="tFirstName" sclass="form-input" />
+                        </row>
+
+                        <row>
+                            <label value="Last Name:" sclass="form-label" />
+                            <textbox id="tLastName" sclass="form-input" />
+                        </row>
+
+                        <row>
+                            <label value="Email:" sclass="form-label" />
+                            <textbox id="tEmail" sclass="form-input" />
+                        </row>
+
+                        <row>
+                            <label value="Password:" sclass="form-label" />
+                            <textbox id="tPassword" type="password" sclass="form-input" />
+                        </row>
+
+                        <row>
+                            <label value="Confirm Password:" sclass="form-label" />
+                            <textbox id="tConfirmPassword" type="password" sclass="form-input" />
+                        </row>
+                    </rows>
+                </grid>
+
+                <!-- Buttons -->
+                <hbox sclass="button-bar" pack="center">
+                    <button id="tRegister" label="Register" sclass="primary-btn" />
+                    <button id="tReset" label="Reset" sclass="primary-btn" />
+                </hbox>
+            </vbox>
+
+        </window>
+
+    </div>
 </zk>

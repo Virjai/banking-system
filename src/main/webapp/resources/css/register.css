@@ -53,9 +53,13 @@ body {
 }
 
 /* Space BETWEEN rows (bank style) */
+.form-grid .z-grid,
+.form-grid .z-grid-body,
+.form-grid .z-row,
 .form-grid .z-row td {
-    padding: 18px 0 !important;   /* vertical gap */
+    border: none !important;
 }
+
 
 
 /* Remove ALL borders / lines */
@@ -87,14 +91,17 @@ body {
 /* ===============================
    INPUT – NORMAL BANK SIZE
 ================================ */
-.form-input {
-	width: 200px;
-	height: 32px;
-	padding: 4px 6px;
-	font-size: 14px;
-	border: 1px solid #cfd8ea;
-	border-radius: 3px;
-	box-sizing: border-box;
+.form-input .z-textbox,
+.form-input .z-intbox,
+.form-input .z-decimalbox,
+.form-input .z-datebox-input {
+    width: 200px;
+    height: 32px;
+    padding: 4px 6px;
+    font-size: 14px;
+    border: 1px solid #cfd8ea;
+    border-radius: 3px;
+    box-sizing: border-box;
 }
 
 .form-input:focus {

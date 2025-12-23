@@ -22,7 +22,8 @@
 		<beans:constructor-arg value="12" />
 	</beans:bean>
 
-	<http pattern="/web/**" security="none" />
+	<http pattern="/pages/**" security="none" />
+	
 	<!-- Security rules -->
 	<http auto-config="true">
 

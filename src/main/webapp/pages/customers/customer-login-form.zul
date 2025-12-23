@@ -94,7 +94,7 @@
                        sclass="title-text"/>
 
                 <!-- 🔑 SPRING SECURITY FORM -->
-                <h:form action="j_spring_security_check" method="post">
+                <h:form action="/j_spring_security_check" method="post">
 
                     <!-- EMAIL -->
                     <hbox sclass="password-wrapper input-box">
