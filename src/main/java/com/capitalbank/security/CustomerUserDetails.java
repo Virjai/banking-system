@@ -12,9 +12,8 @@ import com.capitalbank.model.Customer;
 public class CustomerUserDetails implements UserDetails {
 	private static final long serialVersionUID = -8786257694327540478L;
 
-	private Customer customer;
+	private final Customer customer;
 
-	public CustomerUserDetails() {}
 	public CustomerUserDetails(Customer customer) {
 		this.customer = customer;
 	}
@@ -38,22 +37,22 @@ public class CustomerUserDetails implements UserDetails {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		return false;
+		return true; // ✔ MUST be true
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return false;
+		return true; // ✔ MUST be true
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		return false;
+		return true; // ✔ MUST be true
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return customer.isActive();
+		return customer.isActive(); // ✔ DB controlled
 	}
 
 	public Customer getCustomer() {

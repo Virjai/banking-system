@@ -5,33 +5,32 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import com.capitalbank.dao.CustomerDao;
-import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.enums.query.CustomerQuery;
 import com.capitalbank.model.Customer;
-import com.capitalbank.util.table.TableUtil;
 
 public class CustomerDaoImpl implements CustomerDao {
-	private Connection connection;
+    private DataSource dataSource;
+    
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-	public CustomerDaoImpl() {
-		connection = DBConnection.getConnection();
-	}
-	public CustomerDaoImpl(Connection connection) {
-		TableUtil.createCustomerTable();
-		this.connection = connection;
-	}
-
+	// CREATE
 	@Override
 	public boolean saveCustomer(Customer customer) {
 		int idk = 1;
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.INSERT_CUSTOMER.getQuery())) {
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.INSERT_CUSTOMER.getQuery())) {
 			ps.setString(idk++, customer.getFullName());
-			ps.setDate(idk++, Date.valueOf(customer.getDob()));
+			setDateOrNull(ps, idk++, customer.getDob());
 			ps.setString(idk++, customer.getGender());
 			ps.setString(idk++, customer.getAadharNumber());
 			ps.setString(idk++, customer.getPanNumber());
@@ -50,7 +49,7 @@ public class CustomerDaoImpl implements CustomerDao {
 			ps.setString(idk++, customer.getCountry());
 
 			ps.setString(idk++, customer.getRole().name());
-			ps.setBoolean(idk++, customer.isActive());
+			ps.setBoolean(idk, customer.isActive());
 
 			return ps.executeUpdate() > 0;
 		} catch (SQLException e) {
@@ -58,70 +57,65 @@ public class CustomerDaoImpl implements CustomerDao {
 		}
 	}
 
+	// READ
 	@Override
 	public Optional<Customer> findById(long id) {
-		ResultSet rs = null;
-
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_ID.getQuery())) {
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_ID.getQuery())) {
 
 			ps.setLong(1, id);
-			rs = ps.executeQuery();
 
-			if (rs.next())
-				return Optional.ofNullable(mapRow(rs));
-			return Optional.empty();
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();
+			}
 
 		} catch (Exception e) {
 			throw new RuntimeException("Error while retrieving customer by id: " + e.getMessage());
-		} finally {
-			DBConnection.close(rs);
 		}
 	}
 
 	@Override
 	public Optional<Customer> findByEmail(String email) {
-		ResultSet rs = null;
-
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_EMAIL.getQuery())) {
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_EMAIL.getQuery())) {
 
 			ps.setString(1, email);
-			rs = ps.executeQuery();
-
-			if (rs.next())
-				return Optional.ofNullable(mapRow(rs));
-			return Optional.empty();
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();
+			}
 
 		} catch (Exception e) {
 			throw new RuntimeException("Error while retrieving customer by email: " + e.getMessage());
-		} finally {
-			DBConnection.close(rs);
 		}
 	}
 
 	@Override
 	public Optional<List<Customer>> findAll() {
-		List<Customer> list = new ArrayList<>();
+		List<Customer> customers = new ArrayList<>();
 
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_ALL_CUSTOMER.getQuery())) {
-			ResultSet rs = ps.executeQuery();
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_ALL_CUSTOMER.getQuery());
+				ResultSet rs = ps.executeQuery();) {
 
 			while (rs.next()) {
-				list.add(mapRow(rs));
+				customers.add(mapRow(rs));
 			}
 
-			return Optional.ofNullable(list);
+			return Optional.ofNullable(customers);
 		} catch (Exception e) {
 			throw new RuntimeException("Error while retrieving customer: " + e.getMessage());
 		}
 	}
 
+	// UPDATE
 	@Override
 	public boolean updateCustomer(Customer customer) {
 		int idk = 1;
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_CUSTOMER.getQuery())) {
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_CUSTOMER.getQuery())) {
 
 			ps.setString(idk++, customer.getFullName());
-			ps.setDate(idk++, Date.valueOf(customer.getDob()));
+			setDateOrNull(ps, idk++, customer.getDob());
 			ps.setString(idk++, customer.getGender());
 			ps.setString(idk++, customer.getAadharNumber());
 			ps.setString(idk++, customer.getPanNumber());
@@ -148,7 +142,8 @@ public class CustomerDaoImpl implements CustomerDao {
 
 	@Override
 	public boolean updatePassword(long id, String newPassword) {
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_PASSWORD.getQuery())) {
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_PASSWORD.getQuery())) {
 
 			ps.setString(1, newPassword);
 			ps.setLong(2, id);
@@ -160,9 +155,11 @@ public class CustomerDaoImpl implements CustomerDao {
 		}
 	}
 
+	// DELETE
 	@Override
 	public boolean deleteCustomer(long id) {
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.DELETE_CUSTOMER.getQuery())) {
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.DELETE_CUSTOMER.getQuery())) {
 			ps.setLong(1, id);
 
 			return ps.executeUpdate() > 0;
@@ -172,6 +169,7 @@ public class CustomerDaoImpl implements CustomerDao {
 		}
 	}
 
+	// ROW MAPPER
 	private Customer mapRow(ResultSet rs) {
 		try {
 			Customer c = new Customer();
@@ -180,8 +178,9 @@ public class CustomerDaoImpl implements CustomerDao {
 			c.setFullName(rs.getString("full_name"));
 
 			Date dob = rs.getDate("dob");
-			if (dob != null)
+			if (dob != null) {
 				c.setDob(dob.toLocalDate());
+			}
 
 			c.setGender(rs.getString("gender"));
 			c.setAadharNumber(rs.getString("aadhar_number"));
@@ -190,7 +189,7 @@ public class CustomerDaoImpl implements CustomerDao {
 			c.setCustomerImage(rs.getString("customer_image"));
 
 			c.setEmail(rs.getString("email"));
-			c.setPassword(rs.getString("password")); 
+			c.setPassword(rs.getString("password"));
 			c.setPhone(rs.getString("phone"));
 			c.setCity(rs.getString("city"));
 			c.setState(rs.getString("state"));
@@ -208,5 +207,13 @@ public class CustomerDaoImpl implements CustomerDao {
 		}
 
 		return null;
+	}
+
+	private void setDateOrNull(PreparedStatement ps, int index, LocalDate date) throws SQLException {
+		if (date != null) {
+			ps.setDate(index, Date.valueOf(date));
+		} else {
+			ps.setNull(index, java.sql.Types.DATE);
+		}
 	}
 }

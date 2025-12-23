@@ -2,114 +2,95 @@ package com.capitalbank.serviceImpl;
 
 import java.util.List;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import com.capitalbank.dao.CustomerDao;
 import com.capitalbank.model.Customer;
-import com.capitalbank.model.Customer.Role;
-import com.capitalbank.service.CustomerService;
 import com.capitalbank.security.PasswordUtil;
-import com.capitalbank.util.customer.CustomerNotFoundException;
-import com.capitalbank.util.database.TransactionManager;
+import com.capitalbank.service.CustomerService;
 
 public class CustomerServiceImpl implements CustomerService {
 	private CustomerDao customerDao;
 
-	public CustomerServiceImpl() {
-	}
-
-	public CustomerServiceImpl(CustomerDao customerDao) {
+	public void setCustomerDao(CustomerDao customerDao) {
 		this.customerDao = customerDao;
 	}
-	
-	public void setCustomerDao(CustomerDao customerDao) {
-	    this.customerDao = customerDao;
+
+	/*
+	 * =============================== AUTHENTICATION (Spring Security)
+	 * ===============================
+	 */
+	@Override
+	public Customer loadByEmailForAuth(String email) {
+		return customerDao.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("Customer not found with email: " + email));
 	}
 
-
+	/*
+	 * =============================== REGISTRATION ===============================
+	 */
 	@Override
 	public boolean register(Customer customer) {
-		return TransactionManager.doInTransaction(connection -> {
-			String password = customer.getPassword();
+		if (customerDao.findByEmail(customer.getEmail()).isPresent()) {
+			throw new IllegalStateException("Email already registered");
+		}
 
-			String hashPassword = PasswordUtil.hashPassword(password);
-			customer.setPassword(hashPassword);
-			return customerDao.saveCustomer(customer);
-		});
+		// Hash password
+		customer.setPassword(PasswordUtil.hashPassword(customer.getPassword()));
+		customer.setRole(Customer.Role.USER); // Default role
+		customer.setActive(true); // Default active
+
+		return customerDao.saveCustomer(customer);
+	}
+
+	/*
+	 * =============================== SELF SERVICE ===============================
+	 */
+	@Override
+	public Customer findByEmail(String email) {
+		return customerDao.findByEmail(email).orElse(null);
 	}
 
 	@Override
-	public Customer getCustomerById(long customerId, Role requesterRole, long requesterId) {
-		return TransactionManager.doInTransaction(connection -> {
-			if (requesterRole == Role.USER && requesterId != customerId) {
-				throw new SecurityException("USER is not allowed to view other customer details");
-			}
-
-			return customerDao.findById(customerId)
-					.orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + customerId));
-		});
+	public Customer getMyProfile(long customerId) {
+		return customerDao.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
 	}
 
 	@Override
-	public Customer getCustomerByEmail(String email, Role requesterRole) {
-		return TransactionManager.doInTransaction(connection -> {
-			if (requesterRole == Role.USER) {
-				throw new SecurityException("USER is not allowed to view other customer details");
-			}
+	public boolean updateMyProfile(Customer customer) {
+		return customerDao.updateCustomer(customer);
+	}
 
-			return customerDao.findByEmail(email)
-					.orElseThrow(() -> new CustomerNotFoundException("No customer found."));
-		});
+	/*
+	 * =============================== ADMIN ===============================
+	 */
+	@Override
+	public Customer getCustomerById(long customerId) {
+		return customerDao.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
 	}
 
 	@Override
-	public List<Customer> getAllCustomers(Role requesterRole) {
-		return TransactionManager.doInTransaction(connection -> {
-			if (requesterRole != Role.ADMIN) {
-				throw new SecurityException("Only ADMIN can view all customers");
-			}
-			return customerDao.findAll().orElseThrow(() -> new CustomerNotFoundException("No customer found"));
-		});
+	public List<Customer> getAllCustomers() {
+		return customerDao.findAll().orElse(List.of());
 	}
 
 	@Override
-	public boolean updateCustomer(Customer customer, Role requesterRole, long requesterId) {
-		return TransactionManager.doInTransaction(connection -> {
-			if (requesterRole == Role.USER && requesterId != customer.getCustomerId()) {
-				throw new SecurityException("USER cannot update another customer");
-			}
-
-			return customerDao.updateCustomer(customer);
-		});
+	public boolean deleteCustomer(long customerId) {
+		return customerDao.deleteCustomer(customerId);
 	}
 
+	/*
+	 * =============================== MANUAL LOGIN (ZK)
+	 * ===============================
+	 */
 	@Override
-	public boolean deleteCustomer(long customerId, Role requesterRole) {
-		return TransactionManager.doInTransaction(connection -> {
-			if (requesterRole != Role.ADMIN) {
-				throw new SecurityException("Only ADMIN can delete customers");
-			}
+	public Customer login(String email, String rawPassword) {
+		Customer customer = customerDao.findByEmail(email).orElse(null);
 
-			return customerDao.deleteCustomer(customerId);
-		});
-	}
+		if (customer == null)
+			return null;
 
-	@Override
-	public Customer login(String email, String password) {
-		return TransactionManager.doInTransaction(connection -> {
-			Customer customer = customerDao.findByEmail(email)
-					.orElseThrow(() -> new CustomerNotFoundException("No customer found"));
-
-			String hashedPassword = customer.getPassword();
-			boolean match = PasswordUtil.isPasswordCorrect(password, hashedPassword);
-
-			return match ? customer : null;
-		});
-	}
-
-	@Override
-	public Customer loadCustomerForAuthentication(String email) {
-		return TransactionManager.doInTransaction(connection -> {
-			return customerDao.findByEmail(email)
-					.orElseThrow(() -> new CustomerNotFoundException("No customer found."));
-		});
+		boolean match = PasswordUtil.isPasswordCorrect(rawPassword, customer.getPassword());
+		return match ? customer : null;
 	}
 }
