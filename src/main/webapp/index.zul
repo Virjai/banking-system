@@ -3,155 +3,237 @@
 
 <zk>
 	<div>
+		   <style>
+            /* ===== GLOBAL ===== */
+            body, html {
+                margin: 0;
+                padding: 0;
+            }
 
-		<style>
-			/* ===== GLOBAL ===== */ body, html { margin: 0; padding: 0;
-			}
+            div {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+                margin: 0;
+                padding: 0;
+            }
 
-			div { background: linear-gradient(135deg, #667eea 0%,
-			#764ba2 50%, #f093fb 100%); margin: 0; padding: 0; }
+            /* ===== WINDOW RESET ===== */
+            .z-window,
+            .z-window-embedded,
+            .z-window-content {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
 
-			/* ===== WINDOW RESET ===== */ .z-window,
-			.z-window-embedded, .z-window-content { background:
-			transparent !important; border: none !important; box-shadow:
-			none !important; padding: 0 !important; }
+            /* ===== NAVBAR ===== */
+            .navbar {
+                width: 100%;
+                padding: 20px 40px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            }
 
-			/* ===== NAVBAR ===== */ .navbar { width: 100%; padding:
-			20px 40px; background: linear-gradient(135deg, #667eea 0%,
-			#764ba2 50%, #f093fb 100%); }
+            /* ===== CENTER CONTENT ===== */
+            .center-content {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                min-height: 60vh;
+                text-align: center;
+            }
 
-			/* ===== CENTER CONTENT ===== */ .center-content { display:
-			flex; justify-content: center; align-items: center;
-			flex-direction: column; min-height: 60vh; text-align:
-			center; }
+            .title {
+                font-size: 48px;
+                font-weight: 700;
+                color: white;
+            }
 
-			.title { font-size: 48px; font-weight: 700; color: white; }
+            .subtitle {
+                font-size: 20px;
+                font-weight: 400;
+                color: rgba(255, 255, 255, 0.9);
+                text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            }
 
-			.subtitle { font-size: 20px; font-weight: 400; color:
-			rgba(255, 255, 255, 0.9); text-shadow: 0 2px 8px rgba(0, 0,
-			0, 0.2); }
+            /* ===== CARD CONTAINER ===== */
+            .card-wrapper {
+                position: relative;
+                width: 350px;
+                height: 420px;
+                margin-top: 40px;
+            }
 
-			/* ===== CARD CONTAINER ===== */ .card-wrapper { position:
-			relative; width: 350px; height: 420px; margin-top: 40px; }
+            .card {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 640px;
+                padding: 50px 60px;
+                border-radius: 20px;
+                background: rgba(255, 255, 255, 0.25);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                transition: opacity 1.5s ease-in-out;
+                opacity: 0;
+            }
 
-			.card { position: absolute; top: 0; left: 50%; transform:
-			translateX(-50%); width: 640px; padding: 50px 60px;
-			border-radius: 20px; background: rgba(255, 255, 255, 0.25);
-			border: 1px solid rgba(255, 255, 255, 0.3); transition:
-			opacity 1.5s ease-in-out; opacity: 0; }
+            .card.active {
+                opacity: 1;
+            }
 
-			.card.active { opacity: 1; }
+            .card-icon {
+                font-size: 80px;
+            }
 
-			.card-icon { font-size: 80px; }
+            .card-title {
+                font-size: 26px;
+                font-weight: 700;
+                color: white;
+            }
 
-			.card-title { font-size: 26px; font-weight: 700; color:
-			white; }
+            .card-text {
+                font-size: 16px;
+                color: rgba(255, 255, 255, 0.85);
+                text-align: center;
+            }
 
-			.card-text { font-size: 16px; color: rgba(255, 255, 255,
-			0.85); text-align: center; }
+            /* ===== FOOTER ===== */
+            .footer {
+                padding: 30px;
+                text-align: center;
+                color: rgba(255, 255, 255, 0.7);
+            }
+        </style>
+		<window border="none">
 
-			/* ===== FOOTER ===== */ .footer { padding: 30px;
-			text-align: center; color: rgba(255, 255, 255, 0.7); }
-		</style>
-
-		<!-- ===== WINDOW ===== -->
-		<window border="none" mode="embedded">
-
-			<!-- ===== NAVBAR (INSIDE WINDOW) ===== -->
-			<hbox sclass="navbar">
+			<hbox width="100%"
+				style="padding: 20px 40px; background: linear-gradient(135deg, #667eea 0%,
+            #764ba2 50%, #f093fb 100%);">
 
 				<hbox spacing="12px" hflex="1">
-					<button label="HOME" iconSclass="z-icon-home" />
-					<button label="PAY" iconSclass="z-icon-credit-card" />
-					<button label="SAVE" iconSclass="z-icon-pie-chart" />
-					<button label="INVEST"
+					<button id="bHome" label="HOME" sclass="nav-btn"
+						iconSclass="z-icon-home" />
+					<button id="bPay" label="PAY" class="nav-btn"
+						iconSclass="z-icon-credit-card" />
+					<button id="bSave" label="SAVE" class="nav-btn"
+						iconSclass="z-icon-pie-chart" />
+					<button id="bInvest" label="INVEST" sclass="nav-btn"
 						iconSclass="z-icon-line-chart" />
-					<button label="BORROW"
+					<button id="bBorrow" label="BORROW" class="nav-btn"
 						iconSclass="z-icon-handshake-o" />
-					<button label="INSURE" iconSclass="z-icon-shield" />
-					<button label="OFFER" iconSclass="z-icon-gift" />
+					<button id="bInsure" label="INSURE" class="nav-btn"
+						iconSclass="z-icon-shield" />
+					<button id="bOffer" label="OFFER" class="nav-btn"
+						iconSclass="z-icon-gift" />
 				</hbox>
 
 				<hbox spacing="12px" pack="end">
-					<button label="LOGIN" iconSclass="z-icon-sign-in"
-						onClick='Executions.sendRedirect("/pages/customers/customer-login-form")' />
-					<button label="REGISTER"
-						iconSclass="z-icon-user-plus" />
+					<button id="bLogIn" label="LOGIN" sclass="login-btn"
+						iconSclass="z-icon-sign-in" visible="true"
+						onClick='Executions.sendRedirect("/pages/customers/customer-login-form.zul")' />
+					<button id="bRegister" label="REGISTER"
+						sclass="signup-btn" iconSclass="z-icon-user-plus" visible="true" 
+						onClick='Executions.sendRedirect("/pages/customers/customer-registration-form.zul")'/>
+
+					<button id="bProfile" label="PROFILE"
+						sclass="profile-btn" iconSclass="z-icon-user" visible="false" />
 				</hbox>
 			</hbox>
 
-			<!-- ===== CENTER CONTENT ===== -->
-			<div sclass="center-content">
+			<div class="center-content">
+
 				<vbox spacing="30px" align="center">
 
 					<label value="Welcome to Capital Bank of Prestige"
-						sclass="title" />
+						style="font-size: 48px; font-weight: 700; color: white;" />
 
 					<label
 						value="Trust in Every Transaction | Security in Every Temptation | Technology in Every Touch"
-						sclass="subtitle" />
+						style="font-size: 20px; font-weight: 400; color: rgba(255, 255, 255, 0.9);
+                       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);" />
 
-					<hbox sclass="card-wrapper">
+					<hbox
+						style="position: relative; width: 350px; height: 420px; margin-top: 40px;">
 
-						<vbox id="card1" sclass="card active"
-							align="center" spacing="15px">
-							<label value="💳" sclass="card-icon" />
+						<vbox id="card1" align="center" spacing="15px"
+							style="position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+                               background: rgba(255, 255, 255, 0.25);
+                               border: 1px solid rgba(255, 255, 255, 0.3);
+                               border-radius: 20px; padding: 50px 60px; width: 640px;
+                               opacity: 1; transition: opacity 1.5s ease-in-out;">
+							<label value="💳" style="font-size: 80px;" />
 							<label value="Credit Card"
-								sclass="card-title" />
+								style="font-size: 26px; font-weight: 700; color: white;" />
 							<label value="Swipe • Pay • Benefits"
-								sclass="card-text" />
+								style="font-size: 16px; color: rgba(255, 255, 255, 0.85); text-align: center;" />
 						</vbox>
 
-						<vbox id="card2" sclass="card" align="center"
-							spacing="15px">
-							<label value="💰" sclass="card-icon" />
-							<label value="Savings" sclass="card-title" />
+						<vbox id="card2" align="center" spacing="15px"
+							style="position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+                               background: rgba(255, 255, 255, 0.25);
+                               border: 1px solid rgba(255, 255, 255, 0.3);
+                               border-radius: 20px; padding: 50px 60px; width: 640px;
+                               opacity: 0; transition: opacity 1.5s ease-in-out;">
+							<label value="💰" style="font-size: 80px;" />
+							<label value="Savings"
+								style="font-size: 26px; font-weight: 700; color: white;" />
 							<label value="Plan • Grow • Target"
-								sclass="card-text" />
+								style="font-size: 16px; color: rgba(255, 255, 255, 0.85); text-align: center;" />
 						</vbox>
 
-						<vbox id="card3" sclass="card" align="center"
-							spacing="15px">
-							<label value="📈" sclass="card-icon" />
+						<vbox id="card3" align="center" spacing="15px"
+							style="position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+                               background: rgba(255, 255, 255, 0.25);
+                               border: 1px solid rgba(255, 255, 255, 0.3);
+                               border-radius: 20px; padding: 50px 60px; width: 640px;
+                               opacity: 0; transition: opacity 1.5s ease-in-out;">
+							<label value="📈" style="font-size: 80px;" />
 							<label value="Cred-Score"
-								sclass="card-title" />
+								style="font-size: 26px; font-weight: 700; color: white;" />
 							<label value="Improve • Check • Build"
-								sclass="card-text" />
+								style="font-size: 16px; color: rgba(255, 255, 255, 0.85); text-align: center;" />
 						</vbox>
 
-						<vbox id="card4" sclass="card" align="center"
-							spacing="15px">
-							<label value="💡" sclass="card-icon" />
+						<vbox id="card4" align="center" spacing="15px"
+							style="position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+                               background: rgba(255, 255, 255, 0.25);
+                               border: 1px solid rgba(255, 255, 255, 0.3);
+                               border-radius: 20px; padding: 50px 60px; width: 640px;
+                               opacity: 0; transition: opacity 1.5s ease-in-out;">
+							<label value="💡" style="font-size: 80px;" />
 							<label value="More Tools"
-								sclass="card-title" />
+								style="font-size: 26px; font-weight: 700; color: white;" />
 							<label value="Explore • Discover • Use"
-								sclass="card-text" />
+								style="font-size: 16px; color: rgba(255, 255, 255, 0.85); text-align: center;" />
 						</vbox>
 
 					</hbox>
+
 				</vbox>
+
 			</div>
 
-			<!-- ===== FOOTER ===== -->
+
 			<div sclass="footer">
 				<label
-					value="© 2025 Capital Bank of Prestige, All rights reserved." />
+					value="© 2025 Capital Bank of Prestige, All rights reserved."
+					style="font-size: 14px;" />
 			</div>
 
-			<!-- ===== SCRIPT ===== -->
 			<script>
-				
-				<![CDATA[ zk.afterMount(function () { var cards =
-				[jq('$card1'), jq('$card2'), jq('$card3'),
-				jq('$card4')]; var index = 0;
 
-				setInterval(function () { cards.forEach(c =>
-				c.removeClass('active'));
-				cards[index].addClass('active'); index = (index + 1) %
+				
+				<![CDATA[ zk.afterMount(function() { var cards =
+				[jq('$card1'), jq('$card2'), jq('$card3'),
+				jq('$card4')]; var index = 0; setInterval(function() {
+				cards.forEach(c => c.css('opacity', '0'));
+				cards[index].css('opacity', '1'); index = (index + 1) %
 				cards.length; }, 2500); }); ]]>
 				
-            </script>
 
+        </script>
 		</window>
 	</div>
+
 </zk>

@@ -16,8 +16,7 @@
 			ref="customerService" />
 	</beans:bean>
 
-	<http pattern="/web/**" security="none" />
-
+	<http pattern="/web/**" security="none"/>
 	<!-- Security rules -->
 	<http auto-config="true">
 

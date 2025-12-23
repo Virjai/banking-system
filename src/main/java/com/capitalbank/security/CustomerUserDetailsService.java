@@ -11,8 +11,6 @@ import com.capitalbank.util.customer.CustomerNotFoundException;
 public class CustomerUserDetailsService implements UserDetailsService {
 	private CustomerService customerService;
 
-	
-
 	// 🔥 THIS SETTER IS MANDATORY
 	public void setCustomerService(CustomerService customerService) {
 		this.customerService = customerService;
