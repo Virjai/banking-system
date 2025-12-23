@@ -45,6 +45,7 @@
 	<bean id="customerService"
 		class="com.capitalbank.serviceImpl.CustomerServiceImpl">
 		<property name="customerDao" ref="customerDao" />
+		<property name="passwordEncoder" ref="passwordEncoder"/>
 	</bean>
 
 </beans>

@@ -24,10 +24,12 @@ body {
    CARD (AUTO SIZE TO CONTENT)
 ================================ */
 .form-card {
-	width: 520px;
-	padding: 32px 36px;
-	border-radius: 6px;
-	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    width: 520px;
+    padding: 32px 36px;
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.25);
+    /* Card will automatically be centered by the page wrapper */
 }
 
 /* ===============================

@@ -85,7 +85,7 @@
         }
     </style> 
 
-    <window border="normal">
+    <window border="normal" apply="com.capitalbank.controller.customers.LoginController">
 
         <div sclass="login-wrapper">
             <vbox sclass="login-card" spacing="15px" align="center">
@@ -130,9 +130,10 @@
                 </h:form>
 
                 <!-- ERROR MESSAGE -->
-                <label value="Invalid email or password"
-                       style="color:red"
-                       visible="${param.error != null}"/>
+                <label id="errorLabel"
+       value="Invalid email or password"
+       style="color:red"
+       visible="false"/>
 
                 <hbox spacing="20px" style="margin-top:15px;">
                     <a href="ForgotPassword.zul">Forgot Password?</a>

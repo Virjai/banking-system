@@ -15,6 +15,12 @@
 		<beans:property name="customerService"
 			ref="customerService" />
 	</beans:bean>
+	
+	<beans:bean id="passwordEncoder"
+    class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+    <!-- Cost factor = 12 -->
+    <beans:constructor-arg value="12"/>
+</beans:bean>
 
 	<http pattern="/web/**" security="none"/>
 	<!-- Security rules -->
@@ -52,7 +58,7 @@
 			authentication-failure-url="/pages/customers/customer-login-form.zul?error=true" />
 
 		<!-- Logout -->
-		<logout logout-success-url="/login.zul"
+		<logout logout-success-url="/pages/customers/customer-login-form.zul"
 			invalidate-session="true" />
 
 		<!-- 🔒 BLOCK EVERYTHING ELSE -->
@@ -61,14 +67,15 @@
 
 		<session-management>
 			<concurrency-control max-sessions="1"
-				expired-url="/login.zul?timeout=true" />
+				expired-url="/pages/customers/customer-login-form.zul?/login.zul?timeout=true" />
 		</session-management>
 
 	</http>
 
 	<authentication-manager>
-		<authentication-provider
-			user-service-ref="userDetailsService" />
-	</authentication-manager>
+    <authentication-provider user-service-ref="userDetailsService">
+        <password-encoder ref="passwordEncoder"/>
+    </authentication-provider>
+</authentication-manager>
 
 </beans:beans>

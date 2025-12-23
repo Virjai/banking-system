@@ -3,6 +3,7 @@ package com.capitalbank.serviceImpl;
 import java.util.List;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.capitalbank.dao.CustomerDao;
 import com.capitalbank.model.Customer;
@@ -11,10 +12,14 @@ import com.capitalbank.service.CustomerService;
 
 public class CustomerServiceImpl implements CustomerService {
 	private CustomerDao customerDao;
+	private BCryptPasswordEncoder passwordEncoder;
 
 	public void setCustomerDao(CustomerDao customerDao) {
 		this.customerDao = customerDao;
 	}
+	public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
 	/*
 	 * =============================== AUTHENTICATION (Spring Security)
@@ -36,7 +41,9 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 
 		// Hash password
-		customer.setPassword(PasswordUtil.hashPassword(customer.getPassword()));
+		customer.setPassword(
+	            passwordEncoder.encode(customer.getPassword())
+	        );
 		customer.setRole(Customer.Role.USER); // Default role
 		customer.setActive(true); // Default active
 
