@@ -1,0 +1,111 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<style>
+		
+		body { 
+			margin:0; 
+			padding:0; 
+		} 
+		
+		.z-window, .z-window-content {
+			padding:0 !important; 
+			background:transparent !important; 
+		}
+		
+		.vlayout-bg {
+			background:linear-gradient(135deg,#667eea,#764ba2,#f093fb); 
+		}
+		
+		.profile-img { 
+			border-radius:50%; 
+		} 
+		
+		.action-btn { 
+			color:white;
+			width:150px; 
+			margin-right:10px; 
+			font-weight:bold; 
+		}
+		
+		
+	</style>
+	<window width="100%" height="100%" apply="com.pg.zk.bank.DashboardComposer">
+
+		<borderlayout>
+			<center style="overflow-y:scroll;">
+
+				<vlayout sclass="vlayout-bg">
+
+					<vbox align="center" pack="center" width="100%"
+						height="100%">
+
+						<!-- PROFILE + ACCOUNT -->
+						<hbox align="center" pack="center"
+							style="padding:20px; color:white;">
+							<image id="profileImg" width="100px"
+								height="100px" sclass="profile-img" src="profile.jpg"/>
+							<vlayout style="margin-left:20px;">
+								<label id="userNameLbl"
+									style="font-size:24px; font-weight:bold;" />
+								<label value="Account Number:"
+									style="font-size:16px;" />
+								<combobox id="numberCombo"
+									width="220px" />
+							</vlayout>
+						</hbox>
+
+						<!-- ACCOUNT INFO -->
+						<hlayout spacing="20px" style="padding:20px;">
+							<vlayout>
+								<label value="Account Type"
+									style="font-size:18px; font-weight:bold; color:white;" />
+								<label id="accTypeLbl"
+									style="font-size:22px; color:#fff;" />
+							</vlayout>
+
+							<vlayout>
+								<label value="Current Balance"
+									style="font-size:18px; font-weight:bold; color:white;" />
+								<label id="balanceLbl"
+									style="font-size:22px; color:#fff;" />
+							</vlayout>
+						</hlayout>
+
+						<!-- BUTTONS -->
+						<hbox align="center" pack="center"
+							style="padding:20px;">
+							<button label="Fund Transfer"
+								sclass="action-btn" style="background-color:#007bff;"
+								onClick='mainContent.setSrc("Transfer.zul")' />
+
+							<button label="Deposit Money"
+								sclass="action-btn" style="background-color:#28a745;"
+								onClick='mainContent.setSrc("Deposit.zul")' />
+
+							<button label="Withdraw Money"
+								sclass="action-btn" style="background-color:#dc3545;"
+								onClick='mainContent.setSrc("Withdraw.zul")' />
+						</hbox>
+
+						<label value="Recent Transactions"
+							style="font-size:20px; font-weight:bold; padding:10px; color:white;" />
+
+						<!-- TRANSACTIONS -->
+						<grid width="100%" id="txnGrid"
+							style="border:1px solid #ddd; background:white;">
+							<columns>
+								<column label="Date" width="20%" />
+								<column label="Description" width="35%" />
+								<column label="Amount" width="20%" />
+								<column label="Balance" width="20%" />
+							</columns>
+							<rows id="txnRows" />
+						</grid>
+
+					</vbox>
+				</vlayout>
+
+			</center>
+		</borderlayout>
+	</window>
+</zk>
