@@ -4,6 +4,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+
 import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Messagebox;
@@ -12,6 +13,7 @@ import org.zkoss.zul.Window;
 
 import com.capitalbank.model.Customer;
 import com.capitalbank.service.CustomerService;
+
 
 public class RegistrationController extends SelectorComposer<Window> {
 	private static final long serialVersionUID = -2271757845507892423L;
@@ -47,6 +49,7 @@ public class RegistrationController extends SelectorComposer<Window> {
 		String email = tEmail.getValue().trim();
 		String password = tPassword.getValue().trim();
 		String confirmPassword = tConfirmPassword.getValue().trim();
+
 
 		try {
 			if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()

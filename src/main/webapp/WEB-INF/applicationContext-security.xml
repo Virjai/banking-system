@@ -17,6 +17,7 @@
 	</beans:bean>
 
 	<http pattern="/web/**" security="none" />
+
 	<!-- Security rules -->
 	<http auto-config="true">
 
@@ -27,8 +28,7 @@
 		<!-- Public pages -->
 		<intercept-url pattern="/index.zul"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<intercept-url
-			pattern="/pages/customers/customer-login-form.zul"
+		<intercept-url pattern="/pages/customers/customer-login-form.zul"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 
 		<intercept-url

@@ -40,10 +40,12 @@
 		class="com.capitalbank.daoImpl.CustomerDaoImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+
 	
 	<bean id="accountDao" class="com.capitalbank.daoImpl.AccountDaoImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+
 
 	<!-- ================= SERVICE ================= -->
 	<bean id="customerService"

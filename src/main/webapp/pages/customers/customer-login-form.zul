@@ -159,4 +159,169 @@
         });
     ]]></script>
 
+=======
+<zscript>
+        String ctx = (String) page.getDesktop().getExecution().getContextPath();
+    </zscript>
+    <h:link rel="stylesheet" type="text/css" href="${ctx}/resources/styles/login.css"/>
+	
+   <!--  <style>
+        html, body {
+            min-height: 100% !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            margin: 0;
+            padding: 0;
+            background-attachment: fixed;
+            overflow-y: auto !important;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .z-window,
+        .z-window-embedded,
+        .z-window-embedded .z-window-content {
+            padding: 0;
+            box-shadow: none !important;
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-card {
+            width: 380px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .title-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 45px;
+        }
+
+        .input-box {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .password-wrapper {
+            width: 100%;
+            padding: 0 12px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-wrapper input {
+            border: none !important;
+            background: transparent !important;
+            outline: none !important;
+            box-shadow: none !important;
+            width: 100%;
+            padding: 8px;
+        }
+
+        .icon-btn {
+            background: transparent !important;
+            border: none !important;
+            cursor: pointer;
+            margin-left: 8px;
+            color: gray !important;
+        }
+
+        .footer-text {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #444;
+        }
+    </style> -->
+
+    <window border="normal">
+
+        <div sclass="login-wrapper">
+            <vbox sclass="login-card" spacing="15px" align="center">
+
+                <label value="Welcome to Capital Bank of Prestige"
+                       sclass="title-text"/>
+
+                <!-- 🔑 SPRING SECURITY FORM -->
+                <h:form action="j_spring_security_check" method="post">
+
+                    <!-- EMAIL -->
+                    <hbox sclass="password-wrapper input-box">
+                        <h:input type="text"
+                                 name="j_username"
+                                 placeholder="Enter Email"/>
+                    </hbox>
+
+                    <!-- PASSWORD -->
+                    <hbox sclass="password-wrapper input-box">
+                        <h:input type="password"
+                                 id="pwd"
+                                 name="j_password"
+                                 placeholder="Enter Password"/>
+
+                        <button type="button"
+                                sclass="icon-btn"
+                                id="togglePwd">
+                            👁
+                        </button>
+                    </hbox>
+
+                    <!-- LOGIN BUTTON -->
+                    <h:button type="submit"
+                              style="width:100%;
+                                     background:#0093F9;
+                                     color:white;
+                                     border-radius:10px;
+                                     padding:8px;">
+                        Login
+                    </h:button>
+
+                </h:form>
+
+                <!-- ERROR MESSAGE -->
+                <label value="Invalid email or password"
+                       style="color:red"
+                       visible="${param.error != null}"/>
+
+                <hbox spacing="20px" style="margin-top:15px;">
+                    <a href="ForgotPassword.zul">Forgot Password?</a>
+                    <label value="|" />
+                    <a href="SignUp.zul">New User?</a>
+                </hbox>
+
+                <label sclass="footer-text"
+                       value="© 2025 Capital Bank of Prestige Pvt. Ltd."/>
+
+            </vbox>
+        </div>
+
+    </window>
+
+    <!-- SHOW / HIDE PASSWORD -->
+    <script><![CDATA[
+        zk.afterMount(function () {
+            var btn = jq('#togglePwd');
+            var pwd = jq('#pwd');
+            btn.on('click', function () {
+                pwd.attr('type', pwd.attr('type') === 'password' ? 'text' : 'password');
+            });
+        });
+    ]]></script>
+
+>>>>>>> c7c7611bef445338a8fef7c0cfd11b3c6f6727c3
 </zk>
