@@ -83,7 +83,7 @@
             font-size: 12px;
             color: #444;
         }
-    </style> 
+    </style>
 
     <window border="normal" apply="com.capitalbank.controller.customers.LoginController">
 
@@ -94,7 +94,7 @@
                        sclass="title-text"/>
 
                 <!-- 🔑 SPRING SECURITY FORM -->
-                <h:form action="/j_spring_security_check" method="post">
+                <h:form action="j_spring_security_check" method="POST">
 
                     <!-- EMAIL -->
                     <hbox sclass="password-wrapper input-box">
@@ -159,6 +159,6 @@
             });
         });
     ]]></script>
- 
+
 
 </zk>

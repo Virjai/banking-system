@@ -1,0 +1,204 @@
+<?page title="Open Account" contentType="text/html;charset=UTF-8"?>
+
+<zk>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .open-account-page {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    }
+
+    .open-account-window {
+        width: 650px;
+        padding: 25px 30px;
+        background: rgba(255, 255, 255, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(14px);
+        margin: 30px auto;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        border-radius: 14px;
+        text-align: center;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .z-window-header {
+        text-align: center !important;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .center-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+        align-items: stretch;
+    }
+
+    .form-row {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .form-label {
+        width: 50%;
+        text-align: left;
+        padding-top: 8px;
+        font-weight: 600;
+    }
+
+    .form-input {
+        width: 50%;
+    }
+
+    .z-textbox,
+    .z-doublebox,
+    .z-combobox-input {
+        width: 100% !important;
+        border-radius: 6px !important;
+        padding: 6px 10px !important;
+        border: 1px solid #bfbfbf !important;
+    }
+
+    .z-combobox {
+        width: 100% !important;
+        display: block !important;
+    }
+
+    .z-combobox-button {
+        height: 34px !important;
+    }
+
+    .action-buttons {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .action-btn {
+        width: 150px;
+        padding: 10px 0;
+        border-radius: 6px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #45a049;
+    }
+
+    .btn-danger {
+        background: #f44336;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #da190b;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div sclass="open-account-page">
+
+    <window title="Open New Bank Account"
+            border="normal"
+            width="40vw"
+            sclass="open-account-window"
+           >
+
+        <vlayout sclass="center-layout" style="padding: 16px;">
+
+            <!-- Customer ID -->
+            <hbox sclass="form-row" hflex="1">
+                <label sclass="form-label" value="Customer ID:" hflex="1"/>
+                <textbox id="customerId"
+                         sclass="form-input"
+                         readonly="true"
+                         placeholder="Auto-filled"
+                         hflex="2"/>
+            </hbox>
+
+            <!-- PAN -->
+            <hbox sclass="form-row" hflex="1">
+                <label sclass="form-label" value="PAN Number*:" hflex="1"/>
+                <textbox id="panBox"
+                         sclass="form-input"
+                         placeholder="Enter PAN"
+                         hflex="2"/>
+            </hbox>
+
+            <!-- Account Type -->
+            <hbox sclass="form-row" hflex="1">
+                <label sclass="form-label" value="Account Type*:" hflex="1"/>
+                <combobox id="accountType"
+                          sclass="form-input"
+                          placeholder="Select Account Type"
+                          hflex="2">
+                    <comboitem label="Savings"/>
+                    <comboitem label="Current"/>
+                </combobox>
+            </hbox>
+
+            <!-- GST (Only for Current Account) -->
+            <hbox id="gstRow" sclass="form-row" visible="false" hflex="1">
+                <label sclass="form-label" value="GST Number*:" hflex="1"/>
+                <textbox id="gstBox"
+                         sclass="form-input"
+                         placeholder="Enter GST"
+                         hflex="2"/>
+            </hbox>
+
+            <!-- Opening Balance -->
+            <hbox sclass="form-row" hflex="1">
+                <label sclass="form-label" value="Opening Balance:" hflex="1"/>
+                <doublebox id="balance"
+                           sclass="form-input"
+                           placeholder="0.00"
+                           hflex="2"/>
+            </hbox>
+
+            <!-- Buttons -->
+            <hbox sclass="action-buttons">
+                <button id="openBtn"
+                        label="Create Account"
+                        sclass="action-btn btn-primary"/>
+                <button id="clearBtn"
+                        label="Clear"
+                        sclass="action-btn btn-danger"/>
+            </hbox>
+
+        </vlayout>
+    </window>
+
+</div>
+</zk>

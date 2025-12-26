@@ -1,0 +1,164 @@
+<?page title="Account Summary" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .page {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    }
+
+    .form-window {
+        width: 650px;
+        background: rgba(255, 255, 255, 0.25);
+        border-radius: 14px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        padding: 25px 30px !important;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .z-window-header {
+        text-align: center !important;
+    }
+
+    .center-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+        align-items: stretch;
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .form-row {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .form-label {
+        width: 50%;
+        text-align: left;
+        padding-top: 8px;
+        font-weight: 600;
+    }
+
+    .form-input {
+        width: 50%;
+    }
+
+    .z-textbox, .z-doublebox, .z-combobox-input {
+        width: 100% !important;
+        border-radius: 6px !important;
+        padding: 6px 10px !important;
+        border: 1px solid #bfbfbf !important;
+    }
+
+    .z-combobox {
+        width: 100% !important;
+        display: block !important;
+    }
+
+    .z-combobox-button {
+        height: 34px !important;
+    }
+
+    .action-buttons {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .action-btn {
+        padding: 10px 0;
+        color: white;
+        padding: 10px 16px;
+        margin-right: 10px;
+        font-weight: bold;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #45a049;
+    }
+
+    .btn-danger {
+        background: #f44336;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #da190b;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div sclass="page">
+    <window title="Account Summary"
+            border="normal"
+            width="70vw"
+            sclass="form-window"
+            >
+
+        <vlayout sclass="center-layout" style="padding: 16px;">
+
+            <label value="Your Bank Accounts"
+                   style="font-size:22px; font-weight:bold; margin-bottom:15px; text-align:center;"/>
+
+            <!-- Account Summary Grid -->
+            <grid width="100%" mold="paging" pageSize="10">
+                <columns>
+                    <column label="Account No" width="28%"/>
+                    <column label="Type" width="25%"/>
+                    <column label="Balance" width="20%"/>
+                    <!-- <column label="PAN" width="20%"/>
+                    <column label="GST" width="15%"/> -->
+                    <column label="Created Date" width="27%"/>
+                </columns>
+                <rows id="summaryRows"/>
+            </grid>
+
+            <separator spacing="20px"/>
+
+            <!-- Back Button -->
+            <hbox sclass="action-buttons" style="padding-bottom: 16px;">
+                <button label="Back to Dashboard"
+                        sclass="action-btn btn-primary"
+                        onClick='Executions.sendRedirect("UserProfile.zul")'/>
+            </hbox>
+
+        </vlayout>
+    </window>
+</div>
+
+</zk>

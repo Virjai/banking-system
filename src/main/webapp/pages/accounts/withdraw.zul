@@ -1,0 +1,160 @@
+<?page title="Withdraw Money" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+<style>
+    body { 
+        margin: 0; 
+        padding: 0; 
+    }
+
+    .page {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    }
+
+    .form-window {
+        width: 650px;
+        background: rgba(255, 255, 255, 0.25);
+        border-radius: 14px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        padding: 25px 30px !important;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .z-window-header { 
+        text-align: center !important; 
+    }
+
+    .center-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+        align-items: stretch;
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .form-row {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .form-label {
+        width: 50%;
+        text-align: left;
+        padding-top: 8px;
+        font-weight: 600;
+    }
+
+    .form-input {
+        width: 50%;
+    }
+
+    .z-textbox, .z-doublebox, .z-combobox-input {
+        width: 100% !important;
+        border-radius: 6px !important;
+        padding: 6px 10px !important;
+        border: 1px solid #bfbfbf !important;
+    }
+
+    .z-combobox {
+        width: 100% !important;
+        display: block !important;
+    }
+
+    .z-combobox-button {
+        height: 34px !important;
+    }
+
+    .action-buttons {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .action-btn {
+        width: 150px;
+        padding: 10px 0;
+        border-radius: 6px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #45a049;
+    }
+
+    .btn-danger {
+        background: #f44336;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #da190b;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div sclass="page">
+
+    <window title="Withdraw Money"
+            border="normal"
+            width="40vw"
+            sclass="form-window"
+            >
+
+        <vlayout sclass="center-layout" style="padding: 16px;">
+
+            <label value="Withdraw Money"
+                   style="font-size: 20px; font-weight: 700; color: #333; text-align: center;"/>
+
+            <!-- Select Account -->
+            <hbox sclass="form-row" hflex="1">
+                <label sclass="form-label" value="Select Account:" hflex="1"/>
+                <combobox sclass="form-input" id="accountBox" hflex="2"/>
+            </hbox>
+
+            <!-- Withdraw Amount -->
+            <hbox sclass="form-row" hflex="1">
+                <label sclass="form-label" value="Withdraw Amount:" hflex="1"/>
+                <doublebox sclass="form-input" id="amountBox" hflex="2"/>
+            </hbox>
+
+            <hbox sclass="action-buttons" style="padding-bottom: 16px;">
+                <button id="withdrawBtn" label="Withdraw" sclass="action-btn btn-primary"/>
+                <button id="clearBtn" label="Clear" sclass="action-btn btn-danger"/>
+            </hbox>
+
+        </vlayout>
+
+    </window>
+
+</div>
+
+</zk>

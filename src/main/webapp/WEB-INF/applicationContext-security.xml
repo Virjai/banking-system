@@ -23,7 +23,7 @@
 	</beans:bean>
 
 	<http pattern="/pages/**" security="none" />
-	
+
 	<!-- Security rules -->
 	<http auto-config="true">
 
@@ -51,12 +51,14 @@
 
 		<intercept-url pattern="/pages/accounts/**"
 			access="ROLE_USER" />
+		<intercept-url pattern="/pages/customers/**"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 
 		<!-- Login -->
 		<form-login
 			login-page="/pages/customers/customer-login-form.zul"
-			login-processing-url="/j_spring_security_check"
 			default-target-url="/pages/customers/dashboard.zul"
+			login-processing-url="/j_spring_security_check"
 			authentication-failure-url="/pages/customers/customer-login-form.zul?error=true" />
 
 		<!-- Logout -->

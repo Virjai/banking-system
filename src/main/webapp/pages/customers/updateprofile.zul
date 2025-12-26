@@ -1,0 +1,64 @@
+<?page title="User Profile" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+	<style>
+		.page { width:100%; height:100vh; display:flex;
+		justify-content:center; align-items:center;
+		background:linear-gradient(135deg,#6a11cb,#2575fc);
+		font-family:"Segoe UI",sans-serif; } .card { background:white;
+		padding:25px; width:500px; border-radius:10px; box-shadow:0 4px
+		12px rgba(0,0,0,0.2); text-align:center; } .profile-img {
+		width:130px; height:130px; border-radius:50%;
+		margin-bottom:15px; object-fit:cover; } .label-title {
+		font-size:20px; font-weight:bold; margin-bottom:10px; } .editBox
+		{ width:80%; margin:5px auto; padding:7px; } .save-btn {
+		background:#2196F3; color:white; width:160px; } .back-btn {
+		background:#4CAF50; color:white; width:160px; } .upload-btn {
+		background:#FF9800; color:white; width:160px;
+		margin-bottom:10px; }
+	</style>
+
+	<window >
+		<div sclass="page">
+			<div class="card">
+
+				<!-- Profile Image -->
+				<image id="profileImg" sclass="profile-img" />
+
+				<!-- Upload Button -->
+				<button id="uploadBtn" label="Update Photo"
+					class="upload-btn" upload="true,maxsize=5000000" />
+					<separator/>
+
+				<!-- Name -->
+				<label id="nameLbl" class="label-title" />
+				<separator spacing="15px"></separator>
+				<!-- Editable Fields -->
+				<textbox id="emailBox" class="editBox"
+					placeholder="Email" />
+				<textbox id="phoneBox" class="editBox"
+					placeholder="Phone" />
+				<textbox id="addressBox" class="editBox"
+					placeholder="Address" />
+
+				<textbox id="cityBox" class="editBox"
+					placeholder="City" />
+				<textbox id="stateBox" class="editBox"
+					placeholder="State" />
+				<textbox id="pincodeBox" class="editBox"
+					placeholder="Pincode" />
+				<textbox id="countryBox" class="editBox"
+					placeholder="Country" />
+
+				<separator height="20px" />
+
+				<!-- Action Buttons -->
+				<button id="saveBtn" label="Save Changes"
+					class="save-btn" />
+				<button id="backBtn" label="Back" class="back-btn" />
+
+			</div>
+		</div>
+	</window>
+
+</zk>

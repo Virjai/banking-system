@@ -1,0 +1,142 @@
+<?page title="Profile" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+    <style>
+        html, body {
+            min-height: 100% !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            margin: 0;
+            padding: 0;
+            background-attachment: fixed;
+            overflow-y: auto !important;
+        }
+
+        /* Remove container background of window */
+        .z-window, .z-window-embedded, .z-window-embedded .z-window-content {
+            box-shadow: none !important;
+            border: none !important;
+            padding: 0px;
+        }
+
+        .profile-card {
+            background: rgba(255,255,255,0.25);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 18px;
+            backdrop-filter: blur(14px);
+            padding: 30px 40px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            margin: 30px auto;
+            width: 90%;
+        }
+
+        .title-text {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            margin-bottom: 25px;
+            display: block;
+        }
+
+        .label-col {
+            color: white;
+            font-weight: bold;
+            width: 170px;
+            font-size : 18px;
+        }
+
+        .profile-pic-box {
+            width: 180px;
+            height: 180px;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.7);
+            border: 2px solid rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #444;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border-radius: 10px;
+            padding: 10px 20px;
+        }
+    </style>
+
+    <!-- FIX: remove height, add vflex for scroll -->
+    <window border="normal" vflex="1" style="overflow-y:auto;">
+
+        <vlayout class="profile-card" spacing="25px">
+
+            <label value="Personal Information" sclass="title-text"/>
+
+            <hbox spacing="40px" hflex="1" style="align-items:flex-start;">
+
+               <vbox spacing="15px" hflex="1">
+
+    <hbox spacing="20px" hflex="1">
+        <label value="Full Name:" sclass="label-col"/>
+        <label value="Navin Kumar Saurabh"/>
+    </hbox>
+
+    <hbox spacing="20px" hflex="1">
+        <label value="Email:" sclass="label-col"/>
+        <label value="navin.kumarsaurabh@imageinfosystems.com"/>
+    </hbox>
+
+    <hbox spacing="20px" hflex="1">
+        <label value="Phone:" sclass="label-col"/>
+        <label value="9708152404"/>
+    </hbox>
+
+    <hbox spacing="20px" hflex="1">
+        <label value="Account No:" sclass="label-col"/>
+        <label value="1234567890"/>
+    </hbox>
+
+    <hbox spacing="20px" hflex="1">
+        <label value="Date of Birth:" sclass="label-col"/>
+        <label value="01-01-1992"/>
+    </hbox>
+
+    <hbox spacing="20px" hflex="1">
+        <label value="Country:" sclass="label-col"/>
+        <label value="India"/>
+    </hbox>
+
+                <hbox spacing="20px" hflex="1">
+                    <label value="State:" sclass="label-col"/>
+                    <label value="Bihar"/>
+                </hbox>
+
+                <hbox spacing="20px" hflex="1">
+                    <label value="City:" sclass="label-col"/>
+                    <label value="Patna"/>
+                </hbox>
+
+                <hbox spacing="20px" hflex="1">
+                    <label value="Pincode:" sclass="label-col"/>
+                    <label value="800001"/>
+                </hbox>
+</vbox>
+
+
+                <vbox align="center">
+                    <div class="profile-pic-box">Image Here</div>
+                </vbox>
+
+            </hbox>
+
+            <hbox spacing="25px" align="center" style="margin-top:20px;">
+                <button label="Update Profile" sclass="btn"/>
+                <button label="Change Password" sclass="btn"/>
+            </hbox>
+
+        </vlayout>
+
+    </window>
+</zk>
