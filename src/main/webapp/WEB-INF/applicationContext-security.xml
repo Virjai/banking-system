@@ -1,87 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans
-	xmlns="http://www.springframework.org/schema/security"
-	xmlns:beans="http://www.springframework.org/schema/beans"
+<beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-        http://www.springframework.org/schema/security
-        http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
 
 	<!-- UserDetailsService -->
-	<beans:bean id="userDetailsService"
+	<bean id="userDetailsService"
 		class="com.capitalbank.security.CustomerUserDetailsService">
-		<beans:property name="customerService"
-			ref="customerService" />
-	</beans:bean>
+		<property name="customerService" ref="customerService" />
+	</bean>
 
-	<beans:bean id="passwordEncoder"
+	<!-- Password Encoder -->
+	<!-- <bean id="passwordEncoder"
 		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
-		<!-- Cost factor = 12 -->
-		<beans:constructor-arg value="12" />
-	</beans:bean>
+		<constructor-arg value="12" />
+	</bean> -->
 
-	<http pattern="/pages/**" security="none" />
+	<!-- Security configuration -->
+	<security:http auto-config="true">
 
-	<!-- Security rules -->
-	<http auto-config="true">
-
-		<!-- 🔥 ZK INTERNAL (MUST BE FIRST) -->
-		<intercept-url pattern="/zkau/**"
+		<!-- Allow ZK internal calls -->
+		<security:intercept-url pattern="/zkau/**"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 
-		<!-- Public pages -->
-		<intercept-url pattern="/index.zul"
+		<!-- Public -->
+		<security:intercept-url pattern="/index.zul"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<intercept-url
+		<security:intercept-url
 			pattern="/pages/customers/customer-login-form.zul"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
-		<intercept-url
+		<security:intercept-url
 			pattern="/pages/customers/customer-registration-form.zul"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 
-		<!-- Role based -->
-		<intercept-url pattern="/zul/admin/**"
+		<!-- Role-based -->
+		<security:intercept-url pattern="/zul/admin/**"
+			access="ROLE_ADMIN" />
+		<security:intercept-url pattern="/zul/user/**"
+			access="ROLE_USER" />
+		<security:intercept-url pattern="/admin.zul"
 			access="ROLE_ADMIN" />
 
-		<intercept-url pattern="/zul/user/**" access="ROLE_USER" />
-		<intercept-url pattern="/admin.zul" access="ROLE_ADMIN" />
-
-		<intercept-url pattern="/pages/accounts/**"
-			access="ROLE_USER" />
-		<intercept-url pattern="/pages/customers/**"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<security:intercept-url
+			pattern="/pages/accounts/**" access="ROLE_USER" />
+		<security:intercept-url
+			pattern="/pages/customers/**" access="ROLE_USER" />
 
 		<!-- Login -->
-		<form-login
+		<security:form-login
 			login-page="/pages/customers/customer-login-form.zul"
-			default-target-url="/pages/customers/dashboard.zul"
-			login-processing-url="/j_spring_security_check"
+			authentication-success-handler-ref="loginSuccessHandler"
 			authentication-failure-url="/pages/customers/customer-login-form.zul?error=true" />
 
 		<!-- Logout -->
-		<logout
+		<security:logout
 			logout-success-url="/pages/customers/customer-login-form.zul"
 			invalidate-session="true" />
 
-		<!-- 🔒 BLOCK EVERYTHING ELSE -->
-		<intercept-url pattern="/**"
+		<!-- Block everything else -->
+		<security:intercept-url pattern="/**"
 			access="IS_AUTHENTICATED_FULLY" />
 
-		<session-management>
-			<concurrency-control max-sessions="1"
-				expired-url="/pages/customers/customer-login-form.zul?/login.zul?timeout=true" />
-		</session-management>
+		<security:session-management>
+			<security:concurrency-control
+				max-sessions="1"
+				expired-url="/pages/customers/customer-login-form.zul?timeout=true" />
+		</security:session-management>
 
-	</http>
+	</security:http>
 
-	<authentication-manager>
-		<authentication-provider
+	<!-- Authentication -->
+	<!-- <security:authentication-manager>
+		<security:authentication-provider
 			user-service-ref="userDetailsService">
-			<password-encoder ref="passwordEncoder" />
-		</authentication-provider>
-	</authentication-manager>
+			<security:password-encoder
+				ref="passwordEncoder" />
+		</security:authentication-provider>
+	</security:authentication-manager> -->
 
-</beans:beans>
+</beans>

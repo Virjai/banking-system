@@ -13,22 +13,24 @@ import java.util.Optional;
 import javax.sql.DataSource;
 
 import com.capitalbank.dao.CustomerDao;
+import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.enums.query.CustomerQuery;
 import com.capitalbank.model.Customer;
 
 public class CustomerDaoImpl implements CustomerDao {
-    private DataSource dataSource;
-    
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+//    private DataSource dataSource;
+//    
+//    public void setDataSource(DataSource dataSource) {
+//        this.dataSource = dataSource;
+//    }
+
+	private Connection connection = DBConnection.getConnection();
 
 	// CREATE
 	@Override
 	public boolean saveCustomer(Customer customer) {
 		int idk = 1;
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement ps = connection.prepareStatement(CustomerQuery.INSERT_CUSTOMER.getQuery())) {
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.INSERT_CUSTOMER.getQuery())) {
 			ps.setString(idk++, customer.getFullName());
 			setDateOrNull(ps, idk++, customer.getDob());
 			ps.setString(idk++, customer.getGender());
@@ -60,8 +62,7 @@ public class CustomerDaoImpl implements CustomerDao {
 	// READ
 	@Override
 	public Optional<Customer> findById(long id) {
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_ID.getQuery())) {
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_ID.getQuery())) {
 
 			ps.setLong(1, id);
 
@@ -76,8 +77,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
 	@Override
 	public Optional<Customer> findByEmail(String email) {
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_EMAIL.getQuery())) {
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_EMAIL.getQuery())) {
 
 			ps.setString(1, email);
 			try (ResultSet rs = ps.executeQuery()) {
@@ -93,8 +93,7 @@ public class CustomerDaoImpl implements CustomerDao {
 	public Optional<List<Customer>> findAll() {
 		List<Customer> customers = new ArrayList<>();
 
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_ALL_CUSTOMER.getQuery());
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_ALL_CUSTOMER.getQuery());
 				ResultSet rs = ps.executeQuery();) {
 
 			while (rs.next()) {
@@ -111,8 +110,7 @@ public class CustomerDaoImpl implements CustomerDao {
 	@Override
 	public boolean updateCustomer(Customer customer) {
 		int idk = 1;
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_CUSTOMER.getQuery())) {
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_CUSTOMER.getQuery())) {
 
 			ps.setString(idk++, customer.getFullName());
 			setDateOrNull(ps, idk++, customer.getDob());
@@ -122,6 +120,7 @@ public class CustomerDaoImpl implements CustomerDao {
 			ps.setString(idk++, customer.getAadharImage());
 			ps.setString(idk++, customer.getCustomerImage());
 			ps.setString(idk++, customer.getEmail());
+			ps.setString(idk++, customer.getPassword());
 			ps.setString(idk++, customer.getPhone());
 			ps.setString(idk++, customer.getCity());
 			ps.setString(idk++, customer.getState());
@@ -142,8 +141,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
 	@Override
 	public boolean updatePassword(long id, String newPassword) {
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_PASSWORD.getQuery())) {
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_PASSWORD.getQuery())) {
 
 			ps.setString(1, newPassword);
 			ps.setLong(2, id);
@@ -154,12 +152,10 @@ public class CustomerDaoImpl implements CustomerDao {
 			throw new RuntimeException("Error while updating password of customer: " + e.getMessage());
 		}
 	}
-
 	// DELETE
 	@Override
 	public boolean deleteCustomer(long id) {
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement ps = connection.prepareStatement(CustomerQuery.DELETE_CUSTOMER.getQuery())) {
+		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.DELETE_CUSTOMER.getQuery())) {
 			ps.setLong(1, id);
 
 			return ps.executeUpdate() > 0;

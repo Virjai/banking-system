@@ -1,108 +1,235 @@
 package com.capitalbank.serviceImpl;
 
+import java.sql.Connection;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import com.capitalbank.dao.AccountDao;
-
 import com.capitalbank.model.Account;
 import com.capitalbank.service.AccountService;
-import com.capitalbank.util.account.AccountValidationException;
-import com.capitalbank.util.account.AccountValidator;
+import com.capitalbank.util.TransactionManager;
+import com.capitalbank.util.customer.BusinessException;
 
 public class AccountServiceImpl implements AccountService {
-	private AccountDao accountDao;
 
-	public void setAccountDao(AccountDao accountDao) {
+	private final AccountDao accountDao;
+
+	public AccountServiceImpl(AccountDao accountDao) {
+		if (accountDao == null) {
+			throw new IllegalArgumentException("AccountDao must not be null");
+		}
 		this.accountDao = accountDao;
 	}
 
-	@Override
-	public boolean createAccount(Account account) {
+	/* ================= ACCOUNT LIFECYCLE ================= */
 
-		try {
-			Optional<List<Account>> existingAccount = accountDao.findAccountByCustomerId(account.getCustomerId());
-			if (existingAccount.isPresent()) {
-				throw new RuntimeException("Account already exists.");
+	@Override
+	public Account openAccount(Account account) {
+		return TransactionManager.doInTransaction(connection -> {
+			validateAccountForOpen(account);
+
+			account.setActive(true);
+			account.setCreatedAt(LocalDateTime.now());
+
+			if (accountDao.findByAccountNumber(account.getAccountNumber()).isPresent()) {
+				throw new BusinessException("Account number already exists");
 			}
 
-			AccountValidator.validate(account);
-			System.out.println("Account verification successful");
+			boolean saved = accountDao.save(account);
+			if (!saved) {
+				throw new BusinessException("Failed to open account");
+			}
 
-			return accountDao.save(account);
-		} catch (AccountValidationException e) {
-			throw new AccountValidationException("Account verification failed: " + e.getMessage());
-		}
-
+			return account;
+		});
 	}
 
 	@Override
-	public Optional<List<Account>> findAll() {
-		Optional<List<Account>> existingAccounts = accountDao.findAllAccount();
-		if (existingAccounts.isEmpty()) {
-			throw new RuntimeException("No Account exists.");
-		}
-		return existingAccounts;
+	public boolean closeAccount(long accountId) {
+		return TransactionManager.doInTransaction(connection -> {
+			Account account = getActiveAccount(accountId);
+
+			if (!account.isActive()) {
+				throw new BusinessException("Account is already closed");
+			}
+
+			if (account.getBalance() != 0) {
+				throw new BusinessException("Account balance must be zero to close account");
+			}
+
+			account.setActive(false);
+
+			return accountDao.updateByAccountId(accountId, account);
+		});
 	}
 
 	@Override
-	public Optional<Account> findAccount(String accountNumber) {
+	public boolean activateAccount(long accountId) {
+		return TransactionManager.doInTransaction(connection -> {
+			Account account = getAccountOrThrow(accountId);
 
-		if (accountNumber.length() != 12) {
-			throw new RuntimeException("Invalid account number...");
-		}
+			if (account.isActive()) {
+				throw new BusinessException("Account is already active");
+			}
 
-		Optional<Account> existingAccount = accountDao.findByAccountNumber(accountNumber);
-		if (existingAccount.isEmpty()) {
-			throw new RuntimeException("Account doesn't exist.");
-		}
-		return existingAccount;
+			account.setActive(true);
+
+			return accountDao.updateByAccountId(accountId, account);
+		});
+	}
+
+	/* ================= QUERY ================= */
+
+	@Override
+	public Optional<Account> getAccountById(long accountId) {
+		validateAccountId(accountId);
+		return accountDao.findByAccountId(accountId);
 	}
 
 	@Override
-	public boolean updateAccount(String accountNumber, Account account) {
-
-		try {
-			AccountValidator.validate(account);
-			System.out.println("Account verification successful.");
-
-			if (accountNumber.length() != 12) {
-				throw new RuntimeException("Invalid account number.");
-			}
-
-			Optional<Account> existingAccount = findAccount(accountNumber);
-			if (existingAccount.isEmpty()) {
-				return false;
-			}
-
-			return accountDao.updateByAccountNumber(accountNumber, account);
-		} catch (AccountValidationException e) {
-			throw new AccountValidationException("Account verification failed." + e.getMessage());
-		}
-
+	public Optional<Account> getAccountByNumber(String accountNumber) {
+		validateAccountNumber(accountNumber);
+		return accountDao.findByAccountNumber(accountNumber);
 	}
 
 	@Override
-	public boolean deleteAccount(String accountNumber, Account account) {
-
-		try {
-			AccountValidator.validate(account);
-			System.out.println("Account verification successful.");
-
-			if (accountNumber.length() != 12) {
-				throw new RuntimeException("Invalid account number.");
-			}
-
-			Optional<Account> existingAccount = findAccount(accountNumber);
-			if (existingAccount.isEmpty()) {
-				return false;
-			}
-
-			return accountDao.deleteByAccountNumber(accountNumber);
-
-		} catch (AccountValidationException e) {
-			throw new AccountValidationException("Account verification failed." + e.getMessage());
+	public List<Account> getAccountsByCustomer(long customerId) {
+		if (customerId <= 0) {
+			throw new BusinessException("Invalid customer ID");
 		}
+		return accountDao.findAccountByCustomerId(customerId).orElse(List.of());
+	}
+
+	@Override
+	public List<Account> getAllAccounts() {
+		return accountDao.findAllAccount().orElse(List.of());
+	}
+
+	/* ================= FINANCIAL OPERATIONS ================= */
+
+	@Override
+	public void credit(long accountId, double amount) {
+		validateAmount(amount);
+
+		Account account = getActiveAccount(accountId);
+
+		double newBalance = account.getBalance() + amount;
+		account.setBalance(newBalance);
+		TransactionManager.doInTransaction((connection) -> {
+			accountDao.updateByAccountId(accountId, account);
+		});
+	}
+
+	@Override
+	public void debit(long accountId, double amount) {
+		TransactionManager.doInTransaction(connection -> {
+			validateAmount(amount);
+
+			Account account = getActiveAccount(accountId);
+
+			double currentBalance = account.getBalance();
+
+			if (currentBalance < amount) {
+				throw new BusinessException("Insufficient balance");
+			}
+
+			account.setBalance(currentBalance - amount);
+
+			accountDao.updateByAccountId(accountId, account);
+		});
+	}
+
+	/**
+	 * Atomic fund transfer (business-level). DB-level transaction management will
+	 * be added next.
+	 */
+	@Override
+	public void transfer(long fromAccountId, long toAccountId, double amount) {
+		TransactionManager.doInTransaction(connection -> {
+			if (fromAccountId == toAccountId) {
+				throw new BusinessException("Source and destination accounts cannot be same");
+			}
+
+			validateAmount(amount);
+
+			Account fromAccount = getActiveAccount(fromAccountId);
+			Account toAccount = getActiveAccount(toAccountId);
+
+			double fromBalance = fromAccount.getBalance();
+
+			if (fromBalance < amount) {
+				throw new BusinessException("Insufficient balance for transfer");
+			}
+
+			// Debit source
+			fromAccount.setBalance(fromBalance - amount);
+			accountDao.updateByAccountId(fromAccountId, fromAccount);
+
+			// Credit destination
+			double toBalance = toAccount.getBalance();
+			toAccount.setBalance(toBalance + amount);
+			accountDao.updateByAccountId(toAccountId, toAccount);
+		});
 
 	}
+
+	/* ================= STATUS ================= */
+
+	@Override
+	public boolean isAccountActive(long accountId) {
+		return getAccountOrThrow(accountId).isActive();
+	}
+
+	@Override
+	public boolean accountExists(String accountNumber) {
+		return accountDao.findByAccountNumber(accountNumber).isPresent();
+	}
+
+	/* ================= INTERNAL HELPERS ================= */
+
+	private Account getAccountOrThrow(long accountId) {
+		validateAccountId(accountId);
+		return accountDao.findByAccountId(accountId).orElseThrow(() -> new BusinessException("Account not found"));
+	}
+
+	private Account getActiveAccount(long accountId) {
+		Account account = getAccountOrThrow(accountId);
+		if (!account.isActive()) {
+			throw new BusinessException("Account is inactive");
+		}
+		return account;
+	}
+
+	private void validateAccountForOpen(Account account) {
+		if (account == null) {
+			throw new BusinessException("Account must not be null");
+		}
+		if (account.getCustomerId() <= 0) {
+			throw new BusinessException("Invalid customer ID");
+		}
+		validateAccountNumber(account.getAccountNumber());
+		if (account.getBalance() < 0) {
+			throw new BusinessException("Initial balance cannot be negative");
+		}
+	}
+
+	private void validateAccountId(long accountId) {
+		if (accountId <= 0) {
+			throw new BusinessException("Invalid account ID");
+		}
+	}
+
+	private void validateAccountNumber(String accountNumber) {
+		if (accountNumber == null || accountNumber.isBlank()) {
+			throw new BusinessException("Account number is required");
+		}
+	}
+
+	private void validateAmount(double amount) {
+		if (amount <= 0) {
+			throw new BusinessException("Amount must be greater than zero");
+		}
+	}
+
 }

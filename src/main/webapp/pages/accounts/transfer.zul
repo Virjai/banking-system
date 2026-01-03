@@ -115,13 +115,12 @@
             border="normal"
             width="40vw"
             sclass="form-window"
-           >
-<!--             apply="com.pg.zk.bank.TransferComposer"
- -->
+            apply="">
+
         <vlayout sclass="center-layout" style="padding: 16px;">
 
-            <label value="Transfer Money"
-                   style="font-size:20px;font-weight:700;color:#333;text-align:center;"/>
+            <!-- <label value="Transfer Money"
+                   style="font-size:20px;font-weight:700;color:#333;text-align:center;"/> -->
 
             <!-- From Account -->
             <hbox sclass="form-row" hflex="1">

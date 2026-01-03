@@ -6,20 +6,22 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.capitalbank.dao.CustomerDao;
+import com.capitalbank.daoImpl.CustomerDaoImpl;
 import com.capitalbank.model.Customer;
 import com.capitalbank.security.PasswordUtil;
 import com.capitalbank.service.CustomerService;
+import com.capitalbank.util.TransactionManager;
 
 public class CustomerServiceImpl implements CustomerService {
-	private CustomerDao customerDao;
-	private BCryptPasswordEncoder passwordEncoder;
+	private CustomerDao customerDao = new CustomerDaoImpl();
+//	private BCryptPasswordEncoder passwordEncoder;
 
 	public void setCustomerDao(CustomerDao customerDao) {
 		this.customerDao = customerDao;
 	}
-	public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
+//	public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
+//        this.passwordEncoder = passwordEncoder;
+//    }
 
 	/*
 	 * =============================== AUTHENTICATION (Spring Security)
@@ -27,8 +29,11 @@ public class CustomerServiceImpl implements CustomerService {
 	 */
 	@Override
 	public Customer loadByEmailForAuth(String email) {
-		return customerDao.findByEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException("Customer not found with email: " + email));
+		return TransactionManager.doInTransaction((connection) -> {
+			return customerDao.findByEmail(email)
+					.orElseThrow(() -> new UsernameNotFoundException("Customer not found with email: " + email));
+		});
+
 	}
 
 	/*
@@ -36,18 +41,22 @@ public class CustomerServiceImpl implements CustomerService {
 	 */
 	@Override
 	public boolean register(Customer customer) {
-		if (customerDao.findByEmail(customer.getEmail()).isPresent()) {
-			throw new IllegalStateException("Email already registered");
-		}
+		return TransactionManager.doInTransaction(connection -> {
+			if (customerDao.findByEmail(customer.getEmail()).isPresent()) {
+				throw new IllegalStateException("Email already registered");
+			}
 
-		// Hash password
-		customer.setPassword(
-	            passwordEncoder.encode(customer.getPassword())
-	        );
-		customer.setRole(Customer.Role.USER); // Default role
-		customer.setActive(true); // Default active
+			// Hash password
+			customer.setPassword(customer.getPassword());
 
-		return customerDao.saveCustomer(customer);
+//			customer.setPassword(
+//		            passwordEncoder.encode(customer.getPassword())
+//		        );
+			customer.setRole(Customer.Role.USER); // Default role
+			customer.setActive(true); // Default active
+
+			return customerDao.saveCustomer(customer);
+		});
 	}
 
 	/*
@@ -56,6 +65,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customer findByEmail(String email) {
 		return customerDao.findByEmail(email).orElse(null);
+
 	}
 
 	@Override
@@ -65,7 +75,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public boolean updateMyProfile(Customer customer) {
-		return customerDao.updateCustomer(customer);
+		return TransactionManager.doInTransaction(connection -> {
+			return customerDao.updateCustomer(customer);
+		});
 	}
 
 	/*
@@ -73,17 +85,24 @@ public class CustomerServiceImpl implements CustomerService {
 	 */
 	@Override
 	public Customer getCustomerById(long customerId) {
-		return customerDao.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
+		return TransactionManager.doInTransaction(connection -> {
+			return customerDao.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
+		});
 	}
 
 	@Override
 	public List<Customer> getAllCustomers() {
-		return customerDao.findAll().orElse(List.of());
+		return TransactionManager.doInTransaction(connection -> {
+			return customerDao.findAll().orElse(List.of());
+		});
 	}
 
 	@Override
 	public boolean deleteCustomer(long customerId) {
-		return customerDao.deleteCustomer(customerId);
+		return TransactionManager.doInTransaction(connection -> {
+			return customerDao.deleteCustomer(customerId);
+
+		});
 	}
 
 	/*
@@ -92,12 +111,14 @@ public class CustomerServiceImpl implements CustomerService {
 	 */
 	@Override
 	public Customer login(String email, String rawPassword) {
-		Customer customer = customerDao.findByEmail(email).orElse(null);
+		return TransactionManager.doInTransaction(connection -> {
+			Customer customer = customerDao.findByEmail(email).orElse(null);
 
-		if (customer == null)
-			return null;
+			if (customer == null)
+				return null;
 
-		boolean match = PasswordUtil.isPasswordCorrect(rawPassword, customer.getPassword());
-		return match ? customer : null;
+			boolean match = PasswordUtil.validatePassword(rawPassword, customer.getPassword());
+			return match ? customer : null;
+		});
 	}
 }

@@ -1,164 +1,118 @@
-<?page title="Login" contentType="text/html;charset=UTF-8"?>
-<zk xmlns:h="native">
+<!-- <?page title="Login" contentType="text/html;charset=UTF-8"?>
+<zk >
 
-    <style>
-        html, body {
-            min-height: 100% !important;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            margin: 0;
-            padding: 0;
-            background-attachment: fixed;
-            overflow-y: auto !important;
-            font-family: "Segoe UI", sans-serif;
-        }
+	<style>
+		html, body { min-height: 100% !important; background:
+		linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+		margin: 0; padding: 0; background-attachment: fixed; overflow-y:
+		auto !important; font-family: "Segoe UI", sans-serif; }
 
-        .z-window,
-        .z-window-embedded,
-        .z-window-embedded .z-window-content {
-            padding: 0;
-            box-shadow: none !important;
-            border: none !important;
-            background: transparent !important;
-        }
+		.z-window, .z-window-embedded, .z-window-embedded
+		.z-window-content { padding: 0; box-shadow: none !important;
+		border: none !important; background: transparent !important; }
 
-        .login-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+		.login-wrapper { display: flex; justify-content: center;
+		align-items: center; min-height: 100vh; }
 
-        .login-card {
-            width: 380px;
-            background: rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            backdrop-filter: blur(12px);
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
+		.login-card { width: 380px; background: rgba(255, 255, 255,
+		0.3); border: 1px solid rgba(255, 255, 255, 0.3); border-radius:
+		20px; backdrop-filter: blur(12px); padding: 40px; text-align:
+		center; box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
 
-        .title-text {
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            margin-bottom: 45px;
-        }
+		.title-text { font-size: 24px; font-weight: bold; color: white;
+		margin-bottom: 45px; }
 
-        .input-box {
-            width: 100%;
-            margin-bottom: 20px;
-        }
+		.input-box { width: 100%; margin-bottom: 20px; }
 
-        .password-wrapper {
-            width: 100%;
-            padding: 0 12px;
-            background: white;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            display: flex;
-            align-items: center;
-        }
+		.password-wrapper { width: 100%; padding: 0 12px; background:
+		white; border-radius: 5px; border: 1px solid #ccc; display:
+		flex; align-items: center; }
 
-        .password-wrapper input {
-            border: none !important;
-            background: transparent !important;
-            outline: none !important;
-            box-shadow: none !important;
-            width: 100%;
-            padding: 8px;
-        }
+		.password-wrapper input { border: none !important; background:
+		transparent !important; outline: none !important; box-shadow:
+		none !important; width: 100%; padding: 8px; }
 
-        .icon-btn {
-            background: transparent !important;
-            border: none !important;
-            cursor: pointer;
-            margin-left: 8px;
-            color: gray !important;
-        }
+		.icon-btn { background: transparent !important; border: none
+		!important; cursor: pointer; margin-left: 8px; color: gray
+		!important; }
 
-        .footer-text {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #444;
-        }
-    </style>
+		.footer-text { margin-top: 20px; font-size: 12px; color: #444; }
+	</style>
 
-    <window border="normal" apply="com.capitalbank.controller.customers.LoginController">
+	<window border="normal">
 
-        <div sclass="login-wrapper">
-            <vbox sclass="login-card" spacing="15px" align="center">
+		<div sclass="login-wrapper">
+			<vbox sclass="login-card" spacing="15px" align="center">
 
-                <label value="Welcome to Capital Bank of Prestige"
-                       sclass="title-text"/>
+				<label value="Welcome to Capital Bank of Prestige"
+					sclass="title-text" />
 
-                <!-- 🔑 SPRING SECURITY FORM -->
-                <h:form action="j_spring_security_check" method="POST">
+				🔑 SPRING SECURITY FORM
 
-                    <!-- EMAIL -->
-                    <hbox sclass="password-wrapper input-box">
-                        <h:input type="text"
-                                 name="j_username"
-                                 placeholder="Enter Email"/>
-                    </hbox>
 
-                    <!-- PASSWORD -->
-                    <hbox sclass="password-wrapper input-box">
-                        <h:input type="password"
-                                 id="pwd"
-                                 name="j_password"
-                                 placeholder="Enter Password"/>
+<html:form action="j_spring_security_check" method="POST"
+        xmlns:html="native">
 
-                        <button type="button"
-                                sclass="icon-btn"
-                                id="togglePwd">
-                            👁
-                        </button>
-                    </hbox>
+					EMAIL
+					<hbox sclass="password-wrapper input-box">
+					<html:input type="text"
+					name="j_username"
+					placeholder="Enter Email"/>
+					</hbox>
 
-                    <!-- LOGIN BUTTON -->
-                    <h:button type="submit"
-                              style="width:100%;
-                                     background:#0093F9;
-                                     color:white;
-                                     border-radius:10px;
-                                     padding:8px;">
-                        Login
-                    </h:button>
+					PASSWORD
+					<hbox sclass="password-wrapper input-box">
+					<html:input type="password"
+					id="pwd"
+					name="j_password"
+					placeholder="Enter Password"/>
 
-                </h:form>
+					<button type="button"
+					sclass="icon-btn"
+					id="togglePwd">
+					👁
+					</button>
+					</hbox>
 
-                <!-- ERROR MESSAGE -->
-                <label id="errorLabel"
-       value="Invalid email or password"
-       style="color:red"
-       visible="false"/>
+					LOGIN BUTTON
+					<html:button type="submit"
+					style="width:100%;
+					background:#0093F9;
+					color:white;
+					border-radius:10px;
+					padding:8px;">
+					Login
+					</html:button>
 
-                <hbox spacing="20px" style="margin-top:15px;">
-                    <a href="ForgotPassword.zul">Forgot Password?</a>
-                    <label value="|" />
-                    <a href="SignUp.zul">New User?</a>
-                </hbox>
+					</html:form>
 
-                <label sclass="footer-text"
-                       value="© 2025 Capital Bank of Prestige Pvt. Ltd."/>
+				ERROR MESSAGE
+				<label id="errorLabel" value="Invalid email or password"
+					style="color:red" visible="false" />
 
-            </vbox>
-        </div>
+				<hbox spacing="20px" style="margin-top:15px;">
+					<a href="ForgotPassword.zul">Forgot Password?</a>
+					<label value="|" />
+					<a href="SignUp.zul">New User?</a>
+				</hbox>
 
-    </window>
+				<label sclass="footer-text"
+					value="© 2025 Capital Bank of Prestige Pvt. Ltd." />
 
-    <!-- SHOW / HIDE PASSWORD -->
-    <script><![CDATA[
-        zk.afterMount(function () {
-            var btn = jq('#togglePwd');
-            var pwd = jq('#pwd');
-            btn.on('click', function () {
-                pwd.attr('type', pwd.attr('type') === 'password' ? 'text' : 'password');
-            });
-        });
-    ]]></script>
+			</vbox>
+		</div>
+
+	</window>
+
+	SHOW / HIDE PASSWORD
+	<script>
+		<![CDATA[ zk.afterMount(function () { var btn =
+		jq('#togglePwd'); var pwd = jq('#pwd'); btn.on('click', function
+		() { pwd.attr('type', pwd.attr('type') === 'password' ? 'text' :
+		'password'); }); }); ]]>
+	</script>
 
 
 </zk>
+
+  -->

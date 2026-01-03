@@ -12,7 +12,7 @@ public class Account {
 	private double balance;
 	private LocalDateTime createdAt;
 	private boolean isActive;
-	
+
 	private List<Transaction> transactionList;
 	public static final String IFSC = "CBOP000002";
 

@@ -1,142 +1,183 @@
-<?page title="Profile" contentType="text/html;charset=UTF-8"?>
+<?page title="Personal Information" contentType="text/html;charset=UTF-8"?>
+
 <zk>
 
-    <style>
-        html, body {
-            min-height: 100% !important;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            margin: 0;
-            padding: 0;
-            background-attachment: fixed;
-            overflow-y: auto !important;
-        }
+<style>
+    html, body {
+        min-height: 100% !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        margin: 0;
+        padding: 0;
+        background-attachment: fixed;
+        overflow-y: auto !important;
+        font-family: "Segoe UI", sans-serif;
+    }
 
-        /* Remove container background of window */
-        .z-window, .z-window-embedded, .z-window-embedded .z-window-content {
-            box-shadow: none !important;
-            border: none !important;
-            padding: 0px;
-        }
+    /* Remove default ZK window styling */
+    .z-window, .z-window-embedded, .z-window-embedded .z-window-content {
+        padding: 0px;
+        box-shadow: none !important;
+        border: none !important;
+        overflow-y: auto !important;
+    }
 
-        .profile-card {
-            background: rgba(255,255,255,0.25);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 18px;
-            backdrop-filter: blur(14px);
-            padding: 30px 40px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-            margin: 30px auto;
-            width: 90%;
-        }
+    .profile-card {
+        background: rgba(255,255,255,0.25);
+        border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 18px;
+        backdrop-filter: blur(14px);
+        padding: 30px 40px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+        margin: 40px auto;
+        width: 90%;
+        max-width: 600px;
+    }
 
-        .title-text {
-            font-size: 22px;
-            font-weight: bold;
-            color: white;
-            text-align: center;
-            margin-bottom: 25px;
-            display: block;
-        }
+    .title-text {
+        font-size: 22px;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        display: block;
+        margin-bottom: 15px;
+    }
 
-        .label-col {
-            color: white;
-            font-weight: bold;
-            width: 170px;
-            font-size : 18px;
-        }
+    .label-col {
+        width: 170px;
+        min-width: 170px;
+        text-align: right;
+        color: black;
+        font-weight: bold;
+        font-size: 18px;
+    }
 
-        .profile-pic-box {
-            width: 180px;
-            height: 180px;
-            border-radius: 15px;
-            background: rgba(255,255,255,0.7);
-            border: 2px solid rgba(255,255,255,0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #444;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-        }
+    .value-col {
+        font-size: 18px;
+        color: black;
+        padding-left: 15px;
+        word-wrap: break-word;
+        max-width: 320px;
+    }
 
-        .btn {
-            background: #667eea;
-            color: white;
-            border-radius: 10px;
-            padding: 10px 20px;
-        }
-    </style>
+    .profile-image-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
 
-    <!-- FIX: remove height, add vflex for scroll -->
-    <window border="normal" vflex="1" style="overflow-y:auto;">
+    .profile-pic-box {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.7);
+    	border: 2px solid rgba(255,255,255,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #444;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    }
 
-        <vlayout class="profile-card" spacing="25px">
+    .btn {
+        background: #667eea;
+        color: white;
+        border-radius: 10px;
+        padding: 10px 20px;
+    }
 
-            <label value="Personal Information" sclass="title-text"/>
+    .form-center {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
 
-            <hbox spacing="40px" hflex="1" style="align-items:flex-start;">
+    .form-box {
+        width: 100%;
+        max-width: 520px;
+    }
 
-               <vbox spacing="15px" hflex="1">
+    .center-items {
+        align-items: center;
+    }
+</style>
 
-    <hbox spacing="20px" hflex="1">
-        <label value="Full Name:" sclass="label-col"/>
-        <label value="Navin Kumar Saurabh"/>
-    </hbox>
+<window apply="com.capitalbank.controller.customers.ProfileController" border="none" vflex="1">
 
-    <hbox spacing="20px" hflex="1">
-        <label value="Email:" sclass="label-col"/>
-        <label value="navin.kumarsaurabh@imageinfosystems.com"/>
-    </hbox>
+    <vlayout sclass="profile-card">
 
-    <hbox spacing="20px" hflex="1">
-        <label value="Phone:" sclass="label-col"/>
-        <label value="9708152404"/>
-    </hbox>
+        <label value="Personal Information" sclass="title-text" />
 
-    <hbox spacing="20px" hflex="1">
-        <label value="Account No:" sclass="label-col"/>
-        <label value="1234567890"/>
-    </hbox>
+        <!-- PROFILE IMAGE -->
+        <div sclass="profile-image-wrapper">
+            <image id="profileImage"  sclass="profile-pic-box" />
+        </div>
 
-    <hbox spacing="20px" hflex="1">
-        <label value="Date of Birth:" sclass="label-col"/>
-        <label value="01-01-1992"/>
-    </hbox>
+        <!-- DETAILS SECTION -->
+        <div sclass="form-center">
+            <vbox spacing="16px" sclass="form-box">
 
-    <hbox spacing="20px" hflex="1">
-        <label value="Country:" sclass="label-col"/>
-        <label value="India"/>
-    </hbox>
-
-                <hbox spacing="20px" hflex="1">
-                    <label value="State:" sclass="label-col"/>
-                    <label value="Bihar"/>
+                <hbox sclass="center-items" hflex="1">
+                    <label value="Full Name:" sclass="label-col" hflex="1"/>
+                    <label id="lblName" sclass="value-col" hflex="2"/>
                 </hbox>
 
-                <hbox spacing="20px" hflex="1">
-                    <label value="City:" sclass="label-col"/>
-                    <label value="Patna"/>
+                <hbox sclass="center-items" hflex="1">
+                    <label value="Email:" sclass="label-col" hflex="1"/>
+                    <label id="lblEmail" sclass="value-col" hflex="2"/>
                 </hbox>
 
-                <hbox spacing="20px" hflex="1">
-                    <label value="Pincode:" sclass="label-col"/>
-                    <label value="800001"/>
+                <hbox sclass="center-items" hflex="1">
+                    <label value="Date of Birth:" sclass="label-col" hflex="1"/>
+                    <label id="lblDob" sclass="value-col" hflex="2"/>
                 </hbox>
-</vbox>
 
+                <hbox sclass="center-items" hflex="1">
+                    <label value="Phone:" sclass="label-col" hflex="1"/>
+                    <label id="lblPhone" sclass="value-col" hflex="2"/>
+                </hbox>
 
-                <vbox align="center">
-                    <div class="profile-pic-box">Image Here</div>
-                </vbox>
+                <hbox sclass="center-items" hflex="1">
+                    <label value="Address:" sclass="label-col" hflex="1"/>
+                    <label id="lblAddress" sclass="value-col" hflex="2"/>
+                </hbox>
 
-            </hbox>
+                <hbox sclass="center-items" hflex="1">
+                    <label value="City:" sclass="label-col" hflex="1"/>
+                    <label id="lblCity" sclass="value-col" hflex="2"/>
+                </hbox>
 
-            <hbox spacing="25px" align="center" style="margin-top:20px;">
-                <button label="Update Profile" sclass="btn"/>
-                <button label="Change Password" sclass="btn"/>
-            </hbox>
+                <hbox sclass="center-items" hflex="1">
+                    <label value="State:" sclass="label-col" hflex="1"/>
+                    <label id="lblState" sclass="value-col" hflex="2"/>
+                </hbox>
 
-        </vlayout>
+                <hbox sclass="center-items" hflex="1">
+                    <label value="Country:" sclass="label-col" hflex="1"/>
+                    <label id="lblCountry" sclass="value-col" hflex="2"/>
+                </hbox>
 
-    </window>
+                <hbox sclass="center-items" hflex="1">
+                    <label value="Pincode:" sclass="label-col" hflex="1"/>
+                    <label id="lblPincode" sclass="value-col" hflex="2"/>
+                </hbox>
+
+            </vbox>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <vbox align="center" pack="center">
+        <hbox spacing="25px" align="center" pack="center" style="margin-top:25px;">
+            <button label="Update Profile" sclass="btn" id="updateProfile"
+        onClick='mainContent.setSrc("update_profile.zul");'/>
+
+            <button label="Change Password" sclass="btn" id="changePassword"
+                onClick='mainContent.setSrc("change_password.zul");' />
+        </hbox>
+        </vbox>
+
+    </vlayout>
+
+</window>
+
 </zk>

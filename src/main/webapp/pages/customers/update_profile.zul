@@ -1,0 +1,193 @@
+<?page title="User Profile" contentType="text/html;charset=UTF-8"?>
+
+<zk>
+
+<style>
+    html, body {
+        min-height: 100% !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        margin: 0;
+        padding: 0;
+        background-attachment: fixed;
+        overflow-y: auto !important;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    /* Remove default ZK window styling */
+    .z-window, .z-window-embedded, .z-window-embedded .z-window-content {
+        padding: 0px;
+        box-shadow: none !important;
+        border: none !important;
+        overflow-y: auto !important;
+    }
+
+    .profile-card {
+        background: rgba(255,255,255,0.25);
+        border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 18px;
+        backdrop-filter: blur(14px);
+        padding: 30px 40px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+        margin: 40px auto;
+        width: 90%;
+        max-width: 500px;
+    }
+
+    .title-text {
+        font-size: 22px;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        display: block;
+    }
+
+    .label-col {
+        width: 170px;
+        min-width: 170px;
+        text-align: right;
+        color: black;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .editBox {
+        border-radius: 8px;
+        padding: 6px 10px;
+        width: 320px;
+
+    }
+
+    /* Image centering handled here */
+    .profile-image-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .profile-pic-box {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.7);
+        border: 2px solid rgba(255,255,255,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #444;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        margin-bottom: 10px;
+        margin-right: 30px
+    }
+
+<!--         background: #667eea; -->
+    .btn {
+        color: white;
+        border-radius: 10px;
+        padding: 10px 20px;
+    }
+
+    /* Center form section */
+    .form-center {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .form-box {
+        width: 650px;
+    }
+
+    .center-items {
+        align-items: center;
+    }
+</style>
+
+<!-- NO INLINE STYLING ON WINDOW -->
+<window border="normal" vflex="1" apply="com.capitalbank.controller.customers.UpdateProfileController">
+
+    <vlayout sclass="profile-card" >
+
+        <label value="Update Profile" sclass="title-text" />
+
+        <!-- PROFILE IMAGE : PERFECTLY CENTERED -->
+        <div sclass="profile-image-wrapper">
+        <hbox align="center">
+            <image id="profileImg"  sclass="profile-pic-box" />
+            <button id="uploadBtn" label="Update Photo"
+                    sclass="btn" upload="true,maxsize=5000000" />
+        </hbox>
+        </div>
+
+        <!-- FORM SECTION : CENTERED -->
+        <div sclass="form-center">
+            <vbox spacing="18px" sclass="form-box">
+
+
+                <hbox hflex="1" sclass="center-items">
+                    <space hflex="1" />
+                    <label id="nameLbl" sclass="title-text" />
+                    <space hflex="1" />
+                </hbox>
+
+
+                <hbox hflex="1" sclass="center-items">
+                    <label value="Email:" sclass="label-col" />
+                    <space hflex="1" />
+                    <textbox id="emailBox" sclass="editBox" placeholder="Email" />
+                </hbox>
+
+                <hbox hflex="1" sclass="center-items">
+                    <label value="Phone:" sclass="label-col" />
+                    <space hflex="1" />
+                    <textbox id="phoneBox" sclass="editBox" placeholder="Phone" />
+                </hbox>
+
+                <hbox hflex="1" sclass="center-items">
+                    <label value="Address:" sclass="label-col" />
+                    <space hflex="1" />
+                    <textbox id="addressBox" sclass="editBox" placeholder="Address" />
+                </hbox>
+
+                <hbox hflex="1" sclass="center-items">
+                    <label value="City:" sclass="label-col" />
+                    <space hflex="1" />
+                    <textbox id="cityBox" sclass="editBox" placeholder="City" />
+                </hbox>
+
+                <hbox hflex="1" sclass="center-items">
+                    <label value="State:" sclass="label-col" />
+                    <space hflex="1" />
+                    <textbox id="stateBox" sclass="editBox" placeholder="State" />
+                </hbox>
+
+                <hbox spacing="20px" hflex="1" sclass="center-items">
+                    <label value="Pincode:" sclass="label-col" />
+                    <space hflex="1" />
+                    <textbox id="pincodeBox" sclass="editBox" placeholder="Pincode" />
+                </hbox>
+
+                <hbox spacing="20px" hflex="1" sclass="center-items">
+                    <label value="Country:" sclass="label-col" />
+                    <space hflex="1" />
+                    <textbox id="countryBox" sclass="editBox" placeholder="Country" />
+                </hbox>
+
+            </vbox>
+        </div>
+
+
+        <!-- ACTION BUTTONS -->
+        <hbox spacing="25px" align="center" style="margin-top:20px;">
+            <button id="saveBtn" label="Save Changes" sclass="btn" />
+            <button id="backBtn" label="Back" sclass="btn"
+            onClick='mainContent.setSrc("profile.zul")' />
+        </hbox>
+
+    </vlayout>
+
+</window>
+
+</zk>

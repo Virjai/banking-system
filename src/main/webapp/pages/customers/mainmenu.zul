@@ -1,147 +1,147 @@
 <?page title="Customer Profile" contentType="text/html;charset=UTF-8"?>
 <zk>
 	<style>
-		body { 
-			padding:0px; 
-			margin: 0; 
+		body {
+			padding:0px;
+			margin: 0;
 		}
 
-		.myWindow .z-window-content { 
+		.myWindow .z-window-content {
 			background: linear-gradient(135deg, #667eea 0%, #764ba2 50%,#f093fb 100%);
-			padding:0px; 
+			padding:0px;
 		}
 
-		.myWindow { 
-			background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%) 
+		.myWindow {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)
 		}
 
-		.lBankName { 
-			font-size: 25px; 
-			font-family: "Times New Roman", Times, serif; 
-			font-weight: bold; 
+		.lBankName {
+			font-size: 25px;
+			font-family: "Times New Roman", Times, serif;
+			font-weight: bold;
 			background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-			-webkit-background-clip: text; 
-			-webkit-text-fill-color: transparent; 
-			margin-left: 10px; 
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			margin-left: 10px;
 		}
 
-		.inputgroup { 
-			display: flex; 
-			align-items: center; 
-			width: 100%; 
+		.inputgroup {
+			display: flex;
+			align-items: center;
+			width: 100%;
 		}
 
-		.searchKeyword { 
-			border: 2px solid #ccc; 
-			padding: 12px 40px 12px 16px; 
-			font-size: 16px; 
-			border-radius: 30px; 
-			background-color: white; 
-			outline: none; 
-			transition: all 0.3s ease; 
+		.searchKeyword {
+			border: 2px solid #ccc;
+			padding: 12px 40px 12px 16px;
+			font-size: 16px;
+			border-radius: 30px;
+			background-color: white;
+			outline: none;
+			transition: all 0.3s ease;
 		}
 
-		.searchKeyword:focus { 
-			border-color: #5e50e6; 
-			box-shadow: 0 0 10px rgba(94, 80, 230, 0.2); 
+		.searchKeyword:focus {
+			border-color: #5e50e6;
+			box-shadow: 0 0 10px rgba(94, 80, 230, 0.2);
 		}
 
-		.searchKeyword::placeholder { 
+		.searchKeyword::placeholder {
 			color: #aaa;
 		}
 
-		.notification-btn { 
-			padding: 8px 15px; 
+		.notification-btn {
+			padding: 8px 15px;
 			border-radius: 5px;
-			border: none; 
-			color: white; 
-			cursor: pointer; 
+			border: none;
+			color: white;
+			cursor: pointer;
 			background:	linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-			transition: transform 0.2s ease, box-shadow 0.2s ease; 
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
 			}
 
-		.notification-btn:hover { 
+		.notification-btn:hover {
 			transform: translateY(-2px);
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 		}
 
-		.notification-btn:active { 
+		.notification-btn:active {
 			transform: translateY(1px);
-			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); 
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 		}
 
-		.profile-img { 
-			width: 40px; 
-			height: 40px; 
+		.profile-img {
+			width: 40px;
+			height: 40px;
 			border-radius: 50%;
-			margin-left: 10px; 
+			margin-left: 10px;
 		}
 
-		.logout-btn { 
-			font-size: 16px; 
-			padding: 8px 15px; 
-			border-radius: 30px; 
-			border: none; 
-			color: white; 
-			cursor: pointer; 
+		.logout-btn {
+			font-size: 16px;
+			padding: 8px 15px;
+			border-radius: 30px;
+			border: none;
+			color: white;
+			cursor: pointer;
 			background:	linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-			transition: transform 0.2s ease, box-shadow 0.2s ease; 
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
 		}
 
-		.logout-btn:hover { 
-			transform: translateY(-2px); 
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+		.logout-btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 		}
 
-		.logout-btn:active { 
-			transform: translateY(1px); 
-			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); 
+		.logout-btn:active {
+			transform: translateY(1px);
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 		}
 
-		.primary-btn { 
-			background: linear-gradient(135deg, #667eea 0%,	#764ba2 50%, #f093fb 100%); 
-			color: #fff; 
-			border: none; 
-			padding: 8px 18px; 
-			border-radius: 6px; 
-			font-size: 15px; 
-			cursor: pointer; 
-			transition: transform 0.2s ease, box-shadow 0.2s ease; 
+		.primary-btn {
+			background: linear-gradient(135deg, #667eea 0%,	#764ba2 50%, #f093fb 100%);
+			color: #fff;
+			border: none;
+			padding: 8px 18px;
+			border-radius: 6px;
+			font-size: 15px;
+			cursor: pointer;
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
 		}
 
-		.primary-btn:hover { 
-			transform: translateY(-2px); 
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+		.primary-btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 		}
 
-		.primary-btn:active { 
-			transform: translateY(1px); 
-			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); 
+		.primary-btn:active {
+			transform: translateY(1px);
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 		}
 
-		.z-listbox-body { 
-			background: linear-gradient(135deg, #667eea	0%, #764ba2 50%, #f093fb 100%); 
-		} 
-		
+		.z-listbox-body {
+			background: linear-gradient(135deg, #667eea	0%, #764ba2 50%, #f093fb 100%);
+		}
+
 		.z-listbox .z-listcell {
-			cursor: pointer; 
-			font-size: 16px; 
-			background: transparent; 
+			cursor: pointer;
+			font-size: 16px;
+			background: transparent;
 		}
 
-		.z-center-body { 
-			padding : 0px; 
-		} 
-		
-		.z-grid-odd> .z-row-inner, .z-grid-odd>.z-cell { 
-			background: linear-gradient(to bottom, #f0f0f0, #e0e0e0); 
+		.z-center-body {
+			padding : 0px;
 		}
-		
+
+		.z-grid-odd> .z-row-inner, .z-grid-odd>.z-cell {
+			background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+		}
+
 	</style>
 
 	<window width="100%" height="100%" sclass="myWindow"
 		style="padding: 0px; color:black;"
-		 >
+		 apply="com.capitalbank.controller.customers.CustomerProfileController">
 		<borderlayout style="background: transparent; border:0px;">
 			<north size="12%"
 				style="background: linear-gradient(to bottom, #f0f0f0, #e0e0e0); border:0px;">
@@ -151,15 +151,15 @@
 					<!-- Left Section: Logo and Bank Name -->
 					<div
 						style="display: flex; display: flex; justify-content: center; align-items: center;">
-						<image src="logo.png" width="80px"
-							height="80px" style="margin-right: 10px;" 
-							onClick='mainContent.src = "/pages/customers/dashboard.zul"' />
-						<label sclass="lBankName" onClick='mainContent.src = "/pages/customers/dashboard.zul"' >
+						<image src="/resources/images/logo.png" width="80px"
+							height="80px" style="margin-right: 10px;"
+							onClick='mainContent.setSrc("dashboard.zul")' />
+						<label sclass="lBankName" onClick='mainContent.setSrc("dashboard.zul")' >
 							CAPITAL BANK of PRESTIGE
 						</label>
 					</div>
 
-					<!-- Center Section: Search Bar -->
+					<!--  Center Section: Search Bar
 					<div visible="true"
 						style=" display: flex; justify-content: center;">
 						<div sclass="inputgroup"
@@ -172,7 +172,7 @@
 								style="border-radius: 50%; font-size: 18px; cursor: pointer; padding: 10px; background-color: #6a4cfa; color: white; border: none; margin-left: 10px;">
 							</button>
 						</div>
-					</div>
+					</div> -->
 
 					<!-- Right Section: User Info, Notification, Profile & Logout -->
 					<div style="display: flex; align-items: center;">
@@ -183,7 +183,7 @@
 						<image src="profile.jpg" width="40px" id="profileImg"
 							height="40px" style="border-radius: 50%; margin-right: 10px;" />
 						<button sclass="logout-btn"
-							onClick='Executions.sendRedirect("/pages/customers/customer-login-rorm")'
+							onClick='Executions.sendRedirect("login.zul")'
 							style="font-size: 16px; padding: 8px 15px; border-radius: 30px; background-color: #6a4cfa; color: white; border: none;">
 							Logout
 						</button>
@@ -195,33 +195,31 @@
 				<div>
 					<div
 						style="display: flex; display: flex; justify-content: center; align-items: center;">
-						<image src="/images/logo.png" width="60px"
-							height="60px" style="margin-right: 15px;" />
+						<image src="/resources/images/logo.png"
+       width="60px"
+       height="60px"
+       style="margin-right:15px;" />
 					</div>
 					<vlayout>
 						<listbox>
 							<listitem label="Dashboard"
-								onClick='mainContent.src = "/pages/customers/dashboard.zul"' />
-							 <listitem label="My Profile"  
-								onClick='mainContent.src = "/pages/customers/profile.zul"' />
+								onClick='mainContent.setSrc("dashboard.zul")' />
+							<listitem label="My Profile"
+								onClick='mainContent.setSrc("profile.zul")' />
 							<listitem label="Open Account"
-								onClick='mainContent.src = "/pages/accounts/account.zul"' />
-							<listitem label="View Accounts" 
-								onClick='mainContent.src = "/pages/accounts/accountS-summary.zul"' />
+								onClick='mainContent.setSrc("../accounts/open_account.zul")' />
+							<listitem label="View Accounts"
+								onClick='mainContent.setSrc("../accounts/account_summary.zul")' />
 							<listitem label="My Transactions"
-								onClick='mainContent.src = "/pages/transactions/transactions.zul"' />
-							<listitem label="Change Password"
-								onClick='mainContent.src = "/pages/customers/changepassword.zul"' />
-							<listitem label="Update Profile"
-								onClick='mainContent.src = "/pages/customers/updateprofile.zul"' />
-							<listitem label="Contact Us" 
-								onClick='mainContent.src = "/pages/accounts/new-account.zul"' /> 
+								onClick='mainContent.setSrc("../transactions/transactions.zul")' />
+							<listitem label="Contact Us"
+								onClick='mainContent.setSrc("update_profile.zul")' />
 						</listbox>
 					</vlayout>
 				</div>
 			</west>
-			<center style="overflow-y:scroll;">
-				<include id="mainContent" src="/pages/customers/dashboard.zul"></include>
+			<center style="overflow-y:auto;">
+				<include id="mainContent" src="dashboard.zul"></include>
 			</center>
 		</borderlayout>
 	</window>

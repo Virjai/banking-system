@@ -1,7 +1,7 @@
 package com.capitalbank.daoImpl;
 
 import java.sql.Connection;
-import java.sql.Date;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,24 +12,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.sql.DataSource;
-
-
 import com.capitalbank.dao.AccountDao;
+import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.enums.query.AccountQuery;
 import com.capitalbank.model.Account;
+import com.capitalbank.util.table.TableUtil;
 
 public class AccountDaoImpl implements AccountDao {
-	private DataSource dataSource;
-	
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
+//	private DataSource dataSource;
+//	
+//	public void setDataSource(DataSource dataSource) {
+//		this.dataSource = dataSource;
+//	}
+	private Connection connection = DBConnection.getConnection();
+
+	public AccountDaoImpl() {
+		new TableUtil().createAccountsTableIfNotExists();
 	}
+
 	@Override
 	public boolean save(Account account) {
 
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(AccountQuery.SAVE_ACCOUNT.getQuery());) {
+		try (PreparedStatement preparedStatement = connection.prepareStatement(AccountQuery.SAVE_ACCOUNT.getQuery());) {
 
 			preparedStatement.setLong(1, account.getCustomerId());
 			preparedStatement.setString(2, account.getAccountNumber());
@@ -52,8 +56,7 @@ public class AccountDaoImpl implements AccountDao {
 	public Optional<List<Account>> findAllAccount() {
 		List<Account> accounts = new ArrayList<>();
 
-		try (Connection connection = dataSource.getConnection();
-				Statement statement = connection.createStatement();
+		try (Statement statement = connection.createStatement();
 				ResultSet resultSet = statement.executeQuery(AccountQuery.SELECT_ALL_ACCOUNTS.getQuery())) {
 
 			while (resultSet.next()) {
@@ -81,8 +84,7 @@ public class AccountDaoImpl implements AccountDao {
 	public Optional<List<Account>> findAccountByCustomerId(long customerId) {
 		List<Account> accounts = new ArrayList<>();
 
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement preparedStatement = connection
+		try (PreparedStatement preparedStatement = connection
 				.prepareStatement(AccountQuery.SELECT_ALL_ACCOUNT_BY_CUSTOMER_ID.getQuery())) {
 			preparedStatement.setLong(1, customerId);
 
@@ -111,8 +113,7 @@ public class AccountDaoImpl implements AccountDao {
 	public Optional<Account> findByAccountId(long accountId) {
 
 		Account account = null;
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement preparedStatement = connection
+		try (PreparedStatement preparedStatement = connection
 				.prepareStatement(AccountQuery.SELECT_ACCOUNT_BY_ID.getQuery())) {
 
 			preparedStatement.setLong(1, accountId);
@@ -142,8 +143,7 @@ public class AccountDaoImpl implements AccountDao {
 	public Optional<Account> findByAccountNumber(String accountNumber) {
 		Account account = null;
 		ResultSet resultSet = null;
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement preparedStatement = connection
+		try (PreparedStatement preparedStatement = connection
 				.prepareStatement(AccountQuery.SELECT_ACCOUNT_BY_NUMBER.getQuery())) {
 			preparedStatement.setString(1, accountNumber);
 
@@ -176,8 +176,7 @@ public class AccountDaoImpl implements AccountDao {
 			return false;
 		}
 
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement preparedStatement = connection
+		try (PreparedStatement preparedStatement = connection
 				.prepareStatement(AccountQuery.UPDATE_BY_ACCOUNT_ID.getQuery())) {
 
 			preparedStatement.setString(1, account.getAccountType());
@@ -203,8 +202,7 @@ public class AccountDaoImpl implements AccountDao {
 
 		Account updatedAccount = null;
 		// Prepare the update statement
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement preparedStatement = connection
+		try (PreparedStatement preparedStatement = connection
 				.prepareStatement(AccountQuery.UPDATE_BY_ACCOUNT_NUMBER.getQuery())) {
 
 			preparedStatement.setString(1, account.getAccountType());
@@ -236,8 +234,7 @@ public class AccountDaoImpl implements AccountDao {
 			return false;
 		}
 
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement preparedStatement = connection
+		try (PreparedStatement preparedStatement = connection
 				.prepareStatement(AccountQuery.DELETE_BY_ACCOUNT_ID.getQuery())) {
 			preparedStatement.setLong(1, accountId);
 
@@ -259,8 +256,7 @@ public class AccountDaoImpl implements AccountDao {
 			return false;
 		}
 
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement preparedStatement = connection
+		try (PreparedStatement preparedStatement = connection
 				.prepareStatement(AccountQuery.DELETE_BY_ACCOUNT_NUMBER.getQuery())) {
 
 			preparedStatement.setString(1, accountNumber);

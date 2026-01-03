@@ -1,38 +1,39 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
 	<style>
-		
-		body { 
-			margin:0; 
-			padding:0; 
-		} 
-		
+
+		body {
+			margin:0;
+			padding:0;
+		}
+
 		.z-window, .z-window-content {
-			padding:0 !important; 
-			background:transparent !important; 
+			padding:0 !important;
+			background:transparent !important;
 		}
-		
+
 		.vlayout-bg {
-			background:linear-gradient(135deg,#667eea,#764ba2,#f093fb); 
+			background:linear-gradient(135deg,#667eea,#764ba2,#f093fb);
 		}
-		
-		.profile-img { 
-			border-radius:50%; 
-		} 
-		
-		.action-btn { 
+
+		.profile-img {
+			border-radius:50%;
+		}
+
+		.action-btn {
 			color:white;
-			width:150px; 
-			margin-right:10px; 
-			font-weight:bold; 
+			width:180px;
+			margin-right:10px;
+			font-weight:bold;
 		}
-		
-		
+
+
 	</style>
-	<window width="100%" height="100%">
+	<window width="100%" height="100%" apply="com.capitalbank.controller.customers.DashboardController">
 
 		<borderlayout>
 			<center style="overflow-y:scroll;">
+
 				<vlayout sclass="vlayout-bg">
 
 					<vbox align="center" pack="center" width="100%"
@@ -75,15 +76,15 @@
 							style="padding:20px;">
 							<button label="Fund Transfer"
 								sclass="action-btn" style="background-color:#007bff;"
-								onClick='mainContent.setSrc("Transfer.zul")' />
+								onClick='mainContent.setSrc("../accounts/transfer.zul")' />
 
 							<button label="Deposit Money"
 								sclass="action-btn" style="background-color:#28a745;"
-								onClick='mainContent.setSrc("Deposit.zul")' />
+								onClick='mainContent.setSrc("../accounts/deposit.zul")' />
 
 							<button label="Withdraw Money"
 								sclass="action-btn" style="background-color:#dc3545;"
-								onClick='mainContent.setSrc("Withdraw.zul")' />
+								onClick='mainContent.setSrc("../accounts/withdraw.zul")' />
 						</hbox>
 
 						<label value="Recent Transactions"

@@ -41,6 +41,7 @@
     .center-layout {
         display: flex;
         flex-direction: column;
+        background: rgba(255, 255, 255, 0.25);
         gap: 16px;
         width: 100%;
         align-items: stretch;
@@ -134,7 +135,7 @@
             border="normal"
             width="40vw"
             sclass="open-account-window"
-           >
+            apply="com.capitalbank.controller.accounts.OpenAccountController">
 
         <vlayout sclass="center-layout" style="padding: 16px;">
 

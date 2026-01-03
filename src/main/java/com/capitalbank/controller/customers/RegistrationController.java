@@ -1,5 +1,6 @@
 package com.capitalbank.controller.customers;
 
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
@@ -13,12 +14,12 @@ import org.zkoss.zul.Window;
 
 import com.capitalbank.model.Customer;
 import com.capitalbank.service.CustomerService;
-
+import com.capitalbank.serviceImpl.CustomerServiceImpl;
 
 public class RegistrationController extends SelectorComposer<Window> {
 	private static final long serialVersionUID = -2271757845507892423L;
 
-	private CustomerService customerService;
+	private CustomerService customerService = new CustomerServiceImpl();
 
 	@Wire
 	private Textbox tFirstName;
@@ -36,11 +37,11 @@ public class RegistrationController extends SelectorComposer<Window> {
 	@Wire
 	private Button tReset;
 
-	@Override
-	public void doAfterCompose(Window comp) throws Exception {
-		super.doAfterCompose(comp);
-		customerService = (CustomerService) SpringUtil.getBean("customerService");
-	}
+	/*
+	 * @Override public void doAfterCompose(Window comp) throws Exception {
+	 * super.doAfterCompose(comp); customerService = (CustomerService)
+	 * SpringUtil.getBean("customerService"); }
+	 */
 
 	@Listen("onClick = #tRegister")
 	public void register() {
@@ -77,6 +78,8 @@ public class RegistrationController extends SelectorComposer<Window> {
 			}
 
 			Customer customer = new Customer(firstName, lastName, email, password);
+			customer.setRole(Customer.Role.USER);
+			
 			boolean success = customerService.register(customer);
 
 			if (success) {
@@ -86,6 +89,7 @@ public class RegistrationController extends SelectorComposer<Window> {
 				tPassword.setValue("");
 				tConfirmPassword.setValue("");
 				
+				Executions.sendRedirect("login.zul");
 				Messagebox.show("Registration Successful!", "Success", Messagebox.OK, Messagebox.INFORMATION);
 			} else {
 				Messagebox.show("Registration Failed!", "Error", Messagebox.OK, Messagebox.ERROR);

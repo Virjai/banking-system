@@ -3,55 +3,55 @@ package com.capitalbank.enums.query;
 public enum AccountQuery {
 	
 	SAVE_ACCOUNT ("""
-			INSERT INTO accounts (customerId, accountNumber, accountType, balance, createdAt, isActive)
+			INSERT INTO accounts (customer_id, account_number, account_type, balance, created_at, is_active)
 			VALUES (?, ?, ?, ?, ?, ?);
 		"""),
 	
 	SELECT_ALL_ACCOUNTS ("""
-			SELECT accountId, customerId, accountNumber, accountType, balance, createdAt, isActive
+			SELECT account_id, customer_id, account_number, account_type, balance, created_at, is_active
 		 	FROM accounts;
 		"""),
 	
 	SELECT_ALL_ACCOUNT_BY_CUSTOMER_ID("""
-			SELECT accountId, accountNumber, accountType, balance, 
-			createdAt, isActive FROM accounts WHERE customerId = ?
+			SELECT account_id, account_number, account_type, balance, 
+			created_at, is_active FROM accounts WHERE customer_id = ?
 		"""),
 	
 	SELECT_ACCOUNT_BY_ID("""
-			SELECT accountId, customerId, accountNumber, accountType, balance, createdAt, isActive
+			SELECT account_id, customer_id, account_number, account_type, balance, created_at, is_active
 			FROM accounts
-			WHERE accountId = ?
+			WHERE account_id = ?
 	    """),
 	
 	SELECT_ACCOUNT_BY_NUMBER ("""
-			SELECT accountId, customerId, accountNumber, accountType, balance, 
-			createdAt, isActive FROM accounts WHERE accountNumber = ?
+			SELECT account_id, customer_id, account_number, account_type, balance, 
+			created_at, is_active FROM accounts WHERE account_number = ?
 		"""),
 	
 	UPDATE_BY_ACCOUNT_ID ("""
 			UPDATE accounts
 			SET 
-			    accountType = ?, 
+			    account_type = ?, 
 			    balance = ?, 
-			    isActive = ?
-			WHERE accountId = ?;
+			    is_active = ?
+			WHERE account_id = ?;
 		"""),
 	
 	UPDATE_BY_ACCOUNT_NUMBER ("""
 			UPDATE accounts
 			SET 
-			    accountType = ?, 
+			    account_type = ?, 
 			    balance = ?, 
-			    isActive = ?
-			WHERE accountNumber = ?;
+			    is_active = ?
+			WHERE account_number = ?;
 		"""),
 	
 	DELETE_BY_ACCOUNT_NUMBER ("""
- 			DELETE FROM customers WHERE accountNumber = ?
+ 			DELETE FROM customers WHERE account_number = ?
 	"""),
 	
 	DELETE_BY_ACCOUNT_ID ("""
-			DELETE FROM customers WHERE accountId = ?
+			DELETE FROM customers WHERE account_id = ?
 	""");
 
 

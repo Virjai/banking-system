@@ -1,4 +1,4 @@
-<?page title="Account Summary" contentType="text/html;charset=UTF-8"?>
+<?page title="Transaction History" contentType="text/html;charset=UTF-8"?>
 <zk>
 
 <style>
@@ -83,10 +83,10 @@
 
     .action-btn {
         padding: 10px 0;
-        color: white;
+        color:white;
         padding: 10px 16px;
-        margin-right: 10px;
-        font-weight: bold;
+		margin-right:10px; 
+		font-weight:bold; 
         border-radius: 6px;
         border: none;
         cursor: pointer;
@@ -124,28 +124,35 @@
 </style>
 
 <div sclass="page">
-    <window title="Account Summary"
+    <window title="Transaction History"
             border="normal"
             width="70vw"
             sclass="form-window"
-            >
+            apply="">
 
         <vlayout sclass="center-layout" style="padding: 16px;">
 
-            <label value="Your Bank Accounts"
-                   style="font-size:22px; font-weight:bold; margin-bottom:15px; text-align:center;"/>
+   
 
-            <!-- Account Summary Grid -->
-            <grid width="100%" mold="paging" pageSize="10">
+            <!-- Select Account -->
+            <hbox sclass="form-row" hflex="1">
+                <label sclass="form-label" value="Select Account:" hflex="1"/>
+                <combobox sclass="form-input" id="accountCombo" hflex="2" placeholder="Select Account">
+                    <!-- comboitem can be dynamically populated -->
+                </combobox>
+            </hbox>
+
+            <separator spacing="20px"/>
+
+            <!-- Transactions Grid -->
+            <grid width="100%" mold="paging" pageSize="10" id="txnGrid">
                 <columns>
-                    <column label="Account No" width="28%"/>
-                    <column label="Type" width="25%"/>
+                    <column label="Date" width="20%"/>
+                    <column label="Description" width="40%"/>
+                    <column label="Amount" width="20%"/>
                     <column label="Balance" width="20%"/>
-                    <!-- <column label="PAN" width="20%"/>
-                    <column label="GST" width="15%"/> -->
-                    <column label="Created Date" width="27%"/>
                 </columns>
-                <rows id="summaryRows"/>
+                <rows id="txnRows"/>
             </grid>
 
             <separator spacing="20px"/>
@@ -154,7 +161,7 @@
             <hbox sclass="action-buttons" style="padding-bottom: 16px;">
                 <button label="Back to Dashboard"
                         sclass="action-btn btn-primary"
-                        onClick='Executions.sendRedirect("UserProfile.zul")'/>
+                        onClick='Executions.sendRedirect("MainMenu.zul")'/>
             </hbox>
 
         </vlayout>

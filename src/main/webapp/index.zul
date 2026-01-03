@@ -105,6 +105,7 @@
                 color: rgba(255, 255, 255, 0.7);
             }
         </style>
+        
 		<window border="none">
 
 			<hbox width="100%"
@@ -129,13 +130,12 @@
 				</hbox>
 
 				<hbox spacing="12px" pack="end">
-					<button id="bLogIn" label="LOGIN" sclass="login-btn"
+					<button id="bLogIn" label="Sign In" sclass="login-btn"
 						iconSclass="z-icon-sign-in" visible="true"
-						onClick='Executions.sendRedirect("/pages/customers/customer-login-form.zul")' />
-					<button id="bRegister" label="REGISTER"
+						onClick='Executions.sendRedirect("/pages/customers/login.zul")' />
+					<button id="bRegister" label="Sign Up"
 						sclass="signup-btn" iconSclass="z-icon-user-plus" visible="true" 
-						onClick='Executions.sendRedirect("/pages/customers/customer-registration-form.zul")'/>
-
+						onClick='Executions.sendRedirect("/pages/customers/customer-registration-form.zul")'/> 
 					<button id="bProfile" label="PROFILE"
 						sclass="profile-btn" iconSclass="z-icon-user" visible="false" />
 				</hbox>
@@ -214,7 +214,6 @@
 
 			</div>
 
-
 			<div sclass="footer">
 				<label
 					value="© 2025 Capital Bank of Prestige, All rights reserved."
@@ -222,16 +221,12 @@
 			</div>
 
 			<script>
-
-				
 				<![CDATA[ zk.afterMount(function() { var cards =
 				[jq('$card1'), jq('$card2'), jq('$card3'),
 				jq('$card4')]; var index = 0; setInterval(function() {
 				cards.forEach(c => c.css('opacity', '0'));
 				cards[index].css('opacity', '1'); index = (index + 1) %
 				cards.length; }, 2500); }); ]]>
-				
-
         </script>
 		</window>
 	</div>

@@ -126,13 +126,13 @@
             border="normal"
             width="40vw"
             sclass="form-window"
-            >
+            apply="">
 
         <vlayout sclass="center-layout" style="padding: 16px;">
 
-            <label value="Deposit Money"
+           <!-- <label value="Deposit Money"
                    style="font-size:20px;font-weight:700;color:#333;text-align:center;"/>
-
+ -->
             <hbox sclass="form-row" hflex="1">
                 <label sclass="form-label" value="Account Number:" hflex="1"/>
                 <textbox sclass="form-input" id="accBox" placeholder="Enter Account Number" hflex="2"/>
@@ -145,7 +145,8 @@
 
             <hbox sclass="action-buttons" style="padding-bottom: 16px;">
                 <button id="depositBtn" label="Deposit" sclass="action-btn btn-primary"/>
-                <button id="backBtn" label="Back" sclass="action-btn btn-danger"/>
+                <button id="backBtn" label="Back" sclass="action-btn btn-danger"
+                onClick='mainContent.setSrc("dashboard.zul")'/>
             </hbox>
 
         </vlayout>

@@ -10,7 +10,7 @@ public class PasswordUtil {
 		return BCrypt.hashpw(password, BCrypt.gensalt(BCRYPT_COST_FACTOR));
 	}
 	
-	public static boolean isPasswordCorrect(String plainPassword, String hashPassword) {
+	public static boolean validatePassword(String plainPassword, String hashPassword) {
 		return BCrypt.checkpw(plainPassword, hashPassword);
 	}
 }

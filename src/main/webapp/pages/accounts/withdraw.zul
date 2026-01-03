@@ -127,12 +127,12 @@
             border="normal"
             width="40vw"
             sclass="form-window"
-            >
+            apply="">
 
         <vlayout sclass="center-layout" style="padding: 16px;">
 
-            <label value="Withdraw Money"
-                   style="font-size: 20px; font-weight: 700; color: #333; text-align: center;"/>
+            <!-- <label value="Withdraw Money"
+                   style="font-size: 20px; font-weight: 700; color: #333; text-align: center;"/> -->
 
             <!-- Select Account -->
             <hbox sclass="form-row" hflex="1">

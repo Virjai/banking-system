@@ -31,6 +31,7 @@ public enum CustomerQuery {
 	            aadhar_image=?,
 	            customer_image=?,
 	            email=?,
+	            password=?,
 	            phone=?,
 	            city=?,
 	            state=?,
