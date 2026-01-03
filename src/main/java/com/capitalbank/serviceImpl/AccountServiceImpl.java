@@ -1,6 +1,5 @@
 package com.capitalbank.serviceImpl;
 
-import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +28,9 @@ public class AccountServiceImpl implements AccountService {
 		return TransactionManager.doInTransaction(connection -> {
 			validateAccountForOpen(account);
 
-			account.setActive(true);
-			account.setCreatedAt(LocalDateTime.now());
+			account.setAccountNumber(generateAccountNumber()); 
+	        account.setActive(true);
+	        account.setCreatedAt(LocalDateTime.now());
 
 			if (accountDao.findByAccountNumber(account.getAccountNumber()).isPresent()) {
 				throw new BusinessException("Account number already exists");
@@ -231,5 +231,12 @@ public class AccountServiceImpl implements AccountService {
 			throw new BusinessException("Amount must be greater than zero");
 		}
 	}
+
+	private String generateAccountNumber(long customerId) {
+	    return "CB"
+	           + customerId
+	           + LocalDateTime.now().toString().replaceAll("\\D", "").substring(0, 12);
+	}
+
 
 }
