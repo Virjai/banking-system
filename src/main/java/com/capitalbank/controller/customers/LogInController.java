@@ -1,5 +1,7 @@
 package com.capitalbank.controller.customers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
@@ -11,72 +13,107 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.capitalbank.model.Customer;
+import com.capitalbank.security.PasswordUtil;
 import com.capitalbank.service.CustomerService;
 import com.capitalbank.serviceImpl.CustomerServiceImpl;
 
+/**
+ * Controller responsible for handling login interactions within the
+ * CapitalBank application. It validates the email and password provided
+ * by the user, authenticates credentials, sets session attributes, and
+ * redirects users based on their assigned role.
+ */
 public class LogInController extends SelectorComposer<Window> {
-	private static final long serialVersionUID = 1L;
 
-	@Wire
-	private Textbox tEmailBox;
-	@Wire
-	private Textbox tPassBox;
-	@Wire
-	private Button bLogin;
+    private static final long serialVersionUID = 1L;
 
-	private CustomerService customerService = new CustomerServiceImpl();
+    /** Logger instance for audit and troubleshooting purposes. */
+    private static final Logger log = LoggerFactory.getLogger(LogInController.class);
 
-	// ----------------------
-	// LOGIN VALIDATION
-	// ----------------------
-	@Listen("onClick = #bLogin")
-	public void validate() {
-		String email = tEmailBox.getValue().trim().toLowerCase();
-		String password = tPassBox.getValue().trim();
+    /** Textbox where the user enters an email address. */
+    @Wire
+    private Textbox tEmailBox;
 
-		try {
+    /** Textbox where the user enters a password. */
+    @Wire
+    private Textbox tPassBox;
 
-			// Basic empty field validation
-			if (email.isEmpty() || password.isEmpty()) {
-				Clients.alert("Please enter Email or Password");
-				return;
-			}
+    /** Login action button. */
+    @Wire
+    private Button bLogin;
 
-			// Hash the password before checking
-//			String hashedPassword = PasswordUtil.hashPassword(password);
+    /** Service component used to retrieve and manage customer data. */
+    private final CustomerService customerService = new CustomerServiceImpl();
 
-			// check user using email if it exists in the database
-			Customer existingUser = customerService.findByEmail(email);
-			if (existingUser == null) {
-				Clients.showNotification("User does not exist");
-				return;
-			}
+    /**
+     * Handles the login process when the Login button is clicked.
+     * <p>
+     * This method performs:
+     * <ul>
+     *   <li>Input validation</li>
+     *   <li>User lookup</li>
+     *   <li>Password verification</li>
+     *   <li>Session initialization</li>
+     *   <li>Role-based redirection</li>
+     * </ul>
+     */
+    @Listen("onClick = #bLogin")
+    public void validate() {
 
-//			boolean isPasswordCorrect = PasswordUtil.validatePassword(hashedPassword, existingUser.getPassword());
-			if (!password.equals(existingUser.getPassword())) {
-				Clients.showNotification("Invalid email or password");
-				return;
-			}
+        String email = tEmailBox.getValue().trim().toLowerCase();
+        String password = tPassBox.getValue().trim();
 
-			// Store email in session
-			// Executions.getCurrent().getSession().setAttribute("email_id",
-			// email.getValue());
-			// Store into session
+        log.debug("Login attempt initiated for email: {}", email);
 
-			long id = existingUser.getCustomerId();
-			Sessions.getCurrent().setAttribute("customer_id", id);
+        try {
+            // Validate input
+            if (email.isEmpty() || password.isEmpty()) {
+                log.warn("Login attempt failed due to missing credentials. Email: {}", email);
+                Clients.alert("Please enter Email and Password");
+                return;
+            }
 
-			if (existingUser.getRole().name().equals("USER")) {
-				Clients.showNotification("Login Successful", "info", bLogin, "middle_center", 5000);
-				Executions.sendRedirect("mainmenu.zul");
-			} else if (existingUser.getRole().name().equals("ADMIN")) {
-				Clients.showNotification("Login Failed", "info", bLogin, "middle_center", 5000);
-				Executions.sendRedirect("mainmenu.zul");
-			}
+            // Fetch user
+            Customer existingUser = customerService.findByEmail(email);
+            if (existingUser == null) {
+                log.warn("Login failed: user not found. Email: {}", email);
+                Clients.showNotification("User does not exist");
+                return;
+            }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			Clients.alert("Error: " + e.getMessage());
-		}
-	}
+            // Validate password
+            boolean isPasswordCorrect = PasswordUtil.verifyPassword(password, existingUser.getPassword());
+            if (!isPasswordCorrect) {
+                log.warn("Login failed: invalid credentials. Email: {}", email);
+                Clients.showNotification("Invalid email or password");
+                return;
+            }
+
+            // Store customer ID in session
+            Sessions.getCurrent().setAttribute("customer_id", existingUser.getCustomerId());
+            log.info("User authenticated successfully. customerId={}, role={}",
+                    existingUser.getCustomerId(), existingUser.getRole());
+
+            // Redirect based on role
+            switch (existingUser.getRole()) {
+                case USER:
+                    Clients.showNotification("Login Successful", "info", bLogin, "middle_center", 3000);
+                    Executions.sendRedirect("mainmenu.zul");
+                    break;
+
+                case ADMIN:
+                    Clients.showNotification("Login Successful", "info", bLogin, "middle_center", 3000);
+                    Executions.sendRedirect("/pages/admin/mainmenu.zul");
+                    break;
+
+                default:
+                    log.error("Unknown role detected for customerId={}", existingUser.getCustomerId());
+                    Clients.alert("Unknown role. Contact administrator.");
+            }
+
+        } catch (Exception e) {
+            log.error("Unexpected error occurred during login process for email: {}", email, e);
+            Clients.alert("Error: " + e.getMessage());
+        }
+    }
 }

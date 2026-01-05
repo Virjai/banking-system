@@ -21,8 +21,10 @@
 		right-aligned */ .form-input { width: 400px !important;
 		max-width: 100%; box-sizing: border-box; display: block;
 		margin-left: auto; padding: 8px 10px; font-size: 14px; } /*
-		Buttons same size */ .primary-btn { width: 120px; text-align:
-		center; } .button-bar { width: 100%; justify-content: center;
+		Buttons same size */
+		 .primary-btn { width: 120px; text-align:
+		center;
+	 } .button-bar { width: 100%; justify-content: center;
 		margin-top: 12px; gap: 10px; } /* Remove all hover effects */
 		.z-row, .z-row:hover, .z-listitem, .z-listitem:hover,
 		.z-grid-row, .z-grid-row:hover, .z-row-selected,
@@ -38,7 +40,21 @@
 		} .form-grid td { display: block; } .form-grid tr { display:
 		block; margin-bottom: 8px; } .button-bar { flex-direction:
 		column; gap: 8px; } }
-		
+
+		/* Remove background + pointer effects on rows and inner cells
+		*/ .z-row, .z-row:hover, .z-row:active, .z-row-selected,
+		.z-row-inner, .z-row-inner:hover, .z-grid-row,
+		.z-grid-row:hover, .z-grid-row:active, .z-grid-row-inner,
+		.z-grid-row-inner:hover, .z-listitem, .z-listitem:hover,
+		.z-listitem:active, .z-listitem-selected, .z-listcell,
+		.z-listcell:hover { background: transparent !important; color:
+		inherit !important; cursor: default !important; }
+
+		/* Also ensure child divs never inherit hover styling */ .z-row
+		> div, .z-grid-row > div, .z-listitem > div { background:
+		transparent !important; }
+
+
 	</style>
 	<div sclass="page-wrapper">
 		<window border="none" sclass="form-card"
@@ -81,7 +97,7 @@
 						</row>
 					</rows>
 				</grid><!-- Buttons -->
-				<hbox sclass="button-bar" pack="center">
+				<hbox sclass="button-bar" pack="center" spacing="30px">
 					<button id="tRegister" label="Register"
 						sclass="primary-btn" />
 					<button id="tReset" label="Reset"

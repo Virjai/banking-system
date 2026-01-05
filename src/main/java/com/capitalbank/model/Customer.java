@@ -21,8 +21,6 @@ public class Customer {
 	private String gender;
 	private String aadharNumber;
 	private String panNumber;
-	private String aadharImage;
-	private String customerImage;
 
 	// --- Contact Information ---
 	private String email;
@@ -52,9 +50,8 @@ public class Customer {
 	}
 
 	public Customer(long customerId, String fullName, LocalDate dob, String gender, String aadharNumber,
-			String panNumber, String aadharImage, String customerImage, String email, String password, String city,
-			String state, String pincode, String country, String phone, String address, Role role, boolean isActive,
-			List<Account> accountList) {
+			String panNumber, String email, String password, String city, String state, String pincode, String country,
+			String phone, String address, Role role, boolean isActive, List<Account> accountList) {
 
 		this.customerId = customerId;
 		this.fullName = fullName;
@@ -62,8 +59,6 @@ public class Customer {
 		this.gender = gender;
 		this.aadharNumber = aadharNumber;
 		this.panNumber = panNumber;
-		this.aadharImage = aadharImage;
-		this.customerImage = customerImage;
 		this.email = email;
 		this.password = password;
 		this.city = city;
@@ -125,22 +120,6 @@ public class Customer {
 
 	public void setPanNumber(String panNumber) {
 		this.panNumber = panNumber;
-	}
-
-	public String getAadharImage() {
-		return aadharImage;
-	}
-
-	public void setAadharImage(String aadharImage) {
-		this.aadharImage = aadharImage;
-	}
-
-	public String getCustomerImage() {
-		return customerImage;
-	}
-
-	public void setCustomerImage(String customerImage) {
-		this.customerImage = customerImage;
 	}
 
 	public String getEmail() {
@@ -235,10 +214,7 @@ public class Customer {
 	@Override
 	public String toString() {
 		return "Customer{" + "customerId=" + customerId + ", fullName='" + fullName + '\'' + ", dob=" + dob
-				+ ", gender='" + gender + '\'' + ", aadharNumber='" + aadharNumber + '\'' + ", panNumber='" + panNumber
-				+ '\'' + ", aadharImage='" + aadharImage + '\'' + ", customerImage='" + customerImage + '\''
-				+ ", email='" + email + '\'' + ", city='" + city + '\'' + ", state='" + state + '\'' + ", pincode='"
-				+ pincode + '\'' + ", country='" + country + '\'' + ", phone='" + phone + '\'' + ", address='" + address
-				+ '\'' + ", role=" + role + ", isActive=" + isActive + ", accountList=" + accountList + '}';
+				+ ", gender='" + gender + '\'' + ", email='" + email + '\'' + ", role=" + role + ", active=" + isActive
+				+ '}';
 	}
 }

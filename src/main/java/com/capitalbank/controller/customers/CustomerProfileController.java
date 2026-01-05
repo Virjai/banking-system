@@ -8,59 +8,69 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Window;
+import org.zkoss.image.AImage;
 
 import com.capitalbank.model.Customer;
 import com.capitalbank.service.CustomerService;
+import com.capitalbank.service.KYCDocumentService;
 import com.capitalbank.serviceImpl.CustomerServiceImpl;
+import com.capitalbank.serviceImpl.KYCDocumentServiceImpl;
 
-public class CustomerProfileController extends SelectorComposer<Component> {
-	private static final long serialVersionUID = 1L;
+public class CustomerProfileController extends SelectorComposer<Window> {
+    private static final long serialVersionUID = 1L;
 
-	@Wire
-	private Label welcomeLbl;
-	@Wire
-	private Image profileImg;
+    @Wire
+    private Label welcomeLbl;
 
-	private Long customerId;
-	private CustomerService customerService = new CustomerServiceImpl();
+    @Wire
+    private Image profileImg;
 
-	@Override
-	public void doAfterCompose(Component comp) throws Exception {
-		super.doAfterCompose(comp);
+    private Long customerId;
+    private CustomerService customerService = new CustomerServiceImpl();
+    private KYCDocumentService kycService = new KYCDocumentServiceImpl();
 
-		// Get user ID from session
-		customerId = (Long) Sessions.getCurrent().getAttribute("customer_id");
+    @Override
+    public void doAfterCompose(Window window) throws Exception {
+        super.doAfterCompose(window);
 
-		if (customerId == null) {
-			Clients.alert("Session expired. Please login again.");
-			Executions.sendRedirect("login.zul");
-			return;
-		}
+        // Get user ID from session
+        customerId = (Long) Sessions.getCurrent().getAttribute("customer_id");
 
-		loadCustomerHeaderData();
-	}
+        if (customerId == null) {
+            Clients.alert("Session expired. Please login again.");
+            Executions.sendRedirect("login.zul");
+            return;
+        }
 
-	private void loadCustomerHeaderData() {
-		try {
-			Customer existingCustomer = customerService.getCustomerById(customerId);
-			if (existingCustomer == null) {
-				Clients.showNotification("User does not exist by id: " + customerId);
-				return;
-			}
+        loadCustomerHeaderData();
+    }
 
-			String name = existingCustomer.getFullName();
-			String profileImage = existingCustomer.getCustomerImage();
+    private void loadCustomerHeaderData() {
+        try {
+            // Fetch customer data
+            Customer customer = customerService.getCustomerById(customerId);
+            if (customer == null) {
+                Clients.showNotification("User does not exist by id: " + customerId);
+                return;
+            }
 
-			welcomeLbl.setValue("Welcome, " + name + "!");
+            // Set welcome label
+            welcomeLbl.setValue("Welcome, " + customer.getFullName() + "!");
 
-			if (profileImage != null && !profileImage.trim().isEmpty()) {
-				profileImg.setSrc(profileImage);
-			} else {
-				profileImg.setSrc("/resources/images/default_profile.png");
-			}
+            // Fetch profile image from KYC documents
+            byte[] profileImageBytes = kycService.getProfileImageByCustomerId(customerId);
 
-		} catch (Exception e) {
-			Clients.alert("Failed to load profile: " + e.getMessage());
-		}
-	}
+            if (profileImageBytes != null && profileImageBytes.length > 0) {
+                AImage profileAImage = new AImage("profile.jpg", profileImageBytes);
+                profileImg.setContent(profileAImage);
+            } else {
+                // Default image if none uploaded
+                profileImg.setSrc("/resources/images/default_profile.png");
+            }
+
+        } catch (Exception e) {
+            Clients.alert("Failed to load profile: " + e.getMessage());
+        }
+    }
 }
