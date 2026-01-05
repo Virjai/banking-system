@@ -13,15 +13,15 @@ import com.capitalbank.service.CustomerService;
 import com.capitalbank.util.TransactionManager;
 
 public class CustomerServiceImpl implements CustomerService {
-	private CustomerDao customerDao = new CustomerDaoImpl();
-//	private BCryptPasswordEncoder passwordEncoder;
+	private CustomerDao customerDao;/* = new CustomerDaoImpl(); */
+	private BCryptPasswordEncoder passwordEncoder;
 
 	public void setCustomerDao(CustomerDao customerDao) {
 		this.customerDao = customerDao;
 	}
-//	public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
-//        this.passwordEncoder = passwordEncoder;
-//    }
+	public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
 	/*
 	 * =============================== AUTHENTICATION (Spring Security)
@@ -49,9 +49,9 @@ public class CustomerServiceImpl implements CustomerService {
 			// Hash password
 			customer.setPassword(customer.getPassword());
 
-//			customer.setPassword(
-//		            passwordEncoder.encode(customer.getPassword())
-//		        );
+			customer.setPassword(
+		            passwordEncoder.encode(customer.getPassword())
+		        );
 			customer.setRole(Customer.Role.USER); // Default role
 			customer.setActive(true); // Default active
 

@@ -12,6 +12,8 @@ import java.util.Optional;
 
 import javax.sql.DataSource;
 
+import org.zkoss.zkplus.spring.SpringUtil;
+
 import com.capitalbank.dao.CustomerDao;
 import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.enums.query.CustomerQuery;
@@ -24,13 +26,18 @@ public class CustomerDaoImpl implements CustomerDao {
 //        this.dataSource = dataSource;
 //    }
 
-	private Connection connection = DBConnection.getConnection();
+	private DBConnection dbConnection;
+
+	public void setDbConnection(DBConnection dbConnection) {
+		this.dbConnection = dbConnection;
+	}
 
 	// CREATE
 	@Override
 	public boolean saveCustomer(Customer customer) {
 		int idk = 1;
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.INSERT_CUSTOMER.getQuery())) {
+		try (Connection connection = dbConnection.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.INSERT_CUSTOMER.getQuery())) {
 			ps.setString(idk++, customer.getFullName());
 			setDateOrNull(ps, idk++, customer.getDob());
 			ps.setString(idk++, customer.getGender());
@@ -62,7 +69,8 @@ public class CustomerDaoImpl implements CustomerDao {
 	// READ
 	@Override
 	public Optional<Customer> findById(long id) {
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_ID.getQuery())) {
+		try (Connection connection = dbConnection.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_ID.getQuery())) {
 
 			ps.setLong(1, id);
 
@@ -77,7 +85,8 @@ public class CustomerDaoImpl implements CustomerDao {
 
 	@Override
 	public Optional<Customer> findByEmail(String email) {
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_EMAIL.getQuery())) {
+		try (Connection connection = dbConnection.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_EMAIL.getQuery())) {
 
 			ps.setString(1, email);
 			try (ResultSet rs = ps.executeQuery()) {
@@ -93,7 +102,8 @@ public class CustomerDaoImpl implements CustomerDao {
 	public Optional<List<Customer>> findAll() {
 		List<Customer> customers = new ArrayList<>();
 
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_ALL_CUSTOMER.getQuery());
+		try (Connection connection = dbConnection.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_ALL_CUSTOMER.getQuery());
 				ResultSet rs = ps.executeQuery();) {
 
 			while (rs.next()) {
@@ -110,7 +120,8 @@ public class CustomerDaoImpl implements CustomerDao {
 	@Override
 	public boolean updateCustomer(Customer customer) {
 		int idk = 1;
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_CUSTOMER.getQuery())) {
+		try (Connection connection = dbConnection.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_CUSTOMER.getQuery())) {
 
 			ps.setString(idk++, customer.getFullName());
 			setDateOrNull(ps, idk++, customer.getDob());
@@ -141,7 +152,8 @@ public class CustomerDaoImpl implements CustomerDao {
 
 	@Override
 	public boolean updatePassword(long id, String newPassword) {
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_PASSWORD.getQuery())) {
+		try (Connection connection = dbConnection.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.UPDATE_PASSWORD.getQuery())) {
 
 			ps.setString(1, newPassword);
 			ps.setLong(2, id);
@@ -152,10 +164,12 @@ public class CustomerDaoImpl implements CustomerDao {
 			throw new RuntimeException("Error while updating password of customer: " + e.getMessage());
 		}
 	}
+
 	// DELETE
 	@Override
 	public boolean deleteCustomer(long id) {
-		try (PreparedStatement ps = connection.prepareStatement(CustomerQuery.DELETE_CUSTOMER.getQuery())) {
+		try (Connection connection = dbConnection.getConnection();
+				PreparedStatement ps = connection.prepareStatement(CustomerQuery.DELETE_CUSTOMER.getQuery())) {
 			ps.setLong(1, id);
 
 			return ps.executeUpdate() > 0;

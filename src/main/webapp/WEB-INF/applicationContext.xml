@@ -5,13 +5,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<!-- ================= IMPORT SECURITY ================= -->
 	<import resource="applicationContext-security.xml" />
 
 	<!-- ================= DATASOURCE ================= -->
-	<bean id="dataSource"
+	<!-- <bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName"
 			value="com.mysql.cj.jdbc.Driver" />
@@ -19,26 +19,31 @@
 			value="jdbc:mysql://localhost:3306/capitalbank" />
 		<property name="username" value="root" />
 		<property name="password" value="root123" />
-	</bean>
+	</bean> -->
+	<bean id="dbConnection"
+      class="com.capitalbank.dbconfig.DBConnection"
+      init-method="init" />
+
+	
 
 	<!-- ================= TABLE INITIALIZATION ================= -->
-	<bean id="tableUtil" class="com.capitalbank.util.table.TableUtil"
+	<!-- <bean id="tableUtil" class="com.capitalbank.util.table.TableUtil"
 		init-method="createCustomerTableIfNotExists">
 		<constructor-arg ref="dataSource" />
 	</bean>
-
+ -->
 
 	<!-- ================= TRANSACTION MANAGER ================= -->
-	<bean id="transactionManager"
+	<!-- <bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
-	</bean>
+	</bean> -->
 
 	<!-- ================= DAO ================= -->
 	<bean id="customerDao"
 		class="com.capitalbank.daoImpl.CustomerDaoImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+		<property name="dbConnection" ref="dbConnection" />
+	</bean> 
 
 	<!-- ================= SERVICE ================= -->
 	<bean id="customerService"

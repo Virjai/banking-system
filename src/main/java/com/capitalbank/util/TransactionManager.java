@@ -3,6 +3,8 @@ package com.capitalbank.util;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.zkoss.zkplus.spring.SpringUtil;
+
 import com.capitalbank.dbconfig.DBConnection;
 
 public class TransactionManager {
@@ -15,7 +17,7 @@ public class TransactionManager {
 		Connection connection = null;
 
 		try {
-			connection = DBConnection.getConnection();
+			connection =  (Connection) SpringUtil.getBean("dbConnection");
 			connection.setAutoCommit(false);
 
 			T result = action.execute(connection);
@@ -52,7 +54,7 @@ public class TransactionManager {
 		Connection connection = null;
 
 		try {
-			connection = DBConnection.getConnection();
+			connection = (Connection) SpringUtil.getBean("dbConnection");;
 			connection.setAutoCommit(false);
 
 			action.execute(connection);

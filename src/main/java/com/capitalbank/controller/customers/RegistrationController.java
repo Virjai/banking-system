@@ -19,7 +19,7 @@ import com.capitalbank.serviceImpl.CustomerServiceImpl;
 public class RegistrationController extends SelectorComposer<Window> {
 	private static final long serialVersionUID = -2271757845507892423L;
 
-	private CustomerService customerService = new CustomerServiceImpl();
+	private CustomerService customerService ;
 
 	@Wire
 	private Textbox tFirstName;
@@ -36,6 +36,13 @@ public class RegistrationController extends SelectorComposer<Window> {
 	private Button tRegister;
 	@Wire
 	private Button tReset;
+	
+	@Override
+	public void doAfterCompose(Window comp) throws Exception {
+		// TODO Auto-generated method stub
+		super.doAfterCompose(comp);
+		customerService = (CustomerService) SpringUtil.getBean("customerService");
+	}
 
 	/*
 	 * @Override public void doAfterCompose(Window comp) throws Exception {
@@ -99,4 +106,13 @@ public class RegistrationController extends SelectorComposer<Window> {
 		}
 	}
 
+	@Listen("onClick=#tReset")
+	public void reset() {
+		tFirstName.setValue("");
+		tLastName.setValue("");
+		tEmail.setValue("");
+		tPassword.setValue("");
+		tConfirmPassword.setValue("");
+	}
 }
+

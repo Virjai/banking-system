@@ -28,7 +28,7 @@ public class AccountServiceImpl implements AccountService {
 		return TransactionManager.doInTransaction(connection -> {
 			validateAccountForOpen(account);
 
-			account.setAccountNumber(generateAccountNumber()); 
+			account.setAccountNumber(generateAccountNumber(account.getCustomerId())); 
 	        account.setActive(true);
 	        account.setCreatedAt(LocalDateTime.now());
 

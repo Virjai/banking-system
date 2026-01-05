@@ -1,6 +1,7 @@
 package com.capitalbank.controller.customers;
 
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.SelectorComposer;
@@ -24,7 +25,14 @@ public class LogInController extends SelectorComposer<Window> {
 	@Wire
 	private Button bLogin;
 
-	private CustomerService customerService = new CustomerServiceImpl();
+	 private CustomerService customerService;
+
+	    @Override
+	    public void doAfterCompose(Window comp) throws Exception {
+	        super.doAfterCompose(comp);
+	        // Get Spring-managed bean (XML configuration)
+	        customerService = (CustomerService) SpringUtil.getBean("customerService");
+	    }
 
 	// ----------------------
 	// LOGIN VALIDATION

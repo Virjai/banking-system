@@ -5,6 +5,8 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
+import org.zkoss.zkplus.spring.SpringUtil;
+
 import com.capitalbank.dbconfig.DBConnection;
 
 public class TableUtil {
@@ -14,7 +16,7 @@ public class TableUtil {
 //    public TableUtil(DataSource dataSource) {
 //        this.dataSource = dataSource;
 //    }
-	private Connection connection = DBConnection.getConnection();
+	private Connection connection = (Connection) SpringUtil.getBean("dbConnection");;
 
 	public void createCustomerTableIfNotExists() {
 

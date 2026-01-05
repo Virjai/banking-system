@@ -46,7 +46,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 
 		for (GrantedAuthority authority : authorities) {
 			if (authority.getAuthority().equals("ROLE_ADMIN")) {
-				isAdmin = true;
+				isAdmin = true; 
 				break;
 			} else if (authority.getAuthority().equals("ROLE_CUSTOMER")) {
 				isCustomer = true;

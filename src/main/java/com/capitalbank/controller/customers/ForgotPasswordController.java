@@ -7,10 +7,10 @@ import java.util.Random;
 
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zul.*;
 
-import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.model.Customer;
 import com.capitalbank.service.CustomerService;
 import com.capitalbank.serviceImpl.CustomerServiceImpl;
@@ -150,7 +150,7 @@ public class ForgotPasswordController extends SelectorComposer<Window> {
 
 	// UPDATE PASSWORD IN DB
 	private boolean updatePasswordInDB(String email, String newPassword) {
-		try (Connection con = DBConnection.getConnection()) {
+		try (Connection con = (Connection) SpringUtil.getBean("dbConnection");) {
 
 			String sql = "UPDATE capitalbank SET password = ? WHERE email = ?";
 			PreparedStatement stmt = con.prepareStatement(sql);

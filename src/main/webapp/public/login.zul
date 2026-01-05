@@ -1,0 +1,23 @@
+<zk xmlns:h="xhtml">
+
+    <window title="Login" border="normal" width="380px">
+
+        <h:form action="${execution.contextPath}/login" method="post">
+
+            <vlayout spacing="10px">
+
+                <label value="Username"/>
+                <textbox name="j_username"/>
+
+                <label value="Password"/>
+                <textbox type="password" name="j_password"/>
+
+                <button label="Login" type="submit"/>
+
+            </vlayout>
+
+        </h:form>
+
+    </window>
+
+</zk>
