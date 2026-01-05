@@ -12,6 +12,8 @@ public class Account {
 	private double balance;
 	private LocalDateTime createdAt;
 	private boolean isActive;
+	private String gstNumber;   // only for Current accounts
+
 
 	private List<Transaction> transactionList;
 	public static final String IFSC = "CBOP000002";
@@ -96,6 +98,14 @@ public class Account {
 
 	public void setActive(boolean active) {
 		this.isActive = active;
+	}
+	
+	public String getGstNumber() {
+	    return gstNumber;
+	}
+
+	public void setGstNumber(String gstNumber) {
+	    this.gstNumber = gstNumber;
 	}
 
 	@Override

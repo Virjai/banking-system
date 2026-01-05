@@ -128,7 +128,7 @@
             border="normal"
             width="70vw"
             sclass="form-window"
-            apply="">
+            apply="com.capitalbank.controller.accounts.AccountSummaryController">
 
         <vlayout sclass="center-layout" style="padding: 16px;">
 
@@ -136,7 +136,7 @@
                    style="font-size:22px; font-weight:bold; margin-bottom:15px; text-align:center;"/>
 
             <!-- Account Summary Grid -->
-            <grid width="100%" mold="paging" pageSize="10">
+            <grid width="100%" mold="paging" pageSize="10" >
                 <columns>
                     <column label="Account No" width="28%"/>
                     <column label="Type" width="25%"/>
@@ -154,7 +154,7 @@
             <hbox sclass="action-buttons" style="padding-bottom: 16px;">
                 <button label="Back to Dashboard"
                         sclass="action-btn btn-primary"
-                        onClick='Executions.sendRedirect("UserProfile.zul")'/>
+                        onClick='Executions.sendRedirect("mainmenu.zul")'/>
             </hbox>
 
         </vlayout>

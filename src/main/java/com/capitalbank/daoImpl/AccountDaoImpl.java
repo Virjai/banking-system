@@ -27,7 +27,7 @@ public class AccountDaoImpl implements AccountDao {
 	private Connection connection = DBConnection.getConnection();
 
 	public AccountDaoImpl() {
-		new TableUtil().createAccountsTableIfNotExists();
+		new TableUtil().createAccountTableIfNotExists();
 	}
 
 	@Override
@@ -43,6 +43,7 @@ public class AccountDaoImpl implements AccountDao {
 			LocalDateTime createdAt = account.getCreatedAt();
 			preparedStatement.setTimestamp(5, createdAt != null ? Timestamp.valueOf(createdAt) : null);
 			preparedStatement.setBoolean(6, account.isActive());
+			preparedStatement.setString(7, account.getGstNumber());
 
 			int affectedRows = preparedStatement.executeUpdate();
 			return affectedRows > 0;
@@ -62,15 +63,16 @@ public class AccountDaoImpl implements AccountDao {
 			while (resultSet.next()) {
 				Account account = new Account();
 
-				account.setAccountId(resultSet.getLong("accountId"));
-				account.setCustomerId(resultSet.getLong("customerId"));
-				account.setAccountNumber(resultSet.getString("accountNumber"));
-				account.setAccountType(resultSet.getString("accountType"));
+				account.setAccountId(resultSet.getLong("account_id"));
+				account.setCustomerId(resultSet.getLong("customer_id"));
+				account.setAccountNumber(resultSet.getString("account_number"));
+				account.setAccountType(resultSet.getString("account_type"));
 				account.setBalance(resultSet.getDouble("balance"));
 
-				Timestamp timestamp = resultSet.getTimestamp("createdAt");
+				Timestamp timestamp = resultSet.getTimestamp("created_at");
 				account.setCreatedAt(timestamp != null ? timestamp.toLocalDateTime() : null);
-				account.setActive(resultSet.getBoolean("isActive"));
+				account.setActive(resultSet.getBoolean("is_active"));
+				account.setGstNumber(resultSet.getString("gst_number"));
 
 				accounts.add(account);
 			}
@@ -91,15 +93,15 @@ public class AccountDaoImpl implements AccountDao {
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
 				Account account = new Account();
-				account.setAccountId(resultSet.getLong("accountId"));
-				account.setAccountNumber(resultSet.getString("accountNumber"));
-				account.setAccountType(resultSet.getString("accountType"));
+				account.setAccountId(resultSet.getLong("account_id"));
+				account.setAccountNumber(resultSet.getString("account_number"));
+				account.setAccountType(resultSet.getString("account_type"));
 				account.setBalance(resultSet.getDouble("balance"));
 
-				Timestamp timestamp = resultSet.getTimestamp("createdAt");
+				Timestamp timestamp = resultSet.getTimestamp("created_at");
 				account.setCreatedAt(timestamp != null ? timestamp.toLocalDateTime() : null);
 
-				account.setActive(resultSet.getBoolean("isActive"));
+				account.setActive(resultSet.getBoolean("is_active"));
 				accounts.add(account);
 			}
 
@@ -122,15 +124,16 @@ public class AccountDaoImpl implements AccountDao {
 			if (resultSet.next()) {
 
 				account = new Account();
-				account.setCustomerId(resultSet.getLong("customerId"));
-				account.setAccountId(resultSet.getLong("accountId"));
-				account.setAccountNumber(resultSet.getString("accountNumber"));
-				account.setAccountType(resultSet.getString("accountType"));
+				account.setCustomerId(resultSet.getLong("customer_id"));
+				account.setAccountId(resultSet.getLong("account_id"));
+				account.setAccountNumber(resultSet.getString("account_number"));
+				account.setAccountType(resultSet.getString("account_type"));
 				account.setBalance(resultSet.getDouble("balance"));
 
-				Timestamp timestamp = resultSet.getTimestamp("createdAt");
+				Timestamp timestamp = resultSet.getTimestamp("created_at");
 				account.setCreatedAt(timestamp != null ? timestamp.toLocalDateTime() : null);
-				account.setActive(resultSet.getBoolean("isActive"));
+				account.setActive(resultSet.getBoolean("is_active"));
+				account.setGstNumber(resultSet.getString("gst_number"));
 			}
 
 			return Optional.ofNullable(account);
@@ -150,15 +153,16 @@ public class AccountDaoImpl implements AccountDao {
 			resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
 				account = new Account();
-				account.setAccountId(resultSet.getLong("accountId"));
-				account.setCustomerId(resultSet.getLong("customerId"));
-				account.setAccountNumber(resultSet.getString("accountNumber"));
-				account.setAccountType(resultSet.getString("accountType"));
+				account.setAccountId(resultSet.getLong("account_id"));
+				account.setCustomerId(resultSet.getLong("customer_id"));
+				account.setAccountNumber(resultSet.getString("account_number"));
+				account.setAccountType(resultSet.getString("account_type"));
 				account.setBalance(resultSet.getDouble("balance"));
 
-				Timestamp timestamp = resultSet.getTimestamp("createdAt");
+				Timestamp timestamp = resultSet.getTimestamp("created_at");
 				account.setCreatedAt(timestamp != null ? timestamp.toLocalDateTime() : null);
-				account.setActive(resultSet.getBoolean("isActive"));
+				account.setActive(resultSet.getBoolean("is_active"));
+				account.setGstNumber(resultSet.getString("gst_number"));
 			}
 
 			return Optional.ofNullable(account);
@@ -270,4 +274,44 @@ public class AccountDaoImpl implements AccountDao {
 			throw new RuntimeException("Error while deleting account by account number: " + e.getMessage());
 		}
 	}
+
+	@Override
+	public Optional<Account> findByGstNumber(String gstNumber) {
+
+		if (gstNumber == null || gstNumber.isBlank()) {
+			return Optional.empty();
+		}
+
+		Account account = null;
+
+		try (PreparedStatement preparedStatement = connection
+				.prepareStatement(AccountQuery.SELECT_ACCOUNT_BY_GST.getQuery())) {
+
+			preparedStatement.setString(1, gstNumber);
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+				if (resultSet.next()) {
+					account = new Account();
+					account.setAccountId(resultSet.getLong("accountId"));
+					account.setCustomerId(resultSet.getLong("customerId"));
+					account.setAccountNumber(resultSet.getString("accountNumber"));
+					account.setAccountType(resultSet.getString("accountType"));
+					account.setBalance(resultSet.getDouble("balance"));
+
+					Timestamp timestamp = resultSet.getTimestamp("createdAt");
+					account.setCreatedAt(timestamp != null ? timestamp.toLocalDateTime() : null);
+
+					account.setActive(resultSet.getBoolean("isActive"));
+					account.setGstNumber(resultSet.getString("gst_number"));
+				}
+			}
+
+			return Optional.ofNullable(account);
+
+		} catch (SQLException e) {
+			throw new RuntimeException("Error while retrieving account by GST number: " + e.getMessage(), e);
+		}
+	}
+
 }

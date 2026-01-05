@@ -1,0 +1,187 @@
+<?page title="View Customers" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+<style>
+    /* Base reset */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* page itself will not scroll */
+        font-family: "Segoe UI", sans-serif;
+        background: #f4f6fb;
+    }
+
+    /* Gradient background */
+    .page-bg {
+        min-height: 100vh;
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        display: flex;
+     justify-content: center; /**/
+        padding: 40px 60px;        /**/
+        align-items: flex-start;
+        padding-bottom:40px;
+        box-sizing: border-box;
+    }
+
+    /* Remove default ZK window UI */
+    .z-window,
+    .z-window-content {
+        border: none !important;
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* Glass card */
+    .admin-card {
+        background: rgba(255,255,255,0.25);
+        border: 1px solid rgba(255,255,255,0.3);
+      	border-radius: 18px;
+        backdrop-filter: blur(14px);
+        padding: 30px 35px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+       
+       
+    }
+
+    /* Title */
+    .title-text {
+        font-size: 22px;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    /* Search row */
+    .search-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .z-textbox {
+        border-radius: 8px !important;
+        padding: 6px 10px !important;
+        width: 360px;
+    }
+
+    .btn {
+        color: white;
+        border-radius: 8px;
+        padding: 7px 16px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+    }
+
+    .search-label {
+        font-weight: bold;
+        color: black;
+    }
+
+    .btn-search {
+        background: #4CAF50;
+    }
+
+    .btn-reset {
+        background: #f44336;
+    }
+
+    /*  TABLE CONTAINER – BOTH SCROLLS */
+    .table-box {
+        background: rgba(255,255,255,0.35);
+       
+        overflow-x: auto;   /* horizontal scroll */
+        overflow-y: auto;   /* vertical scroll */
+
+        width: 100%;
+      
+    }
+
+    /* Force table width for horizontal scrolling */
+    .z-listbox {
+        min-width: 1400px;  /* ensures horizontal scrollbar */
+        border-radius: 0px;
+    }
+
+    .z-listheader-content {
+        font-weight: bold;
+    }
+      .action-box {
+        display: flex;
+        justify-content: center;
+        margin-top: 25px;
+    }
+    
+    .btn-approve {
+        background: #4CAF50;
+    }
+</style>
+
+<div sclass="page-bg">
+
+    <window border="none"
+            apply="">
+
+        <vlayout sclass="admin-card" spacing="20px">
+
+            <!-- Title -->
+            <label value="View Customers" sclass="title-text"/>
+
+            <!-- Search -->
+            <div sclass="search-row">
+                <label value="Search:" sclass="search-label"/>
+                <textbox id="searchTb"
+                         placeholder="Name / Aadhar/ State / Country / Pincode"/>
+                <button id="searchBtn" label="Search" sclass="btn btn-search"/>
+                <button id="resetBtn" label="Reset" sclass="btn btn-reset"/>
+            </div>
+
+            <!-- Customer Table -->
+            <div sclass="table-box">
+                <listbox id="customerListbox"
+                         width="100%"
+                         
+                         mold="paging"
+                         pageSize="4">
+                       
+
+                    <listhead>
+                        <listheader label="ID" width="4%"/>
+                        <listheader label="Name" width="10%"/>
+                        <listheader label="DOB" width="8%"/>
+                        <listheader label="Gender" width="6%"/>
+                        <listheader label="Email" width="17%"/>
+                        <listheader label="Phone" width="9%"/>
+                        <listheader label="Aadhar" width="10%"/>
+                        <listheader label="Address" width="13%"/>
+                        <listheader label="City" width="8%"/>
+                        <listheader label="State" width="8%"/>
+                        <listheader label="Pincode" width="7%"/>
+                        <listheader label="Country" width="8%"/>
+                    </listhead>
+
+                </listbox>
+            </div>
+             <!-- BACK BUTTON -->
+            <div sclass="action-box">
+                <button label="Back to Dashboard"
+                        sclass="btn btn-approve"
+                        onClick='Executions.sendRedirect("mainmenu.zul")'/>
+            </div>
+            
+
+        </vlayout>
+
+    </window>
+
+</div>
+
+</zk>

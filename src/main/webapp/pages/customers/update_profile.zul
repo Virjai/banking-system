@@ -30,7 +30,7 @@
         box-shadow: 0 8px 25px rgba(0,0,0,0.25);
         margin: 40px auto;
         width: 90%;
-        max-width: 500px;
+        max-width: 570px;
     }
 
     .title-text {
@@ -54,7 +54,7 @@
         border-radius: 8px;
         padding: 6px 10px;
         width: 320px;
-
+        
     }
 
     /* Image centering handled here */
@@ -99,14 +99,14 @@
     .form-box {
         width: 650px;
     }
-
+    
     .center-items {
         align-items: center;
     }
 </style>
 
 <!-- NO INLINE STYLING ON WINDOW -->
-<window border="normal" vflex="1" apply="com.capitalbank.controller.customers.UpdateProfileController">
+<window border="normal" vflex="1" apply="com.capitalbank.controller.customers.UpdateProfileComposer">
 
     <vlayout sclass="profile-card" >
 
@@ -115,7 +115,7 @@
         <!-- PROFILE IMAGE : PERFECTLY CENTERED -->
         <div sclass="profile-image-wrapper">
         <hbox align="center">
-            <image id="profileImg"  sclass="profile-pic-box" />
+            <image id="profileImg"  sclass="profile-pic-box" /> 
             <button id="uploadBtn" label="Update Photo"
                     sclass="btn" upload="true,maxsize=5000000" />
         </hbox>
@@ -131,18 +131,30 @@
                     <label id="nameLbl" sclass="title-text" />
                     <space hflex="1" />
                 </hbox>
-
-
+                
+                
                 <hbox hflex="1" sclass="center-items">
-                    <label value="Email:" sclass="label-col" />
+                    <label value="Current Email:" sclass="label-col" />
                     <space hflex="1" />
-                    <textbox id="emailBox" sclass="editBox" placeholder="Email" />
+                    <textbox id="currentEmailBox" sclass="editBox" readonly="true" />
+                </hbox>
+                
+                <hbox hflex="1" sclass="center-items">
+                    <label value="New Email:" sclass="label-col" />
+                    <space hflex="1" />
+                    <textbox id="newEmailBox" sclass="editBox" placeholder="Email" />
+                </hbox>
+                
+                <hbox hflex="1" sclass="center-items">
+                    <label value="Current Phone:" sclass="label-col" />
+                    <space hflex="1" />
+                    <textbox id="currentPhoneBox" sclass="editBox" readonly="true" />
                 </hbox>
 
                 <hbox hflex="1" sclass="center-items">
-                    <label value="Phone:" sclass="label-col" />
+                    <label value="New Phone:" sclass="label-col" />
                     <space hflex="1" />
-                    <textbox id="phoneBox" sclass="editBox" placeholder="Phone" />
+                    <textbox id="newPhoneBox" sclass="editBox" placeholder="Phone" />
                 </hbox>
 
                 <hbox hflex="1" sclass="center-items">
@@ -181,9 +193,9 @@
 
         <!-- ACTION BUTTONS -->
         <hbox spacing="25px" align="center" style="margin-top:20px;">
-            <button id="saveBtn" label="Save Changes" sclass="btn" />
-            <button id="backBtn" label="Back" sclass="btn"
-            onClick='mainContent.setSrc("profile.zul")' />
+            <button id="changeAddressBtn" label="Change Address" sclass="btn" />
+            <button id="changeContactBtn" label="Change Email/Phone" sclass="btn" />
+            <button id="backBtn" label="Back" sclass="btn" />
         </hbox>
 
     </vlayout>

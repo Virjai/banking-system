@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.capitalbank.dao.AccountDao;
+import com.capitalbank.enums.type.AccountType;
 import com.capitalbank.model.Account;
 import com.capitalbank.service.AccountService;
 import com.capitalbank.util.TransactionManager;
@@ -13,6 +14,7 @@ import com.capitalbank.util.customer.BusinessException;
 public class AccountServiceImpl implements AccountService {
 
 	private final AccountDao accountDao;
+	private static final String GST_REGEX = "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$";
 
 	public AccountServiceImpl(AccountDao accountDao) {
 		if (accountDao == null) {
@@ -26,11 +28,15 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public Account openAccount(Account account) {
 		return TransactionManager.doInTransaction(connection -> {
+			String accountNum = generateAccountNumber(account.getCustomerId());
+			
+			account.setAccountNumber(accountNum);
+			validateAccountNumber(account.getAccountNumber());
+			validateGst(account);
 			validateAccountForOpen(account);
-
-			account.setAccountNumber(generateAccountNumber()); 
-	        account.setActive(true);
-	        account.setCreatedAt(LocalDateTime.now());
+			
+			account.setActive(true);
+			account.setCreatedAt(LocalDateTime.now());
 
 			if (accountDao.findByAccountNumber(account.getAccountNumber()).isPresent()) {
 				throw new BusinessException("Account number already exists");
@@ -185,6 +191,15 @@ public class AccountServiceImpl implements AccountService {
 	public boolean accountExists(String accountNumber) {
 		return accountDao.findByAccountNumber(accountNumber).isPresent();
 	}
+	
+	@Override
+	public Optional<Account> getAccountByGstNumber(String gstNumber) {
+	    if (gstNumber == null || gstNumber.isBlank()) {
+	        throw new BusinessException("GST number must not be empty");
+	    }
+
+	    return accountDao.findByGstNumber(gstNumber);
+	}
 
 	/* ================= INTERNAL HELPERS ================= */
 
@@ -208,7 +223,6 @@ public class AccountServiceImpl implements AccountService {
 		if (account.getCustomerId() <= 0) {
 			throw new BusinessException("Invalid customer ID");
 		}
-		validateAccountNumber(account.getAccountNumber());
 		if (account.getBalance() < 0) {
 			throw new BusinessException("Initial balance cannot be negative");
 		}
@@ -233,10 +247,27 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	private String generateAccountNumber(long customerId) {
-	    return "CB"
-	           + customerId
-	           + LocalDateTime.now().toString().replaceAll("\\D", "").substring(0, 12);
+		return "CB" + customerId + LocalDateTime.now().toString().replaceAll("\\D", "").substring(0, 12);
 	}
 
+	private void validateGst(Account account) {
+
+	    if (AccountType.CURRENT.name().equalsIgnoreCase(account.getAccountType())) {
+
+	        if (account.getGstNumber() == null || account.getGstNumber().isBlank()) {
+	            throw new BusinessException("GST number is required for Current Account");
+	        }
+
+	        if (!account.getGstNumber().matches(GST_REGEX)) {
+	            throw new BusinessException("Invalid GST number format");
+	        }
+
+	        // 🔥 Use service method here
+	        getAccountByGstNumber(account.getGstNumber())
+	            .ifPresent(a -> {
+	                throw new BusinessException("GST number already linked to another account");
+	            });
+	    }
+	}
 
 }

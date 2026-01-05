@@ -3,8 +3,9 @@ package com.capitalbank.enums.query;
 public enum AccountQuery {
 	
 	SAVE_ACCOUNT ("""
-			INSERT INTO accounts (customer_id, account_number, account_type, balance, created_at, is_active)
-			VALUES (?, ?, ?, ?, ?, ?);
+			INSERT INTO accounts (customer_id, account_number, account_type, balance, created_at, is_active,
+			gst_number)
+			VALUES (?, ?, ?, ?, ?, ?, ?);
 		"""),
 	
 	SELECT_ALL_ACCOUNTS ("""
@@ -52,8 +53,11 @@ public enum AccountQuery {
 	
 	DELETE_BY_ACCOUNT_ID ("""
 			DELETE FROM customers WHERE account_id = ?
-	""");
-
+	"""),
+	SELECT_ACCOUNT_BY_GST(
+		    "SELECT account_id, customer_id, account_number, account_type, balance, created_at, is_active, gst_number " +
+		    "FROM accounts WHERE gst_number = ?"
+		);
 
 	
 	private final String query;

@@ -56,4 +56,9 @@ public interface AccountService {
     boolean isAccountActive(long accountId);
 
     boolean accountExists(String accountNumber);
+    
+    /**
+     * Find account by GST number (only applicable for Current accounts)
+     */
+    Optional<Account> getAccountByGstNumber(String gstNumber);
 }

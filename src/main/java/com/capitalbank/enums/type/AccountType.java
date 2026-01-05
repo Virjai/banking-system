@@ -1,7 +1,7 @@
 package com.capitalbank.enums.type;
 
 public enum AccountType {
-	SAVING("saving"), CURRENT("current");
+	SAVING("savings"), CURRENT("current");
 
 	private final String literal;
 

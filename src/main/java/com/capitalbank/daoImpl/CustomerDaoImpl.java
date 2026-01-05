@@ -16,6 +16,7 @@ import com.capitalbank.dao.CustomerDao;
 import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.enums.query.CustomerQuery;
 import com.capitalbank.model.Customer;
+import com.capitalbank.util.customer.ValidationPanUtil;
 
 public class CustomerDaoImpl implements CustomerDao {
 //    private DataSource dataSource;
@@ -35,7 +36,14 @@ public class CustomerDaoImpl implements CustomerDao {
 			setDateOrNull(ps, idk++, customer.getDob());
 			ps.setString(idk++, customer.getGender());
 			ps.setString(idk++, customer.getAadharNumber());
-			ps.setString(idk++, customer.getPanNumber());
+			String panNumber = customer.getPanNumber();
+			if(panNumber != null) {
+				if(ValidationPanUtil.isValidPan(panNumber)) {
+					ps.setString(idk++, panNumber );
+				}
+			} else {
+				ps.setString(idk++, panNumber );	
+			}
 			ps.setString(idk++, customer.getAadharImage());
 			ps.setString(idk++, customer.getCustomerImage());
 			ps.setString(idk++, customer.getEmail());

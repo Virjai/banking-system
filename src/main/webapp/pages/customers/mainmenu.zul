@@ -206,6 +206,8 @@
 								onClick='mainContent.setSrc("dashboard.zul")' />
 							<listitem label="My Profile"
 								onClick='mainContent.setSrc("profile.zul")' />
+							<listitem label="KYC Form"
+								onClick='mainContent.setSrc("kyc_page.zul")' />	
 							<listitem label="Open Account"
 								onClick='mainContent.setSrc("../accounts/open_account.zul")' />
 							<listitem label="View Accounts"

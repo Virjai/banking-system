@@ -1,0 +1,192 @@
+<?page title="View Transactions" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+<style>
+    html, body {
+        min-height: 100% !important;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        background-attachment: fixed;
+        overflow-y: auto !important;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    /* Remove default ZK window styling */
+    .z-window, 
+    .z-window-embedded, 
+    .z-window-embedded .z-window-content,
+    .z-window-content {
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        overflow-y: visible !important;
+    }
+
+    /* Main glass card */
+    .admin-card {
+        background: rgba(255,255,255,0.25);
+        border: 1px solid rgba(255,255,255,0.3);
+     	border-radius: 18px;
+        backdrop-filter: blur(14px);
+        padding: 30px 35px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+       
+      
+        
+    }
+
+    .title-text {
+        font-size: 22px;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        margin-bottom: 25px;
+        display: block;
+    }
+
+    /* Filter row */
+    .filter-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+        
+    }
+
+    .filter-label {
+        font-weight: bold;
+        color: black;
+    }
+
+    .filter-input {
+        width: 160px;
+    }
+
+    .z-textbox,
+    .z-datebox-input {
+        border-radius: 8px !important;
+        padding: 6px 10px !important;
+    }
+
+    /* Buttons */
+    .btn {
+        color: white;
+        border-radius: 10px;
+        padding: 8px 18px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-search {
+        background: #4CAF50;
+    }
+
+    .btn-search:hover {
+        background: #45a049;
+    }
+
+    .btn-reset {
+        background: #f44336;
+    }
+
+    .btn-reset:hover {
+        background: #d73833;
+    }
+
+    /* Table container */
+    .table-box {
+        background: rgba(255,255,255,0.35);
+        border-radius: 12px;
+    }
+    
+    .z-listbox {
+        overflow: auto;
+    }
+    
+
+ /* Gradient wrapper */
+    .page-bg {
+        min-height: 100vh;
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        display: flex;
+        justify-content: center; /**/
+        padding: 40px 60px;        /**/
+        align-items: flex-start;
+        
+        box-sizing: border-box;
+    }
+      .action-box {
+        display: flex;
+        justify-content: center;
+        margin-top: 25px;
+    }
+    
+    .btn-approve {
+        background: #4CAF50;
+    }
+
+</style>
+<div sclass="page-bg">
+
+<!-- IMPORTANT: NO vflex, NO fixed height -->
+<window border="none" apply="">
+
+    <vlayout sclass="admin-card" spacing="20px">
+
+        <!-- Title -->
+        <label value="View Transactions" sclass="title-text"/>
+
+        <!-- Filter Section -->
+        <div sclass="filter-row">
+            <label value="Account No:" sclass="filter-label"/>
+            <textbox id="accountTb" placeholder="5000000006" sclass="filter-input"/>
+
+            <label value="From Date:" sclass="filter-label"/>
+            <datebox id="fromDate" sclass="filter-input"/>
+
+            <label value="To Date:" sclass="filter-label"/>
+            <datebox id="toDate" sclass="filter-input"/>
+
+
+            <button id="searchBtn" label="Search" sclass="btn btn-search"/>
+
+            <button id="resetBtn" label="Reset" sclass="btn btn-reset"/>
+        </div>
+
+        <!-- Transactions Table -->
+        <div sclass="table-box">
+            <!-- vflex=min allows growth -> PAGE scroll -->
+          
+             <listbox id="txnListbox" hflex="1" 
+              mold="paging" 
+              pageSize="5" >
+				
+                <listhead>
+                    <listheader label="Txn ID" width="7%"/>
+                    <listheader label="Account No" width="13%"/>
+                    <listheader label="Date" width="18%"/>
+                    <listheader label="Description" width="25%"/>
+                    <listheader label="Amount" width="10%"/>
+                    <listheader label="Balance" width="15%"/>
+                    <listheader label="Type" width="12%"/>
+                </listhead>
+            </listbox>
+        </div>
+             <!-- BACK BUTTON -->
+            <div sclass="action-box">
+                <button label="Back to Dashboard"
+                        sclass="btn btn-approve"
+                        onClick='Executions.sendRedirect("mainmenu.zul")'/>
+            </div>
+            
+
+    </vlayout>
+
+</window>
+</div>
+</zk>

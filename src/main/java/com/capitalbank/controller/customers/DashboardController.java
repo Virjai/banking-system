@@ -1,5 +1,11 @@
 package com.capitalbank.controller.customers;
 
+import java.io.ByteArrayInputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
@@ -11,6 +17,7 @@ import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Rows;
 
+import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.model.Customer;
 import com.capitalbank.service.CustomerService;
 import com.capitalbank.serviceImpl.CustomerServiceImpl;
@@ -55,21 +62,51 @@ public class DashboardController extends SelectorComposer<Component> {
 	// ============================
 	private void loadUserDetails(Long cid) {
 		try {
-			Customer existingCustomer = customerService.getCustomerById(cid);
-			if (existingCustomer == null) {
-				Clients.showNotification("User does not exist by id: " + cid);
-				return;
-			}
-			String name = existingCustomer.getFullName();
-			String profileImage = existingCustomer.getCustomerImage();
+//			Customer existingCustomer = customerService.getCustomerById(cid);
+//			if (existingCustomer == null) {
+//				Clients.showNotification("User does not exist by id: " + cid);
+//				return;
+//			}
+//			String name = existingCustomer.getFullName();
+//			String profileImage = existingCustomer.getCustomerImage();
+//
+//			userNameLbl.setValue(name);
+			
+			Connection con = DBConnection.getConnection();
 
-			userNameLbl.setValue(name);
+            PreparedStatement ps = con.prepareStatement(
+                "SELECT c.full_name, k.profile_image " +
+                "FROM customers c " +
+                "LEFT JOIN kyc_documents k ON c.customer_id = k.customer_id " +
+                "WHERE c.customer_id = ?"
+            );
 
-			if (profileImage != null && profileImage.trim().isEmpty()) {
-				profileImg.setSrc(profileImage);
-			} else {
-				profileImg.setSrc("/resources/images/default_profile.png");
-			}
+            ps.setLong(1, cid);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                userNameLbl.setValue(rs.getString("full_name"));
+
+                byte[] imageBytes = rs.getBytes("profile_image");
+
+                if (imageBytes == null || imageBytes.length == 0) {
+                    profileImg.setSrc("/resources/images/logo.png");
+                } else {
+                    AImage image = new AImage(
+                        "profile",
+                        new ByteArrayInputStream(imageBytes)
+                    );
+                    profileImg.setContent(image);
+                }
+            }
+
+            con.close();
+			
+//			if (profileImage != null && profileImage.trim().isEmpty()) {
+//				profileImg.setSrc(profileImage);
+//			} else {
+//				profileImg.setSrc("/resources/images/default_profile.png");
+//			}
 
 		} catch (Exception e) {
 			Clients.alert("Error loading profile: " + e.getMessage());

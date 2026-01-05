@@ -1,0 +1,137 @@
+<?page title="Rejected Accounts" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+<style>
+    /* Base reset */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      
+        font-family: "Segoe UI", sans-serif;
+        background: #f4f6fb;
+    }
+
+    /* Gradient background wrapper */
+    .page-bg {
+        min-height: 100vh;
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        display: flex;
+   
+        justify-content: center; /**/
+        padding: 40px 60px;        /**/
+        align-items: flex-start;
+    
+        box-sizing: border-box;
+    }
+
+    /* Remove default ZK window UI */
+    .z-window,
+    .z-window-content {
+        border: none !important;
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* Glass admin card */
+    .admin-card {
+        background: rgba(255,255,255,0.25);
+        border: 1px solid rgba(255,255,255,0.3);
+      
+        backdrop-filter: blur(14px);
+        padding: 30px 35px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+       	border-radius: 18px;
+        
+    }
+
+    /* Title */
+    .title-text {
+        font-size: 22px;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        margin-bottom: 25px;
+        display: block;
+    }
+
+    /* Table container */
+    .table-box {
+        background: rgba(255,255,255,0.35);
+        border-radius: 12px;
+    }
+
+    .z-listbox {
+        overflow: auto;
+    }
+
+    .z-listheader-content {
+        font-weight: bold;
+    }
+    
+    
+    .action-box {
+        display: flex;
+        justify-content: center;
+        margin-top: 25px;
+    }
+      /* Buttons */
+    .btn {
+        color: white;
+        border-radius: 10px;
+        padding: 8px 18px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-approve {
+        background: #4CAF50;
+    }
+</style>
+
+<div sclass="page-bg">
+
+    <window border="none"
+            apply="">
+
+        <vlayout sclass="admin-card" spacing="20px">
+
+            <!-- Page Title -->
+            <label value="Rejected Accounts" sclass="title-text"/>
+
+            <!-- Rejected Accounts Table -->
+            <div sclass="table-box">
+                <listbox id="rejectedListbox"
+                        
+                         
+                         mold="paging"
+                         pageSize="5">
+
+                    <listhead>
+                        <listheader label="Account ID"/>
+                        <listheader label="Customer ID"/>
+                        <listheader label="Account No"/>
+                        <listheader label="Account Type"/>
+                        <listheader label="Status"/>
+                        <listheader label="Action"/>
+                    </listhead>
+
+                </listbox>
+                </div>
+                  <!-- Back -->
+            <div sclass="action-box">
+                <button label="Back to Dashboard"
+                        sclass="btn btn-approve"
+                        onClick='Executions.sendRedirect("mainmenu.zul")'/>
+            
+            </div>
+
+        </vlayout>
+
+    </window>
+
+</div>
+</zk>

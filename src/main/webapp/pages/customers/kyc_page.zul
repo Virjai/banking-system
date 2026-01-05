@@ -1,0 +1,291 @@
+<?page title="User Registration" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+<style>
+    /* ================= Base ================= */
+    html, body {
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        background-attachment: fixed;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    /* Remove default ZK chrome */
+    .z-window, .z-window-embedded, .z-window-content {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+
+    /* ================= Card ================= */
+    .kyc-card {
+        background: rgba(255,255,255,0.25);
+        border: 1px solid rgba(255,255,255,0.35);
+        border-radius: 18px;
+        backdrop-filter: blur(14px);
+        padding: clamp(20px, 3vw, 40px);
+        box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+        width: 92%;
+        max-width: 1100px;
+        margin: 40px auto;
+    }
+
+    /* ================= Title ================= */
+    .title-text {
+        font-size: clamp(20px, 2.2vw, 28px);
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 30px;
+        color: #000;
+    }
+
+    /* ================= Form Layout ================= */
+    .form-container {
+        display: flex;
+        gap: clamp(25px, 4vw, 60px);
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .form-column {
+        flex: 1 1 420px;
+        min-width: 280px;
+    }
+
+    .form-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.1rem;
+        flex-wrap: wrap;
+    }
+
+    /* ================= Labels ================= */
+    .label-col {
+        flex: 0 0 clamp(120px, 22%, 180px);
+        font-size: clamp(14px, 1.1vw, 17px);
+        font-weight: 600;
+        color: #000;
+        text-align: right;
+    }
+    
+    .label-title{
+    	width:100%;
+    	text-align:center;
+    	margin-bottom:30px;
+    }
+
+    /* ================= Inputs ================= */
+    .input-col {
+        flex: 1 1 240px;
+        min-width: 200px;
+    }
+
+    .z-textbox,
+    .z-datebox-input {
+        width: 100% !important;
+        border-radius: 8px !important;
+        padding: 6px 10px !important;
+        font-size: clamp(13px, 1vw, 15px);
+    }
+
+    /* ================= Radio ================= */
+    .radio-group {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        font-size: clamp(13px, 1vw, 15px);
+    }
+
+    /* ================= Upload ================= */
+    .upload-box {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        flex: 1;
+    }
+
+    .icon-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        background: #f44336;
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .icon-btn:hover {
+        background: #d32f2f;
+    }
+
+    /* ================= Buttons ================= */
+    .action-box {
+        display: flex;
+        justify-content: center;
+        gap: clamp(15px, 4vw, 35px);
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+    
+    .file-upload {
+    	height:30px; 
+    	padding:2px;
+    	width: 250px;
+    }
+
+    .btn {
+        font-size: clamp(14px, 1vw, 16px);
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        min-width: 120px;
+        color: white;
+    }
+
+    .btn-primary { background: #4CAF50; }
+    .btn-primary:hover { background: #43a047; }
+
+    .btn-danger { background: #f44336; }
+    .btn-danger:hover { background: #d32f2f; }
+
+    /* ================= Mobile ================= */
+    @media (max-width: 768px) {
+        .label-col {
+            text-align: left;
+            flex: 1 1 100%;
+        }
+
+        .form-row {
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<window apply="com.capitalbank.controller.customers.KYCFormController" style="overflow: visible;">
+
+    <vlayout sclass="kyc-card">
+
+        <div sclass="label-title">
+    		<label value="KYC Form" sclass="title-text"/>
+		</div>
+
+        <div sclass="form-container">
+
+            <!-- LEFT COLUMN -->
+            <div sclass="form-column">
+
+                <div sclass="form-row">
+                    <label value="Full Name:" sclass="label-col"/>
+                    <textbox id="tFullName" sclass="input-col" readonly="true"
+                             constraint="/[A-Za-z ]*/: Alphabets only" />
+                </div>
+
+                <div sclass="form-row">
+                    <label value="Date of Birth:" sclass="label-col"/>
+                    <datebox id="dob" format="yyyy-MM-dd" readonly="true"
+                             sclass="input-col"/>
+                </div>
+
+                <div sclass="form-row">
+                    <label value="Gender:" sclass="label-col"/>
+                    <radiogroup id="gender" sclass="radio-group">
+                        <radio label="Male"/>
+                        <radio label="Female"/>
+                        <radio label="Other"/>
+                    </radiogroup>
+                </div>
+
+                <div sclass="form-row">
+                    <label value="Email ID:" sclass="label-col"/>
+                    <textbox id="tEmail" readonly="true" sclass="input-col" />
+                </div>
+
+                <div sclass="form-row">
+                    <label value="Phone Number:" sclass="label-col"/>
+                    <textbox id="tPhoneNo" readonly="true" maxlength="10" sclass="input-col" />
+                </div>
+
+                <div sclass="form-row">
+                    <label value="Aadhar Number:" sclass="label-col"/>
+                    <textbox id="tAadhar" maxlength="12" sclass="input-col"/>
+                </div>
+
+                <div sclass="form-row">
+                    <label value="PAN Number:" sclass="label-col"/>
+                    <textbox id="tPanCardNo" sclass="input-col"
+                             maxlength="10" placeholder="Optional"/>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div sclass="form-column">
+
+                <div sclass="form-row">
+                    <label value="Address:" sclass="label-col"/>
+                    <textbox id="tAddress" sclass="input-col"/>
+                </div>
+
+                <div sclass="form-row">
+                    <label value="City:" sclass="label-col"/>
+                    <textbox id="tCity" sclass="input-col"/>
+                </div>
+
+                <div sclass="form-row">
+                    <label value="State:" sclass="label-col"/>
+                    <textbox id="tState" sclass="input-col"/>
+                </div>
+
+                <div sclass="form-row">
+                    <label value="Pin Code:" sclass="label-col"/>
+                    <textbox id="tPincode" maxlength="6" sclass="input-col"/>
+                </div>
+
+                <div sclass="form-row">
+                    <label value="Country:" sclass="label-col"/>
+                    <textbox id="tCountry" sclass="input-col"/>
+                </div>
+
+                <div sclass="form-row">
+                    <label value="Aadhar Proof:" sclass="label-col"/>
+                    <div sclass="upload-box">
+                        <fileupload id="aadharUpload"
+								label="Upload Proof" upload="true" hflex="1"
+								sclass="file-upload" />
+                        <button id="btnDeleteProof"
+                                iconSclass="z-icon-trash-o"
+                                sclass="icon-btn"/>
+                    </div>
+                </div>
+
+                <div sclass="form-row">
+                    <label value="Profile Photo:" sclass="label-col"/>
+                    <div sclass="upload-box">
+                        <fileupload id="imageUpload"
+								label="Upload Image" upload="true" hflex="1"
+								sclass="file-upload"/>
+                        <button id="btnDeleteImage"
+                                iconSclass="z-icon-trash-o"
+                                sclass="icon-btn"/>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div sclass="action-box">
+            <button id="btnSubmit" label="Submit"
+                    sclass="btn btn-primary"/>
+            <button id="btnClear" label="Clear"
+                    sclass="btn btn-danger"/>
+        </div>
+
+    </vlayout>
+</window>
+</zk>

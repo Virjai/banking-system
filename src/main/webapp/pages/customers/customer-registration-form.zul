@@ -2,55 +2,42 @@
 <zk>
 	<style>
 		/* General body */ body { margin: 0; padding: 0; height: 100vh;
-		} /* Page wrapper */ 
-		.page-wrapper { display: flex;
+		} /* Page wrapper */ .page-wrapper { display: flex;
 		justify-content: center; align-items: center; min-height: 100vh;
 		background: linear-gradient(135deg, #667eea 0%, #764ba2 50%,
-		#f093fb 100%); } 
-		/* Card */ 
-		.form-card { width: 55%;
-	 border-radius: 12px; box-shadow: 0 6px 18px
-		rgba(0, 0, 0, 0.12); background: rgba(255, 255, 255, 0.25);
-		overflow-x: hidden; } 
-		.z-window-content { padding: 16px;
-		background: transparent; box-sizing: border-box; } 
-		/* Title */
-		.form-title { display: block; width: 100%; text-align: center;
-		font-size: 24px; font-weight: 700; color: #0a3d91;
-		margin-bottom: 28px; } 
-		/* Grid layout */ 
-		.form-grid { width:
-		100% !important; table-layout: fixed; border-collapse: collapse;
-		} 
-		.form-grid td, .form-grid th { border: none !important;
-		padding: 4px 8px; vertical-align: middle; } 
-		/* Labels left-aligned */ 
-		.form-label { text-align: left; font-size: 16px;
-		font-weight: 600; white-space: nowrap; overflow: hidden;
-		text-overflow: ellipsis; } /* Textboxes right-aligned */
-		.form-input { width: 400px !important; max-width: 100%;
-		box-sizing: border-box; display: block; margin-left: auto;
-		padding: 8px 10px; font-size: 14px; } /* Buttons same size */
-		.primary-btn { width: 120px; text-align: center; } .button-bar {
-		width: 100%; justify-content: center; margin-top: 12px; gap:
-		10px; } 
-		/* Remove all hover effects */ 
-		.z-row, .z-row:hover,
-		.z-listitem, .z-listitem:hover, .z-grid-row, .z-grid-row:hover,
-		.z-row-selected, .z-listitem-selected, .z-grid-row-selected,
-		.z-row:active, .z-listitem:active, .z-grid-row:active {
-		background-color: transparent !important; color: inherit
-		!important; cursor: default !important; } 
-		/* Ensure inner divs
-		inside rows also don't get hover */ .z-row > div, .z-listitem >
-		div, .z-grid-row > div { background-color: transparent
-		!important; }
-		 /* Responsive for small screens */ @media
-		(max-width: 600px) { .form-card { width: 90%; } .form-input {
-		max-width: 100%; margin-left: 0; } .form-label { width: 100%;
-		margin-bottom: 4px; } .form-grid td { display: block; }
-		.form-grid tr { display: block; margin-bottom: 8px; }
-		.button-bar { flex-direction: column; gap: 8px; } }
+		#f093fb 100%); } /* Card */ .form-card { width: 55%;
+		border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+		background: rgba(255, 255, 255, 0.25); overflow-x: hidden; }
+		.z-window-content { padding: 16px; background: transparent;
+		box-sizing: border-box; } /* Title */ .form-title { display:
+		block; width: 100%; text-align: center; font-size: 24px;
+		font-weight: 700; color: #0a3d91; margin-bottom: 28px; } /* Grid
+		layout */ .form-grid { width: 100% !important; table-layout:
+		fixed; border-collapse: collapse; } .form-grid td, .form-grid th
+		{ border: none !important; padding: 4px 8px; vertical-align:
+		middle; } /* Labels left-aligned */ .form-label { text-align:
+		left; font-size: 16px; font-weight: 600; white-space: nowrap;
+		overflow: hidden; text-overflow: ellipsis; } /* Textboxes
+		right-aligned */ .form-input { width: 400px !important;
+		max-width: 100%; box-sizing: border-box; display: block;
+		margin-left: auto; padding: 8px 10px; font-size: 14px; } /*
+		Buttons same size */ .primary-btn { width: 120px; text-align:
+		center; } .button-bar { width: 100%; justify-content: center;
+		margin-top: 12px; gap: 10px; } /* Remove all hover effects */
+		.z-row, .z-row:hover, .z-listitem, .z-listitem:hover,
+		.z-grid-row, .z-grid-row:hover, .z-row-selected,
+		.z-listitem-selected, .z-grid-row-selected, .z-row:active,
+		.z-listitem:active, .z-grid-row:active { background-color:
+		transparent !important; color: inherit !important; cursor:
+		default !important; } /* Ensure inner divs inside rows also
+		don't get hover */ .z-row > div, .z-listitem > div, .z-grid-row
+		> div { background-color: transparent !important; } /*
+		Responsive for small screens */ @media (max-width: 600px) {
+		.form-card { width: 90%; } .form-input { max-width: 100%;
+		margin-left: 0; } .form-label { width: 100%; margin-bottom: 4px;
+		} .form-grid td { display: block; } .form-grid tr { display:
+		block; margin-bottom: 8px; } .button-bar { flex-direction:
+		column; gap: 8px; } }
 		
 	</style>
 	<div sclass="page-wrapper">

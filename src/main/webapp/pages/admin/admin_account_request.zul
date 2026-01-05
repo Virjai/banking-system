@@ -1,0 +1,147 @@
+<?page title="Pending Account Requests" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+<style>
+    /* Reset */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: "Segoe UI", sans-serif;
+        background: #f4f6fb;
+    }
+
+
+
+    /* Gradient wrapper */
+    .page-bg {
+        min-height: 100vh;
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        display: flex;
+        justify-content: center; /**/
+        padding: 40px 60px;        /**/
+        align-items: flex-start;
+        
+        box-sizing: border-box;
+    }
+
+    /* Remove ZK window styling */
+    .z-window,
+    .z-window-content {
+        border: none !important;
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* Glass card */
+    .admin-card {
+        background: rgba(255,255,255,0.25);
+        border: 1px solid rgba(255,255,255,0.3);
+    	border-radius: 18px;
+        backdrop-filter: blur(14px);
+        padding: 30px 35px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+     
+        
+    }
+
+    /* Title */
+    .title-text {
+        font-size: 22px;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        margin-bottom: 25px;
+        display: block;
+    }
+
+    /* Table container */
+    .table-box {
+        background: rgba(255,255,255,0.35);
+        
+        overflow-x: auto;   /* horizontal scroll */
+        overflow-y: auto;   /* vertical scroll */
+
+        width: 100%;
+    }
+
+    .z-listbox {
+        overflow: auto;
+    }
+
+    .z-listheader-content {
+        font-weight: bold;
+    }
+     .btn-approve {
+        background: #4CAF50;
+    }
+
+    .btn-approve:hover {
+        background: #45a049;
+    }
+
+    .btn-reject {
+        background: #f44336;
+    }
+
+    .btn-reject:hover {
+        background: #e53935;
+    }
+    
+     .action-box {
+        display: flex;
+        justify-content: center;
+        margin-top: 25px;
+    }
+    
+    .btn-approve {
+        background: #4CAF50;
+    }
+</style>
+
+<div sclass="page-bg">
+
+    <window border="none"
+           apply="" >
+
+        <vlayout sclass="admin-card" spacing="20px">
+
+            <!-- Title -->
+            <label value="Pending Account Requests" sclass="title-text"/>
+
+            <!-- Requests Table -->
+            <div sclass="table-box">
+                <listbox id="requestListbox"
+                         width="100%"
+                      
+                          mold="paging"
+                         pageSize="5">
+
+                    <listhead>
+                        <listheader label="Account ID" width="12%"/>
+                        <listheader label="Customer ID" width="13%"/>
+                        <listheader label="Account No" width="15%"/>
+                        <listheader label="Account Type" width="15%"/>
+                        <listheader label="Request Date" width="20%"/>
+                        <listheader label="Action" width="25%"/>
+                    </listhead>
+
+                </listbox>
+            </div>
+             <!-- BACK BUTTON -->
+            <div sclass="action-box">
+                <button label="Back to Dashboard"
+                        sclass="btn btn-approve"
+                        onClick='Executions.sendRedirect("mainmenu.zul")'/>
+            </div>
+            
+
+        </vlayout>
+
+    </window>
+
+</div>
+</zk>

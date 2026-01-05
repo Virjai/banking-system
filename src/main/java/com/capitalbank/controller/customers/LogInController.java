@@ -69,8 +69,9 @@ public class LogInController extends SelectorComposer<Window> {
 			if (existingUser.getRole().name().equals("USER")) {
 				Clients.showNotification("Login Successful", "info", bLogin, "middle_center", 5000);
 				Executions.sendRedirect("mainmenu.zul");
-			} else {
+			} else if (existingUser.getRole().name().equals("ADMIN")) {
 				Clients.showNotification("Login Failed", "info", bLogin, "middle_center", 5000);
+				Executions.sendRedirect("mainmenu.zul");
 			}
 
 		} catch (Exception e) {

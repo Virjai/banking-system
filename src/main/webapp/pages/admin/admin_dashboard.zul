@@ -1,0 +1,95 @@
+<?page title="Admin Dashboard" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<style>
+		body { margin: 0; padding: 0; background:
+		linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+		font-family: Arial, sans-serif; } 
+		.z-window {
+			padding : 0px;
+		}
+		.card { background: white;
+		border-radius: 20px; padding: 20px; width: 250px; box-shadow: 0
+		8px 20px rgba(0,0,0,0.25); text-align: center; } .title {
+		font-size: 15px; color: #666; } .value { font-size: 28px;
+		font-weight: bold; margin-top: 8px; }
+	</style>
+
+	<window width="100%" height="100%" border="none" 
+		apply="">
+
+		<vlayout width="100%" spacing="25px" style="padding:30px">
+
+
+
+			<!-- ROW 1 -->
+			<hbox spacing="20px" align="center" pack="center" width="100%">
+				<vlayout sclass="card">
+					<label  value="Total Customers" sclass="title"   />
+					<label id="totalCustomersLbl" value="0"
+						sclass="value"  />
+				</vlayout>
+
+				<vlayout sclass="card">
+					<label value="Total Accounts" sclass="title" />
+					<label id="totalAccountsLbl" value="0"
+						sclass="value" />
+				</vlayout>
+
+				<vlayout sclass="card">
+					<label value="Total Transactions" sclass="title" />
+					<label id="totalTransactionsLbl" value="0"
+						sclass="value" />
+				</vlayout>
+			</hbox>
+
+			<!-- ROW 2 -->
+			<hbox width="100%" spacing="20px" pack="center" align="center">
+				<vlayout sclass="card">
+					<label value="Approved Accounts" sclass="title" />
+					<label id="totalapprovedLbl" value="0"
+						sclass="value" />
+				</vlayout>
+				<vlayout sclass="card">
+					<label value="Rejected Accounts" sclass="title" />
+					<label id="totalRejectedLbl" value="0"
+						sclass="value" />
+				</vlayout>
+
+				<vlayout sclass="card">
+					<label value="Pending Accounts" sclass="title" />
+					<label id="pendingAccountsLbl" value="0"
+						sclass="value" />
+				</vlayout>
+			</hbox>
+
+			<!-- ROW 3 -->
+			<hbox spacing="20px" align="center" pack="center" width="100%">
+				<vlayout sclass="card">
+					<label value="Active Accounts" sclass="title" />
+					<label id="activeAccountsLbl" value="0"
+						sclass="value" />
+				</vlayout>
+
+				<vlayout sclass="card">
+					<label value="DeActive Accounts" sclass="title" />
+					<label id="deActiveAccountsLbl" value="0"
+						sclass="value" />
+				</vlayout>
+				<vlayout sclass="card">
+					<label value="Updateprofilerequest" sclass="title" />
+					<label id="Updateprofilerequestlbl" value="0"
+						sclass="value" />
+				</vlayout>
+				
+			</hbox>
+			<hbox spacing="20px" align="center" pack="center" width="100%">
+			<vlayout sclass="card" >
+					<label value="CloseAccountRequest" sclass="title" />
+					<label id="CloseAccountRequestlbl" value="0"
+						sclass="value" />
+				</vlayout>
+			</hbox>
+
+		</vlayout>
+	</window>
+</zk>

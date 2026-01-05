@@ -9,16 +9,16 @@ import com.capitalbank.model.Transaction;
 
 public interface TransactionDao {
 
-	public Transaction save(Connection connection, Transaction transaction);
+	public Transaction save(Transaction transaction);
 
-	public Optional<List<Transaction>> findAllTransaction(Connection connection);
+	public Optional<List<Transaction>> findAllTransaction();
 
-	public Optional<Transaction> findByTransactionId(Connection connection, long transactionId);
+	public Optional<Transaction> findByTransactionId(long transactionId);
 
-	public Optional<Transaction> findTransactionByDate(Connection connection, LocalDate initialDate, LocalDate endDate);
+	public Optional<Transaction> findTransactionByDate(LocalDate initialDate, LocalDate endDate);
 
-	public boolean updateByTransactionId(Connection connection, long transactionId);
+	public boolean updateByTransactionId(long transactionId);
 
-	public boolean deleteByTransactionId(Connection connection, long transactionId);
+	public boolean deleteByTransactionId(long transactionId);
 
 }

@@ -24,5 +24,7 @@ public interface AccountDao {
 	public boolean deleteByAccountId(long AccountId);
 
 	public boolean deleteByAccountNumber(String accountNumber);
+	
+	Optional<Account> findByGstNumber(String gstNumber);
 
 }

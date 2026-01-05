@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.Listen;
+import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
@@ -12,161 +15,170 @@ import org.zkoss.zul.Doublebox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
-import org.zkoss.zk.ui.select.SelectorComposer;
-import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zk.ui.select.annotation.Listen;
 
 import com.capitalbank.dao.AccountDao;
 import com.capitalbank.daoImpl.AccountDaoImpl;
 import com.capitalbank.enums.type.AccountType;
 import com.capitalbank.model.Account;
+import com.capitalbank.model.Customer;
 import com.capitalbank.service.AccountService;
+import com.capitalbank.service.CustomerService;
 import com.capitalbank.serviceImpl.AccountServiceImpl;
+import com.capitalbank.serviceImpl.CustomerServiceImpl;
 
 public class OpenAccountController extends SelectorComposer<Window> {
-	private static final long serialVersionUID = 1L;
 
-	@Wire
-	private Textbox customerId;
-	@Wire
-	private Textbox panBox;
-	@Wire
-	private Textbox gstBox;
+    private static final long serialVersionUID = 1L;
 
-	@Wire
-	private Combobox accountType;
+    // ---------- UI COMPONENTS ----------
+    @Wire private Textbox customerId;
+    @Wire private Textbox panBox;
+    @Wire private Textbox gstBox;
+    @Wire private Combobox accountType;
+    @Wire private Doublebox balance;
+    @Wire private Hbox gstRow;
+    @Wire private Button openBtn;
+    @Wire private Button clearBtn;
 
-	@Wire
-	private Doublebox balance;
+    // ---------- SERVICES ----------
+    private final AccountDao accountDao = new AccountDaoImpl();
+    private final AccountService accountService = new AccountServiceImpl(accountDao);
+    private final CustomerService customerService = new CustomerServiceImpl();
 
-	@Wire
-	private Hbox gstRow;
+    // ---------- INIT ----------
+    @Override
+    public void doAfterCompose(Window comp) throws Exception {
+        super.doAfterCompose(comp);
 
-	@Wire
-	private Button openBtn;
-	@Wire
-	private Button clearBtn;
+        Long cid = getCustomerIdFromSession();
+        if (cid == null) {
+            redirectToLogin();
+            return;
+        }
 
-	private AccountDao accountDao = new AccountDaoImpl();
-	private AccountService accountService = new AccountServiceImpl(accountDao);
+        initCustomerDetails(cid);
+    }
 
-	@Override
-	public void doAfterCompose(Window comp) throws Exception {
-		super.doAfterCompose(comp);
+    // ---------- UI EVENTS ----------
+    @Listen("onChange = #accountType")
+    public void onAccountTypeChange() {
+        String selected = accountType.getValue(); // value from combobox, e.g. "Savings" or "Current"
 
-		Long cid = (Long) Sessions.getCurrent().getAttribute("customer_id");
+        // Compare with enum literal
+        if (AccountType.CURRENT.getLiteral().equalsIgnoreCase(selected)) {
+            gstRow.setVisible(true);
+        } else {
+            gstRow.setVisible(false);
+            gstBox.setValue("");
+        }
+    }
 
-		if (cid == null) {
-			Clients.alert("SESSION EXPIRED — Please login again.");
-			Executions.sendRedirect("login.zul");
-			return;
-		}
 
-		customerId.setValue(String.valueOf(cid));
-		customerId.setReadonly(true);
-	}
+    @Listen("onClick = #openBtn")
+    public void createAccount() {
+        try {
+            Long cid = Long.parseLong(customerId.getValue());
+            AccountType type = getSelectedAccountType();
+            Double amount = balance.getValue();
+            String gstNumber = gstBox.getValue();
 
-	// Show GST only for Current Account
-	@Listen("onChange = #accountType")
-	public void onAccountTypeChange() {
-		if ("Current".equals(accountType.getValue())) {
-			gstRow.setVisible(true);
-		} else {
-			gstRow.setVisible(false);
-			gstBox.setValue("");
-		}
-	}
+            validateUiInputs(type, amount, gstNumber);
+            validateAccountLimits(cid, type);
 
-	@Listen("onClick=#openBtn")
-	public void createAccount() {
-		try {
-			// 🔹 Read inputs
-			Long cid = Long.parseLong(customerId.getValue());
-			String panNumber = panBox.getValue() != null ? panBox.getValue().trim() : "";
-			String accType = accountType.getValue();
-			String gstNumber = gstBox.getValue() != null ? gstBox.getValue().trim() : "";
-			Double amount = balance.getValue();
-			
-			// 1️⃣ PAN required always
-			if (panNumber.isEmpty()) {
-				Clients.alert("PAN Number is required.");
-				return;
-			}
+            Account account = buildAccount(cid, type, amount, gstNumber);
+            accountService.openAccount(account);
 
-			// 2️⃣ Account type required
-			if (accType == null || accType.isEmpty()) {
-				Clients.alert("Please select Account Type.");
-				return;
-			}
+            Clients.alert("Account created successfully!");
+            clearForm();
 
-			// 3️⃣ GST required only for CURRENT
-			if ("Current".equalsIgnoreCase(accType) && gstNumber.isEmpty()) {
-				Clients.alert("GST Number is required for Current Accounts.");
-				return;
-			}
+        } catch (IllegalArgumentException e) {
+            Clients.alert(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Clients.alert("Failed to create account. Please try again.");
+        }
+    }
 
-			// 4️⃣ Minimum balance check
-			if (amount == null || amount <= 0) {
-				Clients.alert("Initial balance must be greater than zero.");
-				return;
-			}
+    @Listen("onClick = #clearBtn")
+    public void clearForm() {
+        accountType.setValue("");
+        balance.setValue(null);
+        gstBox.setValue("");
+        gstRow.setVisible(false);
+    }
 
-			// 🔹 Fetch customer accounts once
-			List<Account> accounts = accountService.getAccountsByCustomer(cid);
+    // ---------- PRIVATE METHODS ----------
 
-			// 5️⃣ Savings account limit (max 5)
-			if ("Savings".equalsIgnoreCase(accType)) {
-				long count = accounts.stream().filter(Account::isActive)
-						.filter(acc -> AccountType.SAVING.name().equalsIgnoreCase(acc.getAccountType())).count();
+    private Long getCustomerIdFromSession() {
+        return (Long) Sessions.getCurrent().getAttribute("customer_id");
+    }
 
-				if (count >= 5) {
-					Clients.alert("You can open a maximum of 5 Savings Accounts.");
-					return;
-				}
-			}
+    private void redirectToLogin() {
+        Clients.alert("SESSION EXPIRED — Please login again.");
+        Executions.sendRedirect("login.zul");
+    }
 
-			// 6️⃣ Current account limit (max 2)
-			if ("Current".equalsIgnoreCase(accType)) {
-				long count = accounts.stream().filter(Account::isActive)
-						.filter(acc -> AccountType.CURRENT.name().equalsIgnoreCase(acc.getAccountType())).count();
+    private void initCustomerDetails(Long cid) {
+        customerId.setValue(String.valueOf(cid));
+        customerId.setReadonly(true);
 
-				if (count >= 2) {
-					Clients.alert("You can open a maximum of 2 Current Accounts.");
-					return;
-				}
-			}
+        Customer customer = customerService.getCustomerById(cid);
+        panBox.setValue(customer.getPanNumber());
+        panBox.setReadonly(true);
+    }
 
-			// 7️⃣ Create Account object
-			Account account = new Account();
-			account.setCustomerId(cid);
-//			account.setGstNumber("Current".equalsIgnoreCase(accType) ? gstNumber : null);
-			account.setAccountType(
-					"Savings".equalsIgnoreCase(accType) ? AccountType.SAVING.name() : AccountType.CURRENT.name());
-			account.setBalance(amount);
-			account.setActive(true);
-			account.setCreatedAt(LocalDateTime.now());
+    private AccountType getSelectedAccountType() {
+        String selected = accountType.getValue(); 
+        if (selected == null || selected.isBlank()) {
+            throw new IllegalArgumentException("Please select an Account Type.");
+        }
 
-			// 8️⃣ Save account
-			accountService.openAccount(account);
+        // Map to enum
+        if (AccountType.SAVING.getLiteral().equalsIgnoreCase(selected)) {
+            return AccountType.SAVING;
+        } else if (AccountType.CURRENT.getLiteral().equalsIgnoreCase(selected)) {
+            return AccountType.CURRENT;
+        } else {
+            throw new IllegalArgumentException("Invalid Account Type selected.");
+        }
+    }
 
-			// 9️⃣ Success message
-			Clients.alert("Account created successfully!");
-			clearForm();
 
-		} catch (NumberFormatException e) {
-			Clients.alert("Invalid Customer ID.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			Clients.alert("Failed to create account. Please try again.");
-		}
-	}
+    private void validateUiInputs(AccountType type, Double amount, String gstNumber) {
+        if (amount == null || amount <= 0) {
+            throw new IllegalArgumentException("Initial balance must be greater than zero.");
+        }
+        if (type == AccountType.CURRENT && (gstNumber == null || gstNumber.isBlank())) {
+            throw new IllegalArgumentException("GST Number is required for Current Accounts.");
+        }
+    }
 
-	@Listen("onClick=#clearBtn")
-	public void clearForm() {
-		accountType.setValue("");
-		balance.setValue(null);
-		panBox.setValue("");
-		gstBox.setValue("");
-		gstRow.setVisible(false);
-	}
+
+    private void validateAccountLimits(Long customerId, AccountType type) {
+        List<Account> accounts = accountService.getAccountsByCustomer(customerId);
+
+        long activeCount = accounts.stream()
+                .filter(Account::isActive)
+                .filter(acc -> type.getLiteral().equalsIgnoreCase(acc.getAccountType()))
+                .count();
+
+        if (type == AccountType.SAVING && activeCount >= 5) {
+            throw new IllegalArgumentException("You can open a maximum of 5 Savings Accounts.");
+        }
+        if (type == AccountType.CURRENT && activeCount >= 2) {
+            throw new IllegalArgumentException("You can open a maximum of 2 Current Accounts.");
+        }
+    }
+
+    private Account buildAccount(Long customerId, AccountType type, Double amount, String gstNumber) {
+        Account account = new Account();
+        account.setCustomerId(customerId);
+        account.setAccountType(type.getLiteral());
+        account.setBalance(amount);
+        account.setActive(true);
+        account.setCreatedAt(LocalDateTime.now());
+        account.setGstNumber(type == AccountType.CURRENT ? gstNumber : null);
+        return account;
+    }
+
 }
