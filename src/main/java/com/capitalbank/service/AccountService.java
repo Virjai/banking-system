@@ -7,58 +7,49 @@ import com.capitalbank.model.Account;
 
 public interface AccountService {
 
-    /* ================= ACCOUNT LIFECYCLE ================= */
+	/* ================= ACCOUNT LIFECYCLE ================= */
 
-    /**
-     * Opens a new bank account.
-     */
-    Account openAccount(Account account);
+	Account openAccount(Account account);
 
-    /**
-     * Closes (deactivates) an account.
-     */
-    boolean closeAccount(long accountId);
+	boolean approve(long accountId);
 
-    /**
-     * Reactivates a previously closed account.
-     */
-    boolean activateAccount(long accountId);
+	boolean reject(long accountId, String reason);
 
-    /* ================= QUERY OPERATIONS ================= */
+	boolean requestAccountClose(long accountId);
 
-    Optional<Account> getAccountById(long accountId);
+	boolean closeAccount(long accountId);
 
-    Optional<Account> getAccountByNumber(String accountNumber);
+	boolean activateAccount(long accountId);
 
-    List<Account> getAccountsByCustomer(long customerId);
+	/* ================= QUERY ================= */
 
-    List<Account> getAllAccounts();
+	Optional<Account> getAccountById(long accountId);
 
-    /* ================= FINANCIAL OPERATIONS ================= */
+	Optional<Account> getAccountByNumber(String accountNumber);
 
-    /**
-     * Credits money to an account.
-     */
-    void credit(long accountId, double amount);
+	Optional<Account> getAccountByGstNumber(String gstNumber);
 
-    /**
-     * Debits money from an account.
-     */
-    void debit(long accountId, double amount);
+	List<Account> getAccountsByCustomer(long customerId);
 
-    /**
-     * Transfers funds between two accounts (atomic).
-     */
-    void transfer(long fromAccountId, long toAccountId, double amount);
+	List<Account> getAllAccounts();
 
-    /* ================= STATUS & VALIDATION ================= */
+	List<Account> getPendingAccounts();
 
-    boolean isAccountActive(long accountId);
+	List<Account> getRejectedAccounts();
 
-    boolean accountExists(String accountNumber);
-    
-    /**
-     * Find account by GST number (only applicable for Current accounts)
-     */
-    Optional<Account> getAccountByGstNumber(String gstNumber);
+	List<Account> getCloseRequests();
+
+	/* ================= FINANCIAL OPERATIONS ================= */
+
+	void credit(long accountId, double amount);
+
+	void debit(long accountId, double amount);
+
+	void transfer(long fromAccountId, long toAccountId, double amount);
+
+	/* ================= STATUS / UTILITIES ================= */
+
+	boolean isAccountActive(long accountId);
+
+	boolean accountExists(String accountNumber);
 }

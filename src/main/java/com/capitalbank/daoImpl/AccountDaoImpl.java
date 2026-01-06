@@ -329,7 +329,192 @@ public class AccountDaoImpl implements AccountDao {
         account.setCreatedAt(timestamp != null ? timestamp.toLocalDateTime() : null);
         account.setActive(rs.getBoolean("is_active"));
         account.setGstNumber(rs.getString("gst_number"));
+        account.setStatus(rs.getString("status"));
+        account.setRejectionReason(rs.getString("rejection_reason"));
+        account.setCloseRequest(rs.getBoolean("close_request"));
+
 
         return account;
     }
+
+    @Override
+    public Optional<List<Account>> findPendingAccounts() {
+        List<Account> accounts = new ArrayList<>();
+
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT * FROM accounts WHERE status = 'PENDING'")) {
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    accounts.add(mapResultSetToAccount(rs));
+                }
+            }
+
+            logger.info("Retrieved {} pending accounts", accounts.size());
+            return accounts.isEmpty() ? Optional.empty() : Optional.of(accounts);
+
+        } catch (SQLException e) {
+            logger.error("Error retrieving pending accounts", e);
+            throw new RuntimeException("Error while retrieving pending accounts: " + e.getMessage(), e);
+        }
+    }
+
+
+    @Override
+    public Optional<List<Account>> findRejectedAccounts() {
+        List<Account> accounts = new ArrayList<>();
+
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT * FROM accounts WHERE status = 'REJECTED'")) {
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    accounts.add(mapResultSetToAccount(rs));
+                }
+            }
+
+            logger.info("Retrieved {} rejected accounts", accounts.size());
+            return accounts.isEmpty() ? Optional.empty() : Optional.of(accounts);
+
+        } catch (SQLException e) {
+            logger.error("Error retrieving rejected accounts", e);
+            throw new RuntimeException("Error while retrieving rejected accounts: " + e.getMessage(), e);
+        }
+    }
+
+
+    @Override
+    public boolean approveAccount(long accountId) {
+
+        // Check if account exists and is pending
+        Optional<Account> existing = findByAccountId(accountId);
+
+        if (existing.isEmpty()) {
+            logger.warn("Attempt to approve non-existing accountId={}", accountId);
+            return false;
+        }
+
+        Account acc = existing.get();
+
+        if (!"PENDING".equalsIgnoreCase(acc.getStatus())) {
+            logger.warn("AccountId={} cannot be approved because status={}", accountId, acc.getStatus());
+            return false;
+        }
+
+        String sql = "UPDATE accounts SET status='APPROVED', is_active=TRUE WHERE account_id=?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, accountId);
+
+            int rows = ps.executeUpdate();
+            logger.info("Approved accountId={}, affected rows={}", accountId, rows);
+
+            return rows > 0;
+
+        } catch (SQLException e) {
+            logger.error("Error approving accountId={}", accountId, e);
+            throw new RuntimeException("Error approving account: " + e.getMessage(), e);
+        }
+    }
+
+
+    @Override
+    public boolean rejectAccount(long accountId, String reason) {
+
+        if (reason == null || reason.isBlank()) {
+            logger.warn("Reject failed: reason cannot be null or empty");
+            return false;
+        }
+
+        Optional<Account> existing = findByAccountId(accountId);
+
+        if (existing.isEmpty()) return false;
+
+        String sql = "UPDATE accounts SET status='REJECTED', rejection_reason=? WHERE account_id=?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, reason);
+            ps.setLong(2, accountId);
+
+            int rows = ps.executeUpdate();
+            logger.info("Rejected accountId={} with reason '{}'", accountId, reason);
+
+            return rows > 0;
+
+        } catch (SQLException e) {
+            logger.error("Error rejecting accountId={}", accountId, e);
+            throw new RuntimeException("Error rejecting account: " + e.getMessage(), e);
+        }
+    }
+
+
+    @Override
+    public boolean requestClose(long accountId) {
+
+        Optional<Account> existing = findByAccountId(accountId);
+        if (existing.isEmpty()) return false;
+
+        String sql = "UPDATE accounts SET close_request=TRUE WHERE account_id=?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, accountId);
+
+            int rows = ps.executeUpdate();
+            logger.info("Close request submitted for accountId={}, affected rows={}", accountId, rows);
+
+            return rows > 0;
+
+        } catch (SQLException e) {
+            logger.error("Error requesting close for accountId={}", accountId, e);
+            throw new RuntimeException("Error requesting account closure: " + e.getMessage(), e);
+        }
+    }
+
+
+    @Override
+    public Optional<List<Account>> findCloseRequests() {
+
+        List<Account> accounts = new ArrayList<>();
+
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT * FROM accounts WHERE close_request = TRUE")) {
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    accounts.add(mapResultSetToAccount(rs));
+                }
+            }
+
+            logger.info("Retrieved {} close account requests", accounts.size());
+            return accounts.isEmpty() ? Optional.empty() : Optional.of(accounts);
+
+        } catch (SQLException e) {
+            logger.error("Error retrieving close requests", e);
+            throw new RuntimeException("Error retrieving close requests: " + e.getMessage(), e);
+        }
+    }
+
+
+    @Override
+    public boolean closeAccount(long accountId) {
+
+        Optional<Account> existing = findByAccountId(accountId);
+        if (existing.isEmpty()) return false;
+
+        String sql = "UPDATE accounts SET is_active=FALSE, close_request=FALSE WHERE account_id=?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, accountId);
+
+            int rows = ps.executeUpdate();
+            logger.info("Closed accountId={}, affected rows={}", accountId, rows);
+
+            return rows > 0;
+
+        } catch (SQLException e) {
+            logger.error("Error closing accountId={}", accountId, e);
+            throw new RuntimeException("Error closing account: " + e.getMessage(), e);
+        }
+    }
+
 }

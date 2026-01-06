@@ -7,24 +7,42 @@ import com.capitalbank.model.Account;
 
 public interface AccountDao {
 
-	public boolean save(Account account);
+    boolean save(Account account);
 
-	public Optional<List<Account>> findAllAccount();
+    Optional<List<Account>> findAllAccount();
 
-	public Optional<List<Account>> findAccountByCustomerId(long customerId);
+    Optional<List<Account>> findAccountByCustomerId(long customerId);
 
-	public Optional<Account> findByAccountId(long accountId);
+    Optional<Account> findByAccountId(long accountId);
 
-	public Optional<Account> findByAccountNumber(String accountNumber);
+    Optional<Account> findByAccountNumber(String accountNumber);
 
-	public boolean updateByAccountId(long AccountId, Account account);
+    boolean updateByAccountId(long AccountId, Account account);
 
-	public boolean updateByAccountNumber(String accountNumber, Account account);
+    boolean updateByAccountNumber(String accountNumber, Account account);
 
-	public boolean deleteByAccountId(long AccountId);
+    boolean deleteByAccountId(long AccountId);
 
-	public boolean deleteByAccountNumber(String accountNumber);
-	
-	Optional<Account> findByGstNumber(String gstNumber);
+    boolean deleteByAccountNumber(String accountNumber);
+    
+    Optional<Account> findByGstNumber(String gstNumber);
 
+
+    // ---------------------------
+    // NEW WORKFLOW APIS
+    // ---------------------------
+
+    Optional<List<Account>> findPendingAccounts();
+
+    Optional<List<Account>> findRejectedAccounts();
+
+    boolean approveAccount(long accountId);
+
+    boolean rejectAccount(long accountId, String reason);
+
+    boolean requestClose(long accountId);
+
+    Optional<List<Account>> findCloseRequests();
+
+    boolean closeAccount(long accountId);
 }

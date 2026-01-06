@@ -29,12 +29,12 @@ public class AccountServiceImpl implements AccountService {
 	public Account openAccount(Account account) {
 		return TransactionManager.doInTransaction(connection -> {
 			String accountNum = generateAccountNumber(account.getCustomerId());
-			
+
 			account.setAccountNumber(accountNum);
 			validateAccountNumber(account.getAccountNumber());
 			validateGst(account);
 			validateAccountForOpen(account);
-			
+
 			account.setActive(true);
 			account.setCreatedAt(LocalDateTime.now());
 
@@ -122,9 +122,9 @@ public class AccountServiceImpl implements AccountService {
 
 		double newBalance = account.getBalance() + amount;
 		account.setBalance(newBalance);
-		TransactionManager.doInTransaction((connection) -> {
-			accountDao.updateByAccountId(accountId, account);
-		});
+		TransactionManager.doInTransaction((connection) -> 
+			accountDao.updateByAccountId(accountId, account)
+		);
 	}
 
 	@Override
@@ -142,7 +142,7 @@ public class AccountServiceImpl implements AccountService {
 
 			account.setBalance(currentBalance - amount);
 
-			accountDao.updateByAccountId(accountId, account);
+			return accountDao.updateByAccountId(accountId, account);
 		});
 	}
 
@@ -175,7 +175,7 @@ public class AccountServiceImpl implements AccountService {
 			// Credit destination
 			double toBalance = toAccount.getBalance();
 			toAccount.setBalance(toBalance + amount);
-			accountDao.updateByAccountId(toAccountId, toAccount);
+			return accountDao.updateByAccountId(toAccountId, toAccount);
 		});
 
 	}
@@ -191,14 +191,14 @@ public class AccountServiceImpl implements AccountService {
 	public boolean accountExists(String accountNumber) {
 		return accountDao.findByAccountNumber(accountNumber).isPresent();
 	}
-	
+
 	@Override
 	public Optional<Account> getAccountByGstNumber(String gstNumber) {
-	    if (gstNumber == null || gstNumber.isBlank()) {
-	        throw new BusinessException("GST number must not be empty");
-	    }
+		if (gstNumber == null || gstNumber.isBlank()) {
+			throw new BusinessException("GST number must not be empty");
+		}
 
-	    return accountDao.findByGstNumber(gstNumber);
+		return accountDao.findByGstNumber(gstNumber);
 	}
 
 	/* ================= INTERNAL HELPERS ================= */
@@ -252,22 +252,85 @@ public class AccountServiceImpl implements AccountService {
 
 	private void validateGst(Account account) {
 
-	    if (AccountType.CURRENT.name().equalsIgnoreCase(account.getAccountType())) {
+		if (AccountType.CURRENT.name().equalsIgnoreCase(account.getAccountType())) {
 
-	        if (account.getGstNumber() == null || account.getGstNumber().isBlank()) {
-	            throw new BusinessException("GST number is required for Current Account");
-	        }
+			if (account.getGstNumber() == null || account.getGstNumber().isBlank()) {
+				throw new BusinessException("GST number is required for Current Account");
+			}
 
-	        if (!account.getGstNumber().matches(GST_REGEX)) {
-	            throw new BusinessException("Invalid GST number format");
-	        }
+			if (!account.getGstNumber().matches(GST_REGEX)) {
+				throw new BusinessException("Invalid GST number format");
+			}
 
-	        // 🔥 Use service method here
-	        getAccountByGstNumber(account.getGstNumber())
-	            .ifPresent(a -> {
-	                throw new BusinessException("GST number already linked to another account");
-	            });
-	    }
+			// 🔥 Use service method here
+			getAccountByGstNumber(account.getGstNumber()).ifPresent(a -> {
+				throw new BusinessException("GST number already linked to another account");
+			});
+		}
+	}
+
+	@Override
+	public boolean approve(long accountId) {
+
+		return TransactionManager.doInTransaction(connection -> {
+
+			Account account = getAccountOrThrow(accountId);
+
+			if (!"PENDING".equalsIgnoreCase(account.getStatus())) {
+				throw new BusinessException("Only pending accounts can be approved");
+			}
+
+			return accountDao.approveAccount(accountId);
+		});
+	}
+
+	@Override
+	public boolean reject(long accountId, String reason) {
+
+		if (reason == null || reason.isBlank()) {
+			throw new BusinessException("Rejection reason is required");
+		}
+
+		return TransactionManager.doInTransaction(connection -> {
+
+			Account account = getAccountOrThrow(accountId);
+
+			if (!"PENDING".equalsIgnoreCase(account.getStatus())) {
+				throw new BusinessException("Only pending accounts can be rejected");
+			}
+
+			return accountDao.rejectAccount(accountId, reason);
+		});
+	}
+
+	@Override
+	public boolean requestAccountClose(long accountId) {
+
+		return TransactionManager.doInTransaction(connection -> {
+
+			Account account = getActiveAccount(accountId);
+
+			if (account.isCloseRequest()) {
+				throw new BusinessException("Account close already requested");
+			}
+
+			return accountDao.requestClose(accountId);
+		});
+	}
+
+	@Override
+	public List<Account> getPendingAccounts() {
+		return accountDao.findPendingAccounts().orElse(List.of());
+	}
+
+	@Override
+	public List<Account> getRejectedAccounts() {
+		return accountDao.findRejectedAccounts().orElse(List.of());
+	}
+
+	@Override
+	public List<Account> getCloseRequests() {
+		return accountDao.findCloseRequests().orElse(List.of());
 	}
 
 }

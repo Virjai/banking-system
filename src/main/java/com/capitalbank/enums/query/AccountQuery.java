@@ -4,8 +4,8 @@ public enum AccountQuery {
 	
 	SAVE_ACCOUNT ("""
 			INSERT INTO accounts (customer_id, account_number, account_type, balance, created_at, is_active,
-			gst_number)
-			VALUES (?, ?, ?, ?, ?, ?, ?);
+			gst_number, status, rejection_reason, close_request)
+			VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING', NULL, FALSE);
 		"""),
 	
 	SELECT_ALL_ACCOUNTS ("""

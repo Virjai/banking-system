@@ -267,6 +267,9 @@ public class CustomerDaoImpl implements CustomerDao {
             c.setCountry(rs.getString("country"));
             c.setRole(Customer.Role.valueOf(rs.getString("role")));
             c.setActive(rs.getBoolean("is_active"));
+            c.setProfileUpdateStatus(rs.getString("profile_update_status"));
+            c.setProfileUpdateReason(rs.getString("profile_update_reason"));
+
 
             return c;
         } catch (Exception e) {

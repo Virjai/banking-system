@@ -1,31 +1,21 @@
 package com.capitalbank.model;
 
-import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
-public class Customer implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Customer {
 
-	// ENUM ROLE
 	public enum Role {
 		USER, ADMIN
 	}
 
-	// CUSTOMER FIELDS
-
-	// --- Identification ---
 	private long customerId;
 	private String fullName;
 
-	// --- Personal Information ---
 	private LocalDate dob;
 	private String gender;
 	private String aadharNumber;
 	private String panNumber;
 
-	// --- Contact Information ---
 	private String email;
 	private String password;
 	private String city;
@@ -35,18 +25,19 @@ public class Customer implements Serializable {
 	private String phone;
 	private String address;
 
-	// --- Role & Status ---
-	private Role role; // ENUM (USER or ADMIN)
+	private Role role;
 	private boolean isActive;
 
-	// --- Account List ---
-	private List<Account> accountList = new ArrayList<>();
+	// === PROFILE APPROVAL WORKFLOW ===
+	private String profileUpdateStatus; // PENDING | APPROVED | REJECTED
+	private String profileUpdateReason;
 
-	// CONSTRUCTORS
 	public Customer() {
+		super();
 	}
 
 	public Customer(String firstName, String lastName, String email, String password) {
+		super();
 		this.fullName = firstName + " " + lastName;
 		this.email = email;
 		this.password = password;
@@ -54,8 +45,9 @@ public class Customer implements Serializable {
 
 	public Customer(long customerId, String fullName, LocalDate dob, String gender, String aadharNumber,
 			String panNumber, String email, String password, String city, String state, String pincode, String country,
-			String phone, String address, Role role, boolean isActive, List<Account> accountList) {
-
+			String phone, String address, Role role, boolean isActive, String profileUpdateStatus,
+			String profileUpdateReason) {
+		super();
 		this.customerId = customerId;
 		this.fullName = fullName;
 		this.dob = dob;
@@ -72,10 +64,9 @@ public class Customer implements Serializable {
 		this.address = address;
 		this.role = role;
 		this.isActive = isActive;
-		this.accountList = accountList != null ? accountList : new ArrayList<>();
+		this.profileUpdateStatus = profileUpdateStatus;
+		this.profileUpdateReason = profileUpdateReason;
 	}
-
-	// GETTERS & SETTERS
 
 	public long getCustomerId() {
 		return customerId;
@@ -205,19 +196,27 @@ public class Customer implements Serializable {
 		isActive = active;
 	}
 
-	public List<Account> getAccountList() {
-		return accountList;
+	public String getProfileUpdateStatus() {
+		return profileUpdateStatus;
 	}
 
-	public void setAccountList(List<Account> accountList) {
-		this.accountList = accountList;
+	public void setProfileUpdateStatus(String profileUpdateStatus) {
+		this.profileUpdateStatus = profileUpdateStatus;
 	}
 
-	// TO STRING
+	public String getProfileUpdateReason() {
+		return profileUpdateReason;
+	}
+
+	public void setProfileUpdateReason(String profileUpdateReason) {
+		this.profileUpdateReason = profileUpdateReason;
+	}
+
 	@Override
 	public String toString() {
-		return "Customer{" + "customerId=" + customerId + ", fullName='" + fullName + '\'' + ", dob=" + dob
-				+ ", gender='" + gender + '\'' + ", email='" + email + '\'' + ", role=" + role + ", active=" + isActive
-				+ '}';
+		return "Customer [customerId=" + customerId + ", fullName=" + fullName + ", dob=" + dob + ", gender=" + gender
+				+ ", email=" + email + ", city=" + city + ", state=" + state + ", pincode=" + pincode + ", country="
+				+ country + ", phone=" + phone + ", address=" + address + ", role=" + role + ", isActive=" + isActive
+				+ ", profileUpdateStatus=" + profileUpdateStatus + ", profileUpdateReason=" + profileUpdateReason + "]";
 	}
 }
