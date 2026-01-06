@@ -1,24 +1,24 @@
 package com.capitalbank.service;
 
+import java.util.Date;
 
 import com.capitalbank.model.Customer;
 
-import java.util.Date;
-
 public interface KYCDocumentService {
 
-    /**
-     * Load basic customer data by ID
-     */
+    // ===========================
+    // LOAD BASIC CUSTOMER DATA
+    // ===========================
     Customer loadBasicCustomer(Long customerId);
 
-    /**
-     * Save KYC data including files and customer core info
-     */
+    // ===========================
+    // SAVE FULL KYC (TEXT + FILES)
+    // ===========================
     void saveKyc(
             Long customerId,
             Date dob,
             String gender,
+            String phone,
             String aadhar,
             String pan,
             String address,
@@ -29,8 +29,18 @@ public interface KYCDocumentService {
             byte[] aadharFile,
             byte[] profileImage
     );
-    
-    public byte[] getProfileImageByCustomerId(Long customerId);
-    public void updateProfileImage(Long customerId, byte[] profileImage); 
-}
 
+    // ===========================
+    // FETCH PROFILE IMAGE
+    // ===========================
+    byte[] getProfileImageByCustomerId(Long customerId);
+
+    // ===========================
+    // UPDATE ONLY PROFILE IMAGE
+    // ===========================
+    void updateProfileImage(Long customerId, byte[] profileImage);
+
+  
+//     byte[] getAadharProofByCustomerId(Long customerId);
+//     void updateAadharProof(Long customerId, byte[] aadharFile);
+}

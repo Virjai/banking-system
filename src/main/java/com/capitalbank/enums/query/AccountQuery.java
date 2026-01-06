@@ -14,8 +14,8 @@ public enum AccountQuery {
 		"""),
 	
 	SELECT_ALL_ACCOUNT_BY_CUSTOMER_ID("""
-			SELECT account_id, account_number, account_type, balance, 
-			created_at, is_active FROM accounts WHERE customer_id = ?
+			SELECT account_id, customer_id, account_number, account_type, balance, 
+			created_at, is_active, gst_number FROM accounts WHERE customer_id = ?
 		"""),
 	
 	SELECT_ACCOUNT_BY_ID("""

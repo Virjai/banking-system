@@ -161,7 +161,7 @@
             <hbox sclass="action-buttons" style="padding-bottom: 16px;">
                 <button label="Back to Dashboard"
                         sclass="action-btn btn-primary"
-                        onClick='Executions.sendRedirect("MainMenu.zul")'/>
+                        onClick='mainContent.setSrc("dashboard.zul")'/>
             </hbox>
 
         </vlayout>

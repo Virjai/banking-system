@@ -1,10 +1,13 @@
 package com.capitalbank.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Customer {
+public class Customer implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	// ENUM ROLE
 	public enum Role {
 		USER, ADMIN

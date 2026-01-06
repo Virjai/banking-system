@@ -90,7 +90,7 @@ public class DashboardController extends SelectorComposer<Component> {
                 byte[] imageBytes = rs.getBytes("profile_image");
 
                 if (imageBytes == null || imageBytes.length == 0) {
-                    profileImg.setSrc("/resources/images/logo.png");
+                    profileImg.setSrc("/resources/images/default_profile.png");
                 } else {
                     AImage image = new AImage(
                         "profile",

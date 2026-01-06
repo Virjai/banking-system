@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="60">
+
+    <!-- ===================== -->
+    <!-- Properties            -->
+    <!-- ===================== -->
+    <Properties>
+        <!-- Log directory relative to Tomcat/bin -->
+        <Property name="LOG_DIR">logs</Property>
+
+        <!-- Log pattern -->
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %c{1} - %msg%n
+        </Property>
+    </Properties>
+
+    <!-- ===================== -->
+    <!-- Appenders              -->
+    <!-- ===================== -->
+    <Appenders>
+
+        <!-- Console Appender -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+        </Console>
+
+        <!-- Rolling File Appender -->
+        <RollingFile name="FileLogger"
+                     fileName="${LOG_DIR}/capitalbank-app.log"
+                     filePattern="${LOG_DIR}/capitalbank-app-%d{yyyy-MM-dd}-%i.log.gz">
+
+            <PatternLayout pattern="${LOG_PATTERN}" />
+
+            <Policies>
+                <!-- Roll every day -->
+                <TimeBasedTriggeringPolicy />
+
+                <!-- Or when file reaches 10MB -->
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+
+            <!-- Keep last 30 files -->
+            <DefaultRolloverStrategy max="30" />
+        </RollingFile>
+
+    </Appenders>
+
+    <!-- ===================== -->
+    <!-- Loggers                -->
+    <!-- ===================== -->
+    <Loggers>
+
+        <!-- ===================== -->
+        <!-- Your Application Logs -->
+        <!-- ===================== -->
+        <Logger name="com.capitalbank" level="debug" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="FileLogger" />
+        </Logger>
+
+        <!-- ===================== -->
+        <!-- ZK Framework Logs     -->
+        <!-- ===================== -->
+        <Logger name="org.zkoss" level="warn" additivity="false">
+            <AppenderRef ref="FileLogger" />
+        </Logger>
+
+        <!-- ===================== -->
+        <!-- Spring (if used)      -->
+        <!-- ===================== -->
+        <Logger name="org.springframework" level="warn" additivity="false">
+            <AppenderRef ref="FileLogger" />
+        </Logger>
+
+        <!-- ===================== -->
+        <!-- Apache / Tomcat Logs  -->
+        <!-- ===================== -->
+        <Logger name="org.apache" level="warn" additivity="false">
+            <AppenderRef ref="FileLogger" />
+        </Logger>
+
+        <!-- ===================== -->
+        <!-- Root Logger           -->
+        <!-- ===================== -->
+        <Root level="info">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="FileLogger" />
+        </Root>
+
+    </Loggers>
+
+</Configuration>

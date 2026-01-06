@@ -208,7 +208,7 @@
 
                 <div sclass="form-row">
                     <label value="Phone Number:" sclass="label-col"/>
-                    <textbox id="tPhoneNo" readonly="true" maxlength="10" sclass="input-col" />
+                    <textbox id="tPhoneNo" maxlength="10" sclass="input-col" />
                 </div>
 
                 <div sclass="form-row">

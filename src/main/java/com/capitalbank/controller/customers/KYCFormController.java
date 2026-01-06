@@ -62,11 +62,9 @@ public class KYCFormController extends SelectorComposer<Window> {
 
             tFullName.setValue(c.getFullName());
             tEmail.setValue(c.getEmail());
-            tPhoneNo.setValue(c.getPhone());
 
             tFullName.setReadonly(true);
             tEmail.setReadonly(true);
-            tPhoneNo.setReadonly(true);
 
         } catch (Exception e) {
             Clients.showNotification("Failed to load user data", "error", tEmail, "end_center", 2500);
@@ -132,6 +130,7 @@ public class KYCFormController extends SelectorComposer<Window> {
                     customerId,
                     dob.getValue(),
                     gender.getSelectedItem().getLabel(),
+                    tPhoneNo.getValue(),
                     tAadhar.getValue(),
                     tPanCardNo.getValue(),
                     tAddress.getValue(),
@@ -157,6 +156,7 @@ public class KYCFormController extends SelectorComposer<Window> {
         dob.setValue(null);
         gender.setSelectedItem(null);
         tAadhar.setValue("");
+        tPhoneNo.setValue("");
         tPanCardNo.setValue("");
         tAddress.setValue("");
         tCity.setValue("");
