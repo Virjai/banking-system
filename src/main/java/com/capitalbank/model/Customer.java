@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class Customer {
 
 	public enum Role {
-		USER, ADMIN
+		ROLE_USER, ROLE_ADMIN
 	}
 
 	private long customerId;

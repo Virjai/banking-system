@@ -5,8 +5,9 @@ public enum CustomerQuery {
 	INSERT_CUSTOMER("""
 				INSERT INTO customers 
 		        (full_name, dob, gender, aadhar_number, pan_number,
-		         email, password, phone, city, state, address, pincode, country, role, is_active)
-		        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		         email, password, phone, city, state, address, pincode, country, role, is_active,
+		         profile_update_status, profile_update_reason)
+		        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 			"""),
 
 	SELECT_BY_ID("""
@@ -37,7 +38,9 @@ public enum CustomerQuery {
 	            pincode=?,
 	            country=?,
 	            role=?,
-	            is_active=?
+	            is_active=?,
+	            profile_update_status=?,
+	            profile_update_reason=?
 			    WHERE customer_id=?
 			"""),
 	

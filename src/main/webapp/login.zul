@@ -1,0 +1,12 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window xmlns:n="native">
+		<n:form name="loginForm" action="j_spring_security_check"
+			method="POST">
+			<n:input type="text" name='j_username' value='' />
+			<n:input type="password" name='j_password' value='' />
+			<n:input name="submit" type="submit" value="submit" />	
+					
+		</n:form>
+	</window>
+</zk>

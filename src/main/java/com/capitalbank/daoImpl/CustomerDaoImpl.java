@@ -65,7 +65,9 @@ public class CustomerDaoImpl implements CustomerDao {
             ps.setString(idk++, customer.getPincode());
             ps.setString(idk++, customer.getCountry());
             ps.setString(idk++, customer.getRole().name());
-            ps.setBoolean(idk, customer.isActive());
+            ps.setBoolean(idk++, customer.isActive());
+            ps.setString(idk++, customer.getProfileUpdateStatus());
+            ps.setString(idk, customer.getProfileUpdateReason());
 
             boolean result = ps.executeUpdate() > 0;
             logger.info("Customer saved successfully: {}", customer.getEmail());
@@ -111,7 +113,7 @@ public class CustomerDaoImpl implements CustomerDao {
     public Optional<Customer> findByEmail(String email) {
         try (Connection connection = getConnection();
              PreparedStatement ps = connection.prepareStatement(CustomerQuery.SELECT_BY_EMAIL.getQuery())) {
-
+        	System.out.println("Bye");
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 Optional<Customer> customer = rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();

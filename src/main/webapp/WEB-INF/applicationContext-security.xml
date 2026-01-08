@@ -1,86 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
+
+<beans:beans
+	xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="
-           http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/security
-           http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
-
-	<!-- UserDetailsService -->
-	<bean id="userDetailsService"
-		class="com.capitalbank.security.CustomerUserDetailsService">
-		<property name="customerService" ref="customerService" />
-	</bean>
-
-	<!-- Password Encoder -->
-	<!-- <bean id="passwordEncoder"
-		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
-		<constructor-arg value="12" />
-	</bean> -->
-
-	<!-- Security configuration -->
-	<security:http auto-config="true">
-
-		<!-- Allow ZK internal calls -->
-		<security:intercept-url pattern="/zkau/**"
+	
+	<!-- HTTP configuration sample -->
+	<http auto-config="true">
+		<!-- ZK AU requests -->
+		<intercept-url pattern="/zkau/**"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 
-		<!-- Public -->
-		<security:intercept-url pattern="/index.zul"
+		<!-- secure pages -->
+
+		<intercept-url pattern="/index.zul"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<security:intercept-url
-			pattern="/pages/customers/customer-login-form.zul"
+			<intercept-url pattern="/pages/customers/customer-registration-form.zul"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />			
+		
+		<intercept-url pattern="/login.zul"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<security:intercept-url
-			pattern="/pages/customers/customer-registration-form.zul"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
-		<!-- Role-based -->
-		<security:intercept-url pattern="/zul/admin/**"
-			access="ROLE_ADMIN" />
-		<security:intercept-url pattern="/zul/user/**"
-			access="ROLE_USER" />
-		<security:intercept-url pattern="/admin.zul"
-			access="ROLE_ADMIN" />
-
-		<security:intercept-url
-			pattern="/pages/accounts/**" access="ROLE_USER" />
-		<security:intercept-url
-			pattern="/pages/customers/**" access="ROLE_USER" />
-
-		<!-- Login -->
-		<security:form-login
-			login-page="/pages/customers/customer-login-form.zul"
-			authentication-success-handler-ref="loginSuccessHandler"
-			authentication-failure-url="/pages/customers/customer-login-form.zul?error=true" />
-
-		<!-- Logout -->
-		<security:logout
-			logout-success-url="/pages/customers/customer-login-form.zul"
+		<intercept-url pattern="/pages/customers/profile.zul"
+			access="ROLE_EDITOR" />
+		<intercept-url pattern="/pages/customers/mainmenu.zul" access="ROLE_USER" />
+		<intercept-url pattern="/admin.zul" access="ROLE_ADMIN" />
+		<intercept-url pattern="/**" access="ROLE_USER" />
+		<form-login login-page="/login.zul"
+			authentication-failure-url="/error.zul"
+			default-target-url="/pages/customers/mainmenu.zul" />
+		<logout logout-success-url="/index.zul"
 			invalidate-session="true" />
+		<access-denied-handler error-page="/error.zul" />
 
-		<!-- Block everything else -->
-		<security:intercept-url pattern="/**"
-			access="IS_AUTHENTICATED_FULLY" />
+	</http>
 
-		<security:session-management>
-			<security:concurrency-control
-				max-sessions="1"
-				expired-url="/pages/customers/customer-login-form.zul?timeout=true" />
-		</security:session-management>
+<!-- Authentication via userService class or DB -->
+ 	<authentication-manager>
+    <authentication-provider user-service-ref="userService">
+        <password-encoder ref="customPasswordEncoder"/>
+    </authentication-provider>
+</authentication-manager>
 
-	</security:http>
+	<!-- In-Memory Authentication sample -->
+	<!-- 
+	<authentication-manager>
+		<authentication-provider>
+			<user-service>
+				<user name="rod" password="1234"
+					authorities="ROLE_USER, ROLE_EDITOR" />
+				<user name="dianne" password="1234" authorities="ROLE_EDITOR" />
+				<user name="scott" password="1234" authorities="ROLE_USER" />
+				<user name="peter" password="1234" authorities="ROLE_USER" />
+				<user name="1234@test.com" password="test1234"
+					authorities="ROLE_USER" />
+			</user-service>
+		</authentication-provider>
+	</authentication-manager>
 
-	<!-- Authentication -->
-	<!-- <security:authentication-manager>
-		<security:authentication-provider
-			user-service-ref="userDetailsService">
-			<security:password-encoder
-				ref="passwordEncoder" />
-		</security:authentication-provider>
-	</security:authentication-manager> -->
-
-</beans>
+ -->
+	<global-method-security
+		secured-annotations="enabled" />
+</beans:beans>

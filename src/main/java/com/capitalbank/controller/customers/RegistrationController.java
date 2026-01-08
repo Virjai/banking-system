@@ -78,7 +78,9 @@ public class RegistrationController extends SelectorComposer<Window> {
 			}
 
 			// Check if email already exists
+			System.out.println("hi");
 			Customer existedCustomerByEmail = customerService.findByEmail(email);
+			System.out.println(existedCustomerByEmail);
 			if (existedCustomerByEmail != null) {
 				logger.info("Registration blocked — email already exists: {}", email);
 				Messagebox.show("User already exists.", "Warning", Messagebox.OK, Messagebox.EXCLAMATION);
@@ -95,6 +97,7 @@ public class RegistrationController extends SelectorComposer<Window> {
 
 			// Build customer object (password hashing handled in service)
 			Customer customer = new Customer(firstName, lastName, email, password);
+			System.out.println("Cus: " + customer);
 
 			boolean success = customerService.register(customer);
 
