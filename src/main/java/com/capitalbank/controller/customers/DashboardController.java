@@ -5,23 +5,27 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zkplus.spring.DelegatingVariableResolver;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Rows;
 
 import com.capitalbank.dbconfig.DBConnection;
-import com.capitalbank.model.Customer;
+import com.capitalbank.security.CustomerUserDetails;
 import com.capitalbank.service.CustomerService;
-import com.capitalbank.serviceImpl.CustomerServiceImpl;
 
+@VariableResolver(DelegatingVariableResolver.class)
 public class DashboardController extends SelectorComposer<Component> {
 	private static final long serialVersionUID = 1L;
 	@Wire
@@ -36,22 +40,27 @@ public class DashboardController extends SelectorComposer<Component> {
 	private Rows txnRows;
 	@Wire
 	private Image profileImg;
-
-	private CustomerService customerService = new CustomerServiceImpl();
+	
+	@WireVariable
+	private CustomerService customerService;
+	@WireVariable
+	private DBConnection dbConnection;
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		Long cid = (Long) Sessions.getCurrent().getAttribute("customer_id");
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		CustomerUserDetails user = (CustomerUserDetails) auth.getPrincipal();
+		Long customerId = user.getCustomerId();
 
-		if (cid == null) {
+		if (customerId == null) {
 			Clients.alert("Session expired. Please log in again.");
 			Executions.sendRedirect("login.zul");
 			return;
 		}
 
-		loadUserDetails(cid);
+		loadUserDetails(customerId);
 //		loadUserAccounts(cid);
 
 //		numberCombo.addEventListener("onChange", evt -> loadAccountDetails());
@@ -71,37 +80,30 @@ public class DashboardController extends SelectorComposer<Component> {
 //			String profileImage = existingCustomer.getCustomerImage();
 //
 //			userNameLbl.setValue(name);
-			
-			Connection con = DBConnection.getConnection();
 
-            PreparedStatement ps = con.prepareStatement(
-                "SELECT c.full_name, k.profile_image " +
-                "FROM customers c " +
-                "LEFT JOIN kyc_documents k ON c.customer_id = k.customer_id " +
-                "WHERE c.customer_id = ?"
-            );
+			Connection con = dbConnection.getConnection();
 
-            ps.setLong(1, cid);
-            ResultSet rs = ps.executeQuery();
+			PreparedStatement ps = con.prepareStatement("SELECT c.full_name, k.profile_image " + "FROM customers c "
+					+ "LEFT JOIN kyc_documents k ON c.customer_id = k.customer_id " + "WHERE c.customer_id = ?");
 
-            if (rs.next()) {
-                userNameLbl.setValue(rs.getString("full_name"));
+			ps.setLong(1, cid);
+			ResultSet rs = ps.executeQuery();
 
-                byte[] imageBytes = rs.getBytes("profile_image");
+			if (rs.next()) {
+				userNameLbl.setValue(rs.getString("full_name"));
 
-                if (imageBytes == null || imageBytes.length == 0) {
-                    profileImg.setSrc("/resources/images/default_profile.png");
-                } else {
-                    AImage image = new AImage(
-                        "profile",
-                        new ByteArrayInputStream(imageBytes)
-                    );
-                    profileImg.setContent(image);
-                }
-            }
+				byte[] imageBytes = rs.getBytes("profile_image");
 
-            con.close();
-			
+				if (imageBytes == null || imageBytes.length == 0) {
+					profileImg.setSrc("/resources/images/default_profile.png");
+				} else {
+					AImage image = new AImage("profile", new ByteArrayInputStream(imageBytes));
+					profileImg.setContent(image);
+				}
+			}
+
+			con.close();
+
 //			if (profileImage != null && profileImage.trim().isEmpty()) {
 //				profileImg.setSrc(profileImage);
 //			} else {

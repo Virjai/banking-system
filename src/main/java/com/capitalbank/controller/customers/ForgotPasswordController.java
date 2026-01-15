@@ -1,21 +1,29 @@
 package com.capitalbank.controller.customers;
 
+import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.security.MessageDigest;
 import java.util.Random;
 
-import org.zkoss.zk.ui.select.annotation.Listen;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.select.SelectorComposer;
-import org.zkoss.zul.*;
+import org.zkoss.zk.ui.select.annotation.Listen;
+import org.zkoss.zk.ui.select.annotation.VariableResolver;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zkplus.spring.DelegatingVariableResolver;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Vlayout;
+import org.zkoss.zul.Window;
 
 import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.model.Customer;
+import com.capitalbank.security.PasswordUtil;
 import com.capitalbank.service.CustomerService;
-import com.capitalbank.serviceImpl.CustomerServiceImpl;
 import com.capitalbank.util.EmailUtility;
 
+@VariableResolver(DelegatingVariableResolver.class)
 public class ForgotPasswordController extends SelectorComposer<Window> {
 	private static final long serialVersionUID = 1L;
 
@@ -28,7 +36,10 @@ public class ForgotPasswordController extends SelectorComposer<Window> {
 	private String generatedOtp;
 	private String userEmail;
 
-	private CustomerService customerService = new CustomerServiceImpl();
+	@WireVariable
+	private CustomerService customerService;
+	@WireVariable
+	private DBConnection dbConnection;
 
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
@@ -129,13 +140,10 @@ public class ForgotPasswordController extends SelectorComposer<Window> {
 			return;
 		}
 
-		// Hash password before saving
-//		String hashedPassword = hashPassword(newPass);
-
-//		boolean updated = updatePasswordInDB(userEmail, newPass);
 		Customer userByEmail = customerService.findByEmail(userEmail);
 		if (userByEmail != null) {
-			userByEmail.setPassword(newPass);
+			String hashedNewPassword = new PasswordUtil().encodePassword(newPass, null);
+			userByEmail.setPassword(hashedNewPassword);
 		} else {
 			Clients.showNotification("User does not exist");
 		}
@@ -150,7 +158,7 @@ public class ForgotPasswordController extends SelectorComposer<Window> {
 
 	// UPDATE PASSWORD IN DB
 	private boolean updatePasswordInDB(String email, String newPassword) {
-		try (Connection con = DBConnection.getConnection()) {
+		try (Connection con = dbConnection.getConnection()) {
 
 			String sql = "UPDATE capitalbank SET password = ? WHERE email = ?";
 			PreparedStatement stmt = con.prepareStatement(sql);

@@ -6,7 +6,10 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
+import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zkplus.spring.DelegatingVariableResolver;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
@@ -14,19 +17,20 @@ import org.zkoss.zul.Window;
 
 import com.capitalbank.model.Customer;
 import com.capitalbank.service.CustomerService;
-import com.capitalbank.serviceImpl.CustomerServiceImpl;
 
 /**
  * RegistrationController handles user registration from the UI layer. It
  * performs validation, invokes service logic, and manages UI navigation.
  */
+@VariableResolver(DelegatingVariableResolver.class)
 public class RegistrationController extends SelectorComposer<Window> {
 
 	private static final long serialVersionUID = -2271757845507892423L;
 
 	private static final Logger logger = LogManager.getLogger(RegistrationController.class);
 
-	private CustomerService customerService = new CustomerServiceImpl();
+	 @WireVariable
+	private CustomerService customerService;
 
 	@Wire
 	private Textbox tFirstName;
@@ -78,9 +82,9 @@ public class RegistrationController extends SelectorComposer<Window> {
 			}
 
 			// Check if email already exists
-			System.out.println("hi");
+			System.out.println("hel");
 			Customer existedCustomerByEmail = customerService.findByEmail(email);
-			System.out.println(existedCustomerByEmail);
+			
 			if (existedCustomerByEmail != null) {
 				logger.info("Registration blocked — email already exists: {}", email);
 				Messagebox.show("User already exists.", "Warning", Messagebox.OK, Messagebox.EXCLAMATION);
@@ -97,7 +101,6 @@ public class RegistrationController extends SelectorComposer<Window> {
 
 			// Build customer object (password hashing handled in service)
 			Customer customer = new Customer(firstName, lastName, email, password);
-			System.out.println("Cus: " + customer);
 
 			boolean success = customerService.register(customer);
 

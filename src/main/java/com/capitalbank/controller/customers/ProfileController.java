@@ -1,21 +1,25 @@
 package com.capitalbank.controller.customers;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zkplus.spring.DelegatingVariableResolver;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 
 import com.capitalbank.model.Customer;
+import com.capitalbank.security.CustomerUserDetails;
 import com.capitalbank.service.CustomerService;
 import com.capitalbank.service.KYCDocumentService;
-import com.capitalbank.serviceImpl.CustomerServiceImpl;
-import com.capitalbank.serviceImpl.KYCDocumentServiceImpl;
 
+@VariableResolver(DelegatingVariableResolver.class)
 public class ProfileController extends SelectorComposer<Component> {
     private static final long serialVersionUID = 1L;
 
@@ -25,14 +29,19 @@ public class ProfileController extends SelectorComposer<Component> {
     @Wire private Image profileImage;
 
     private Long customerId;
-    private CustomerService customerService = new CustomerServiceImpl();
-    private KYCDocumentService kycService = new KYCDocumentServiceImpl(); // To fetch KYC documents
+    
+    @WireVariable
+    private CustomerService customerService;
+    @WireVariable
+    private KYCDocumentService kycService;
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
 
-        customerId = (Long) Sessions.getCurrent().getAttribute("customer_id");
+       Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+       CustomerUserDetails user = (CustomerUserDetails) auth.getPrincipal();
+       customerId = user.getCustomerId();
 
         if (customerId == null) {
             Clients.alert("Session expired. Please login again.");

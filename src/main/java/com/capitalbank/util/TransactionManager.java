@@ -8,84 +8,42 @@ import com.capitalbank.dbconfig.DBConnection;
 
 public class TransactionManager {
 
-	public interface TransactionCallback<T> {
-		T execute(Connection connection) throws SQLException;
-	}
+    private DBConnection dbConnection;
 
-	public static <T> T doInTransaction(Function<Connection, T> action) {
-		Connection connection = null;
+    public void setDbConnection(DBConnection dbConnection) {
+        this.dbConnection = dbConnection;
+    }
 
-		try {
-			connection = DBConnection.getConnection();
-			connection.setAutoCommit(false);
+    public <T> T doInTransaction(Function<Connection, T> action) {
+        Connection connection = null;
 
-			T result = action.apply(connection);
+        try {
+            connection = dbConnection.getConnection();
+            connection.setAutoCommit(false);
 
-			connection.commit();
-			return result;
+            T result = action.apply(connection);
 
-		} catch (SQLException e) {
-			if (connection != null) {
-				try {
-					connection.rollback();
-				} catch (SQLException e1) {
-					throw new RuntimeException("Rollback failed: " + e.getMessage());
-				}
-			}
-			throw new RuntimeException("Transaction failed: " + e.getMessage());
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					throw new RuntimeException("Failed to close connection: " + e.getMessage());
-				}
-			}
-		}
-	}
+            connection.commit();
+            return result;
 
-//	@FunctionalInterface
-//	public interface VoidTransactionCallback {
-//		void execute(Connection connection) throws SQLException;
-//	}
-//
-//	public static void doInTransaction(VoidTransactionCallback action) {
-//		Connection connection = null;
-//
-//		try {
-//			connection = DBConnection.getConnection();
-//			connection.setAutoCommit(false);
-//
-//			action.execute(connection);
-//
-//			connection.commit();
-//
-//		} catch (SQLException e) {
-//			rollbackQuietly(connection);
-//			throw new RuntimeException("Transaction failed", e);
-//		} finally {
-//			closeQuietly(connection);
-//		}
-//	}
-//
-//	private static void rollbackQuietly(Connection connection) {
-//		if (connection != null) {
-//			try {
-//				connection.rollback();
-//			} catch (SQLException e) {
-//				throw new RuntimeException("Rollback failed", e);
-//			}
-//		}
-//	}
-//
-//	private static void closeQuietly(Connection connection) {
-//		if (connection != null) {
-//			try {
-//				connection.close();
-//			} catch (SQLException e) {
-//				throw new RuntimeException("Failed to close connection", e);
-//			}
-//		}
-//	}
+        } catch (Exception e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException("Rollback failed", ex);
+                }
+            }
+            throw new RuntimeException("Transaction failed", e);
 
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException ex) {
+                    throw new RuntimeException("Close failed", ex);
+                }
+            }
+        }
+    }
 }

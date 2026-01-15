@@ -1,7 +1,7 @@
 package com.capitalbank.security;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,32 +12,39 @@ import com.capitalbank.model.Customer;
 public class CustomerUserDetails implements UserDetails {
 	private static final long serialVersionUID = -8786257694327540478L;
 
-	private final Customer customer;
+	private Long customerId;
+	private String email;
+	private String password;
+	private Collection<? extends GrantedAuthority> authorities;
 
 	public CustomerUserDetails(Customer customer) {
-		this.customer = customer;
+		this.customerId = customer.getCustomerId();
+		this.email = customer.getEmail();
+		this.password = customer.getPassword();
+		this.authorities = toGrantedAuthorities(new String[] { customer.getRole().name() });
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		String role = "ROLE_" + customer.getRole();
-
-		return Collections.singleton(new SimpleGrantedAuthority(role));
+		return authorities;
 	}
 
-	@Override
-	public String getPassword() {
-		return customer.getPassword();
+	public Long getCustomerId() {
+		return customerId;
+	}
+
+	public String getEmail() {
+		return email;
 	}
 
 	@Override
 	public String getUsername() {
-		return customer.getEmail();
+		return email;
 	}
 
 	@Override
-	public boolean isAccountNonExpired() {
-		return true; // ✔ MUST be true
+	public String getPassword() {
+		return password;
 	}
 
 	@Override
@@ -50,12 +57,21 @@ public class CustomerUserDetails implements UserDetails {
 		return true; // ✔ MUST be true
 	}
 
-	@Override
-	public boolean isEnabled() {
-		return customer.isActive(); // ✔ DB controlled
+	private static Collection<? extends GrantedAuthority> toGrantedAuthorities(String[] authoStr) {
+		ArrayList<GrantedAuthority> list = new ArrayList<GrantedAuthority>(authoStr.length);
+		for (String str : authoStr) {
+			list.add(new SimpleGrantedAuthority(str));
+		}
+		return list;
 	}
 
-	public Customer getCustomer() {
-		return customer;
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 }

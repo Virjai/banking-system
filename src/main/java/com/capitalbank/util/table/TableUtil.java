@@ -23,6 +23,19 @@ public class TableUtil {
 
     // Log4j2 Logger instance
     private static final Logger logger = LogManager.getLogger(TableUtil.class);
+    
+    private DBConnection dbConnection;
+    
+    public void setDbConnection(DBConnection dbConnection) {
+    	this.dbConnection = dbConnection;
+    }
+    
+    public void init() {
+        createCustomerTableIfNotExists();
+        createAccountTableIfNotExists();
+        createTransactionTableIfNotExists();
+    }
+
 
     /**
      * Creates the 'customers' table if it does not already exist.
@@ -127,6 +140,6 @@ public class TableUtil {
      */
     private Connection getConnection() {
         logger.debug("Fetching database connection");
-        return DBConnection.getConnection();
+        return dbConnection.getConnection();
     }
 }

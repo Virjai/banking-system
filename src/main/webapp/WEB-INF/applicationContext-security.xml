@@ -9,7 +9,7 @@
 	 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
-	
+
 	<!-- HTTP configuration sample -->
 	<http auto-config="true">
 		<!-- ZK AU requests -->
@@ -20,49 +20,44 @@
 
 		<intercept-url pattern="/index.zul"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-			<intercept-url pattern="/pages/customers/customer-registration-form.zul"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />			
-		
+		<intercept-url
+			pattern="/pages/customers/customer-registration-form.zul"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
 		<intercept-url pattern="/login.zul"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<intercept-url pattern="/pages/customers/profile.zul"
-			access="ROLE_EDITOR" />
-		<intercept-url pattern="/pages/customers/mainmenu.zul" access="ROLE_USER" />
+
+		<intercept-url pattern="/pages/customers/mainmenu.zul"
+			access="ROLE_USER" />
 		<intercept-url pattern="/admin.zul" access="ROLE_ADMIN" />
 		<intercept-url pattern="/**" access="ROLE_USER" />
+
 		<form-login login-page="/login.zul"
 			authentication-failure-url="/error.zul"
-			default-target-url="/pages/customers/mainmenu.zul" />
+			default-target-url="/pages/customers/mainmenu.zul"
+			always-use-default-target="true" />
+
 		<logout logout-success-url="/index.zul"
 			invalidate-session="true" />
 		<access-denied-handler error-page="/error.zul" />
 
 	</http>
 
-<!-- Authentication via userService class or DB -->
- 	<authentication-manager>
-    <authentication-provider user-service-ref="userService">
-        <password-encoder ref="customPasswordEncoder"/>
-    </authentication-provider>
-</authentication-manager>
-
-	<!-- In-Memory Authentication sample -->
-	<!-- 
+	<!-- Authentication via userService class or DB -->
 	<authentication-manager>
-		<authentication-provider>
-			<user-service>
-				<user name="rod" password="1234"
-					authorities="ROLE_USER, ROLE_EDITOR" />
-				<user name="dianne" password="1234" authorities="ROLE_EDITOR" />
-				<user name="scott" password="1234" authorities="ROLE_USER" />
-				<user name="peter" password="1234" authorities="ROLE_USER" />
-				<user name="1234@test.com" password="test1234"
-					authorities="ROLE_USER" />
-			</user-service>
+		<authentication-provider
+			user-service-ref="userService">
+			<password-encoder ref="customPasswordEncoder" />
 		</authentication-provider>
 	</authentication-manager>
 
- -->
+	<!-- In-Memory Authentication sample -->
+	<!-- <authentication-manager> <authentication-provider> <user-service> <user 
+		name="rod" password="1234" authorities="ROLE_USER, ROLE_EDITOR" /> <user 
+		name="dianne" password="1234" authorities="ROLE_EDITOR" /> <user name="scott" 
+		password="1234" authorities="ROLE_USER" /> <user name="peter" password="1234" 
+		authorities="ROLE_USER" /> <user name="1234@test.com" password="test1234" 
+		authorities="ROLE_USER" /> </user-service> </authentication-provider> </authentication-manager> -->
 	<global-method-security
 		secured-annotations="enabled" />
 </beans:beans>

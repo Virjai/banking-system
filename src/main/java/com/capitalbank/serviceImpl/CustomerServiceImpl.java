@@ -7,12 +7,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.capitalbank.dao.CustomerDao;
-import com.capitalbank.daoImpl.CustomerDaoImpl;
 import com.capitalbank.model.Customer;
 import com.capitalbank.security.PasswordUtil;
 import com.capitalbank.service.CustomerService;
 import com.capitalbank.util.TransactionManager;
-import com.capitalbank.util.customer.CustomerNotFoundException;
 
 /**
  * Implementation of {@link CustomerService}. Provides authentication,
@@ -22,7 +20,16 @@ public class CustomerServiceImpl implements CustomerService {
 
 	private static final Logger logger = LogManager.getLogger(CustomerServiceImpl.class);
 
-	private CustomerDao customerDao = new CustomerDaoImpl();
+	private CustomerDao customerDao;
+	private TransactionManager transactionManager;
+	
+	public void setCustomerDao(CustomerDao customerDao) {
+		this.customerDao = customerDao;
+	}
+	
+	public void setTransactionManager(TransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
 
 	/*
 	 * =============================== AUTHENTICATION (Spring Security)
@@ -40,7 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public Customer loadByEmailForAuth(String email) {
 		logger.debug("Loading customer by email for authentication: {}", email);
 
-		return TransactionManager.doInTransaction((connection) -> {
+		return transactionManager.doInTransaction((connection) -> {
 			return customerDao.findByEmail(email).orElseThrow(() -> {
 				logger.error("Customer not found with email: {}", email);
 				return new UsernameNotFoundException("Customer not found with email: " + email);
@@ -62,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public boolean register(Customer customer) {
 		logger.debug("Registering new customer: {}", customer.getEmail());
 
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			// Check if email already exists
 			if (customerDao.findByEmail(customer.getEmail()).isPresent()) {
 				logger.warn("Email already registered: {}", customer.getEmail());
@@ -71,8 +78,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 			// Hash password using SHA-256
 			String rawPassword = customer.getPassword();
-//            String hashedPassword = PasswordUtil.hashPassword(rawPassword);
-			customer.setPassword(rawPassword);
+			String hashed = new PasswordUtil().encodePassword(rawPassword, null);
+			customer.setPassword(hashed);
+
 			logger.debug("Password hashed for customer: {}", customer.getEmail());
 
 			// Set default role and active status
@@ -100,7 +108,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customer findByEmail(String email) {
 		logger.debug("Finding customer by email: {}", email);
-		return TransactionManager.doInTransaction((connection) -> {
+		return transactionManager.doInTransaction((connection) -> {
 			return customerDao.findByEmail(email).orElse(null);
 		});
 	}
@@ -129,7 +137,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public boolean updateMyProfile(Customer customer) {
 		logger.debug("Updating profile for customerId={}", customer.getCustomerId());
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			boolean result = customerDao.updateCustomer(customer);
 			if (result)
 				logger.info("Profile updated successfully for customerId={}", customer.getCustomerId());
@@ -148,7 +156,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customer getCustomerById(long customerId) {
 		logger.debug("Admin retrieving customer by id={}", customerId);
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			return customerDao.findById(customerId).orElseThrow(() -> {
 				logger.error("Customer not found with id={}", customerId);
 				return new RuntimeException("Customer not found");
@@ -164,7 +172,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<Customer> getAllCustomers() {
 		logger.debug("Retrieving all customers");
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			List<Customer> customers = customerDao.findAll().orElse(List.of());
 			logger.info("Retrieved {} customers", customers.size());
 			return customers;
@@ -180,7 +188,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public boolean deleteCustomer(long customerId) {
 		logger.debug("Deleting customer with id={}", customerId);
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			boolean result = customerDao.deleteCustomer(customerId);
 			if (result)
 				logger.info("Customer deleted successfully: {}", customerId);
@@ -205,7 +213,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customer login(String email, String rawPassword) {
 		logger.debug("Attempting login for email={}", email);
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			// Fetch customer by email
 			Customer customer = customerDao.findByEmail(email).orElse(null);
 			if (customer == null) {

@@ -4,26 +4,36 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zul.*;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zkplus.spring.DelegatingVariableResolver;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Rows;
+import org.zkoss.zul.Window;
 
 import com.capitalbank.dao.AccountDao;
-import com.capitalbank.daoImpl.AccountDaoImpl;
 import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.service.AccountService;
-import com.capitalbank.serviceImpl.AccountServiceImpl;
 
+@VariableResolver(DelegatingVariableResolver.class)
 public class TransactionController extends SelectorComposer<Window> {
 	private static final long serialVersionUID = 1L;
 	@Wire private Combobox accountCombo;
     @Wire private Rows txnRows;
     
-    private AccountDao accountDao = new AccountDaoImpl();
-    private AccountService accountService = new AccountServiceImpl(accountDao);
+    @WireVariable
+    private AccountDao accountDao;
+    @WireVariable
+    private AccountService accountService;
+    @WireVariable
+    private DBConnection dbConnection;
+    
 
     @Override
     public void doAfterCompose(Window window) throws Exception {
@@ -45,7 +55,7 @@ public class TransactionController extends SelectorComposer<Window> {
         try {
         	
         	accountService.getAccountsByCustomer(cid);
-            Connection con = DBConnection.getConnection();
+            Connection con = dbConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(
                 "SELECT accountNumber FROM accounts WHERE customerId=?"
@@ -76,7 +86,7 @@ public class TransactionController extends SelectorComposer<Window> {
 
             long accNo = Long.parseLong(accountCombo.getValue());
 
-            Connection con = DBConnection.getConnection();
+            Connection con = dbConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(
                     "SELECT date, description, amount, balance " +

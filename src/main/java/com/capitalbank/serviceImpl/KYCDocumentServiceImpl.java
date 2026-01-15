@@ -1,22 +1,29 @@
 package com.capitalbank.serviceImpl;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 import com.capitalbank.dao.CustomerDao;
-import com.capitalbank.daoImpl.CustomerDaoImpl;
 import com.capitalbank.enums.query.KYCDocumentQuery;
 import com.capitalbank.model.Customer;
 import com.capitalbank.service.KYCDocumentService;
 import com.capitalbank.util.TransactionManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 public class KYCDocumentServiceImpl implements KYCDocumentService {
 
-    private final CustomerDao customerDao = new CustomerDaoImpl();
+    private CustomerDao customerDao;
+    private TransactionManager transactionManager;
+    
+    public void setCustomerDao(CustomerDao customerDao) {
+    	this.customerDao = customerDao;
+    }
+    
+    public void setTransactionManager(TransactionManager transactionManager) {
+    	this.transactionManager = transactionManager;
+    }
 
     // ===========================
     // LOAD BASIC CUSTOMER
@@ -43,7 +50,7 @@ public class KYCDocumentServiceImpl implements KYCDocumentService {
                         byte[] aadharFile,
                         byte[] profileImage) {
 
-        TransactionManager.doInTransaction((Connection con) -> {
+    	transactionManager.doInTransaction((Connection con) -> {
             try {
                 insertOrUpdateKycDocuments(con, customerId, aadharFile, profileImage);
                 updateCustomerDetails(con, customerId, dob, gender, phone, aadhar, pan, address, city, state, pincode, country);
@@ -58,7 +65,7 @@ public class KYCDocumentServiceImpl implements KYCDocumentService {
     // GET PROFILE IMAGE
     // ===========================
     public byte[] getProfileImageByCustomerId(Long customerId) {
-        return TransactionManager.doInTransaction(connection -> {
+        return transactionManager.doInTransaction(connection -> {
             try (PreparedStatement ps = connection.prepareStatement(
                     KYCDocumentQuery.SELECT_PROFILE_IMAGE.get())) {
 
@@ -80,7 +87,7 @@ public class KYCDocumentServiceImpl implements KYCDocumentService {
     // UPDATE ONLY PROFILE IMAGE
     // ===========================
     public void updateProfileImage(Long customerId, byte[] profileImage) {
-        TransactionManager.doInTransaction((Connection con) -> {
+    	transactionManager.doInTransaction((Connection con) -> {
             try (PreparedStatement ps = con.prepareStatement(
                     KYCDocumentQuery.UPDATE_PROFILE_IMAGE.get())) {
 

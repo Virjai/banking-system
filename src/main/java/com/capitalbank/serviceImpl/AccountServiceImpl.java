@@ -13,21 +13,24 @@ import com.capitalbank.util.customer.BusinessException;
 
 public class AccountServiceImpl implements AccountService {
 
-	private final AccountDao accountDao;
+	private AccountDao accountDao;
+	private TransactionManager transactionManager;
+	
 	private static final String GST_REGEX = "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$";
 
-	public AccountServiceImpl(AccountDao accountDao) {
-		if (accountDao == null) {
-			throw new IllegalArgumentException("AccountDao must not be null");
-		}
+	public void setAccountDao(AccountDao accountDao) {
 		this.accountDao = accountDao;
+	}
+	
+	public void setTransactionManager(TransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
 	}
 
 	/* ================= ACCOUNT LIFECYCLE ================= */
 
 	@Override
 	public Account openAccount(Account account) {
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			String accountNum = generateAccountNumber(account.getCustomerId());
 
 			account.setAccountNumber(accountNum);
@@ -53,7 +56,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public boolean closeAccount(long accountId) {
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			Account account = getActiveAccount(accountId);
 
 			if (!account.isActive()) {
@@ -72,7 +75,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public boolean activateAccount(long accountId) {
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			Account account = getAccountOrThrow(accountId);
 
 			if (account.isActive()) {
@@ -122,14 +125,14 @@ public class AccountServiceImpl implements AccountService {
 
 		double newBalance = account.getBalance() + amount;
 		account.setBalance(newBalance);
-		TransactionManager.doInTransaction((connection) -> 
+		transactionManager.doInTransaction((connection) -> 
 			accountDao.updateByAccountId(accountId, account)
 		);
 	}
 
 	@Override
 	public void debit(long accountId, double amount) {
-		TransactionManager.doInTransaction(connection -> {
+		transactionManager.doInTransaction(connection -> {
 			validateAmount(amount);
 
 			Account account = getActiveAccount(accountId);
@@ -152,7 +155,7 @@ public class AccountServiceImpl implements AccountService {
 	 */
 	@Override
 	public void transfer(long fromAccountId, long toAccountId, double amount) {
-		TransactionManager.doInTransaction(connection -> {
+		transactionManager.doInTransaction(connection -> {
 			if (fromAccountId == toAccountId) {
 				throw new BusinessException("Source and destination accounts cannot be same");
 			}
@@ -272,7 +275,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public boolean approve(long accountId) {
 
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 
 			Account account = getAccountOrThrow(accountId);
 
@@ -291,7 +294,7 @@ public class AccountServiceImpl implements AccountService {
 			throw new BusinessException("Rejection reason is required");
 		}
 
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 
 			Account account = getAccountOrThrow(accountId);
 
@@ -306,7 +309,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public boolean requestAccountClose(long accountId) {
 
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 
 			Account account = getActiveAccount(accountId);
 

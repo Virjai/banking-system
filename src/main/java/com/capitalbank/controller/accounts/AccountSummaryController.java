@@ -2,35 +2,46 @@ package com.capitalbank.controller.accounts;
 
 import java.util.List;
 
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.*;
+import org.zkoss.zkplus.spring.DelegatingVariableResolver;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Rows;
+import org.zkoss.zul.Window;
 
 import com.capitalbank.dao.AccountDao;
-import com.capitalbank.daoImpl.AccountDaoImpl;
 import com.capitalbank.model.Account;
 import com.capitalbank.model.Customer;
+import com.capitalbank.security.CustomerUserDetails;
 import com.capitalbank.service.AccountService;
 import com.capitalbank.service.CustomerService;
-import com.capitalbank.serviceImpl.AccountServiceImpl;
-import com.capitalbank.serviceImpl.CustomerServiceImpl;
 
+@VariableResolver(DelegatingVariableResolver.class)
 public class AccountSummaryController extends SelectorComposer<Window> {
 	private static final long serialVersionUID = 1L;
 	@Wire private Rows summaryRows;
 	
-	private AccountDao accountDao = new AccountDaoImpl();
-	private AccountService accountService = new AccountServiceImpl(accountDao);
-	private CustomerService customerService = new CustomerServiceImpl();
-
+	@WireVariable
+	private AccountDao accountDao;
+	@WireVariable
+	private AccountService accountService;
+	@WireVariable
+	private CustomerService customerService;
+	
     @Override
     public void doAfterCompose(Window window) throws Exception {
         super.doAfterCompose(window);
-
-        Long cid = (Long)Executions.getCurrent().getSession().getAttribute("customer_id");
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUserDetails user = (CustomerUserDetails) auth.getPrincipal();
+        Long cid = user.getCustomerId();
 
         if (cid == null) {
             Executions.sendRedirect("login.zul");

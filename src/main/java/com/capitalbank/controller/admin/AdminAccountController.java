@@ -4,8 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zkplus.spring.DelegatingVariableResolver;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Listbox;
@@ -16,16 +21,17 @@ import org.zkoss.zul.Window;
 
 import com.capitalbank.dbconfig.DBConnection;
 
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-
+@VariableResolver(DelegatingVariableResolver.class)
 public class AdminAccountController extends SelectorComposer<Window> {
 
     private static final long serialVersionUID = 1L;
 
     @Wire
     private Listbox requestListbox;
-
+    
+    @WireVariable
+    private DBConnection dbConnection;
+    
     @Override
     public void doAfterCompose(Window comp) throws Exception {
         super.doAfterCompose(comp);
@@ -40,7 +46,7 @@ public class AdminAccountController extends SelectorComposer<Window> {
             "SELECT accountId, customerId, accountNumber, accountType, createdAt " +
             "FROM accounts WHERE accountStatus = 'PENDING'";
 
-        try (Connection con = DBConnection.getConnection();
+        try (Connection con = dbConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
@@ -99,7 +105,7 @@ public class AdminAccountController extends SelectorComposer<Window> {
             "UPDATE accounts SET isActive = 1, accountStatus = 'APPROVED' " +
             "WHERE accountId = ?";
 
-        try (Connection con = DBConnection.getConnection();
+        try (Connection con = dbConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, accountId);
@@ -120,7 +126,7 @@ public class AdminAccountController extends SelectorComposer<Window> {
             "UPDATE accounts SET isActive = 0, accountStatus = 'REJECTED' " +
             "WHERE accountId = ?";
 
-        try (Connection con = DBConnection.getConnection();
+        try (Connection con = dbConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, accountId);

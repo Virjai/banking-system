@@ -1,21 +1,26 @@
 package com.capitalbank.controller.customers;
 
+import java.security.MessageDigest;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
+import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zkplus.spring.DelegatingVariableResolver;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.capitalbank.model.Customer;
+import com.capitalbank.security.CustomerUserDetails;
 import com.capitalbank.service.CustomerService;
-import com.capitalbank.serviceImpl.CustomerServiceImpl;
 
-import java.security.MessageDigest;
-
+@VariableResolver(DelegatingVariableResolver.class)
 public class ChangePasswordController extends SelectorComposer<Window> {
 	private static final long serialVersionUID = 1L;
 
@@ -31,11 +36,18 @@ public class ChangePasswordController extends SelectorComposer<Window> {
 	@Wire
 	private Button clearBtn;
 
-	private CustomerService customerService = new CustomerServiceImpl();
+	@WireVariable
+	private CustomerService customerService;
 
 	// -----------------------------
 	// SUBMIT BUTTON HANDLER
 	// -----------------------------
+
+	@Override
+	public void doAfterCompose(Window comp) throws Exception {
+		super.doAfterCompose(comp);
+	}
+
 	@Listen("onClick = #submitBtn")
 	public void changePassword() {
 		try {
@@ -56,7 +68,9 @@ public class ChangePasswordController extends SelectorComposer<Window> {
 			}
 
 			// 3. Get logged-in email from session
-			Long customerId = (Long) Sessions.getCurrent().getAttribute("customer_id");
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			CustomerUserDetails user = (CustomerUserDetails) auth.getPrincipal();
+			Long customerId = user.getCustomerId();
 
 			if (customerId == null) {
 				Clients.alert("Session expired, please login again.");
@@ -71,7 +85,7 @@ public class ChangePasswordController extends SelectorComposer<Window> {
 				return;
 			}
 			String password = existingCustomer.getPassword();
-			
+
 			if (!password.equals(currentPassword)) {
 				return;
 			}
@@ -81,7 +95,7 @@ public class ChangePasswordController extends SelectorComposer<Window> {
 				return;
 			}
 			existingCustomer.setPassword(newPassword);
-			
+
 			boolean isUpdatedCustomer = customerService.updateMyProfile(existingCustomer);
 //            // 5. Update password
 			if (isUpdatedCustomer) {

@@ -12,33 +12,38 @@ import com.capitalbank.util.customer.BusinessException;
 
 public class AdminServiceImpl implements AdminService {
 
-	private final CustomerDao customerDao;
-	private final AccountDao accountDao;
-
-	public AdminServiceImpl(CustomerDao customerDao, AccountDao accountDao) {
-		if (customerDao == null || accountDao == null) {
-			throw new IllegalArgumentException("DAOs must not be null");
-		}
+	private CustomerDao customerDao;
+	private AccountDao accountDao;
+	private TransactionManager transactionManager;
+	
+	public void setCustomerDao(CustomerDao customerDao) {
 		this.customerDao = customerDao;
+	}
+	
+	public void setAccountDao(AccountDao accountDao) {
 		this.accountDao = accountDao;
+	}
+	
+	public void setTransactionManager(TransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
 	}
 
 	/* ================= CUSTOMER OPERATIONS ================= */
 
 	@Override
 	public List<Customer> viewAllCustomers() {
-		return TransactionManager.doInTransaction(connection -> customerDao.findAll().orElse(List.of()));
+		return transactionManager.doInTransaction(connection -> customerDao.findAll().orElse(List.of()));
 	}
 
 	@Override
 	public Customer viewCustomerById(long customerId) {
-		return TransactionManager.doInTransaction(connection -> customerDao.findById(customerId)
+		return transactionManager.doInTransaction(connection -> customerDao.findById(customerId)
 				.orElseThrow(() -> new BusinessException("Customer not found")));
 	}
 
 	@Override
 	public boolean approveCustomerProfileUpdate(long customerId) {
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			Customer customer = customerDao.findById(customerId)
 					.orElseThrow(() -> new BusinessException("Customer not found"));
 
@@ -59,7 +64,7 @@ public class AdminServiceImpl implements AdminService {
 			throw new BusinessException("Rejection reason is required");
 		}
 
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			Customer customer = customerDao.findById(customerId)
 					.orElseThrow(() -> new BusinessException("Customer not found"));
 
@@ -76,32 +81,32 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public boolean deleteCustomer(long customerId) {
-		return TransactionManager.doInTransaction(connection -> customerDao.deleteCustomer(customerId));
+		return transactionManager.doInTransaction(connection -> customerDao.deleteCustomer(customerId));
 	}
 
 	/* ================= ACCOUNT OPERATIONS ================= */
 
 	@Override
 	public List<Account> viewAllAccounts() {
-	    return TransactionManager.doInTransaction(connection ->
+	    return transactionManager.doInTransaction(connection ->
 	        accountDao.findAllAccount().orElse(List.of())
 	    );
 	}
 
 	@Override
 	public List<Account> viewPendingAccounts() {
-		return TransactionManager.doInTransaction(connection -> accountDao.findPendingAccounts().orElse(List.of()));
+		return transactionManager.doInTransaction(connection -> accountDao.findPendingAccounts().orElse(List.of()));
 	}
 
 	@Override
 	public List<Account> viewRejectedAccounts() {
-		return TransactionManager.doInTransaction(connection ->
+		return transactionManager.doInTransaction(connection ->
 		accountDao.findRejectedAccounts().orElse(List.of()));
 	}
 
 	@Override
 	public boolean approveAccount(long accountId) {
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			Account account = accountDao.findByAccountId(accountId)
 					.orElseThrow(() -> new BusinessException("Account not found"));
 
@@ -122,7 +127,7 @@ public class AdminServiceImpl implements AdminService {
 			throw new BusinessException("Rejection reason is required");
 		}
 
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			Account account = accountDao.findByAccountId(accountId)
 					.orElseThrow(() -> new BusinessException("Account not found"));
 
@@ -139,14 +144,14 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public List<Account> viewCloseAccountRequests() {
-	    return TransactionManager.doInTransaction(connection -> {
+	    return transactionManager.doInTransaction(connection -> {
 	        return accountDao.findCloseRequests().orElse(List.of());
 	    });
 	}
 
 	@Override
 	public boolean closeAccount(long accountId) {
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			Account account = accountDao.findByAccountId(accountId)
 					.orElseThrow(() -> new BusinessException("Account not found"));
 
@@ -161,7 +166,7 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public boolean activateAccount(long accountId) {
-		return TransactionManager.doInTransaction(connection -> {
+		return transactionManager.doInTransaction(connection -> {
 			Account account = accountDao.findByAccountId(accountId)
 					.orElseThrow(() -> new BusinessException("Account not found"));
 

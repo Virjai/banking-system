@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.capitalbank.dao.CustomerDao;
 import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.enums.query.CustomerQuery;
 import com.capitalbank.model.Customer;
 import com.capitalbank.util.customer.ValidationPanUtil;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Implementation of {@link CustomerDao} using JDBC.
@@ -29,7 +29,11 @@ public class CustomerDaoImpl implements CustomerDao {
     private static final Logger logger = LogManager.getLogger(CustomerDaoImpl.class);
 
     // Database connection
-    private Connection connection = DBConnection.getConnection();
+    private DBConnection dbConnection;
+    
+    public void setDbConnection(DBConnection dbConnection) {
+    	this.dbConnection = dbConnection;
+    }
 
     /**
      * Saves a new customer to the database.
@@ -302,7 +306,7 @@ public class CustomerDaoImpl implements CustomerDao {
      * @return Connection object
      */
     private Connection getConnection() {
-        return DBConnection.getConnection();
+        return dbConnection.getConnection();
     }
 
 }

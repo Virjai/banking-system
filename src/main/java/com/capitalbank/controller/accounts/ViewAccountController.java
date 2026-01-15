@@ -5,34 +5,47 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zul.*;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zkplus.spring.DelegatingVariableResolver;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Rows;
 
 import com.capitalbank.dao.AccountDao;
-import com.capitalbank.daoImpl.AccountDaoImpl;
 import com.capitalbank.dbconfig.DBConnection;
 import com.capitalbank.model.Account;
+import com.capitalbank.security.CustomerUserDetails;
 import com.capitalbank.service.AccountService;
-import com.capitalbank.serviceImpl.AccountServiceImpl;
 
-import org.zkoss.zk.ui.Component;
-
+@VariableResolver(DelegatingVariableResolver.class)
 public class ViewAccountController extends SelectorComposer<Component> {
 	private static final long serialVersionUID = 1L;
 	@Wire
     private Grid accountsGrid;
 	
-	private AccountDao accountDao = new AccountDaoImpl();
-	private AccountService accountService = new AccountServiceImpl(accountDao);
+	@WireVariable
+	private AccountDao accountDao;
+	@WireVariable
+	private AccountService accountService;
+	@WireVariable
+	private DBConnection dbConnection;
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-
-        Long cid = (Long) Executions.getCurrent().getSession().getAttribute("customer_id");
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUserDetails user = (CustomerUserDetails) auth.getPrincipal();
+        Long cid = user.getCustomerId();
 
         if (cid == null) {
             Clients.alert("Session expired. Please login again.");
@@ -46,7 +59,7 @@ public class ViewAccountController extends SelectorComposer<Component> {
     private void loadAccounts(Long cid) {
         try {
         	List<Account> accountsByCustomer = accountService.getAccountsByCustomer(cid);
-            Connection con = DBConnection.getConnection();
+            Connection con = dbConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(
                 "SELECT accountNumber, accountType, balance, panNumber, gstNumber, createdAt " +

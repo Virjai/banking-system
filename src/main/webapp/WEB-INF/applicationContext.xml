@@ -8,10 +8,55 @@
 	 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 
+	<bean id="dbConnection"
+		class="com.capitalbank.dbconfig.DBConnection" init-method="init" />
+
 	<bean id="userService"
 		class="com.capitalbank.security.CustomerUserDetailsService" />
 	<bean id="customPasswordEncoder"
 		class="com.capitalbank.security.PasswordUtil" />
+
+	<bean id="customerDao"
+		class="com.capitalbank.daoImpl.CustomerDaoImpl">
+		<property name="dbConnection" ref="dbConnection" />
+	</bean>
+	<bean id="transactionDao"
+		class="com.capitalbank.daoImpl.TransactionDaoImpl">
+		<property name="dbConnection" ref="dbConnection" />
+	</bean>
+	<!-- Account DAO -->
+	<bean id="accountDao"
+		class="com.capitalbank.daoImpl.AccountDaoImpl">
+		<property name="dbConnection" ref="dbConnection" />
+	</bean>
+
+	<bean id="customerService"
+		class="com.capitalbank.serviceImpl.CustomerServiceImpl">
+		<property name="customerDao" ref="customerDao" />
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+	
+	<!-- Account Service -->
+	<bean id="accountService"
+		class="com.capitalbank.serviceImpl.AccountServiceImpl">
+		<property name="accountDao" ref="accountDao" />
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+	
+	<bean id="transactionService"
+		class="com.capitalbank.serviceImpl.TransactionServiceImpl">
+		<property name="transactionDao" ref="transactionDao" />
+	</bean>
+
+	<bean id="tableUtil" class="com.capitalbank.util.table.TableUtil"
+		init-method="init">
+		<property name="dbConnection" ref="dbConnection" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="com.capitalbank.util.TransactionManager">
+		<property name="dbConnection" ref="dbConnection" />
+	</bean>
 
 	<import resource="applicationContext-security.xml" />
 </beans>
